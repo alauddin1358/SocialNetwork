@@ -1,7 +1,27 @@
-import React, {useState} from 'react'
+import React, { useState, useEffect } from 'react'
 import { Alert } from 'reactstrap';
+import { connect } from 'react-redux';
+import { Link, Redirect } from 'react-router-dom';
+import { register } from '../../actions/auth';
+import PropTypes from 'prop-types';
+import {Helmet} from "react-helmet";
+//import ScriptTag from 'react-script-tag';
+//import { RegisterVanillaJsCode } from './RegisterVanillaJsCode'
 
-export const Register = () => {
+const Register = ({register, isAuthenticated}) => {
+    /*useEffect(() => {
+        const script = document.createElement('script');
+      
+        script.src = "./RegisterVanillaJsCode.js";
+        script.async = true;
+      
+        document.body.appendChild(script);
+      
+        return () => {
+          document.body.removeChild(script);
+        }
+      }, []);*/
+
     const [formData, setFormData] = useState({
         firstname: '',
         middlename: '',
@@ -20,6 +40,7 @@ export const Register = () => {
         referrer_email: ''
 
       });
+    
       const { firstname, middlename, lastname, student_type,
       job_type, specialization_type, email, phone,
       password, passwordconfirm, address, country,
@@ -31,11 +52,14 @@ export const Register = () => {
         e.preventDefault();
         if (password !== passwordconfirm) {
             <Alert>Passwords do not match</Alert>
-            }  
+        }  
         else {
             console.log(formData);
-                //register({ formData });
-              }
+            register({ formData });
+            if(isAuthenticated) {
+                return <Redirect to="/login" />
+            }
+        }
             
     };
     return (
@@ -423,11 +447,24 @@ export const Register = () => {
                 
                     <button>Registration</button>
                     <p text-align="center">* Marked fields are required. Please fill up these fields <br/><br/>
-                        Already have an account? <a href="login.html">Login Here</a>
+                        Already have an account? <Link to="/login">Login Here</Link>
                     </p>
 		        </form>
 	        </div>
+            <Helmet>
+                <script src="./RegisterVanillaJsCode.js" type="text/javascript" />
+            </Helmet>
         </div>
         
     )
-}
+};
+Register.propTypes = {
+    register: PropTypes.func.isRequired,
+    isAuthenticated: PropTypes.bool
+  };
+  
+const mapStateToProps = (state) => ({
+    isAuthenticated: state.auth.isAuthenticated
+});
+  
+export default connect(mapStateToProps, { register })(Register);

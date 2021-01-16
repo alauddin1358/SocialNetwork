@@ -1,19 +1,13 @@
-import React, { Fragment, useEffect } from 'react';
+import React, { Fragment } from 'react';
 import { Link } from 'react-router-dom';
+import { connect } from 'react-redux';
+import { logout } from '../actions/auth';
+import PropTypes from 'prop-types';
 
 
-const Navabr = () => {
-  useEffect(() => {
-    console.log('Calling UseEffect');
-  return () => {
-    console.log('Return UseEffect');
-    }
-  }, []);
+const Navabr = ({ auth:{ isAuthenticated, loading }, logout}) => {
     const authLinks = (
         <ul>
-          <li>
-            <Link to="/profiles">Profiles</Link>
-          </li>
           <li>
             <Link to="/posts">Posts</Link>
           </li>
@@ -24,9 +18,9 @@ const Navabr = () => {
             </Link>
           </li>
           <li>
-            <Link to="/dashboard">
-              <i className="fas fa-sign-out-alt" />{' '}
-              <span className="hide-sm">Logout</span>
+            <Link to="/login" onClick={logout}>
+                <i className="fas fa-sign-out-alt" />{' '}
+                <span className="hide-sm">Logout</span>
             </Link>
           </li>
         </ul>
@@ -34,9 +28,6 @@ const Navabr = () => {
     
       const guestLinks = (
         <ul>
-          <li>
-            <Link to="/profiles">Profiles</Link>
-          </li>
           <li>
             <Link to="/register">Register</Link>
           </li>
@@ -52,10 +43,18 @@ const Navabr = () => {
                     <i className="fas fa-code" /> Alauddin
                 </Link>
             </h1>
-            <Fragment>{guestLinks}</Fragment>
+            { !loading && (<Fragment>{isAuthenticated ? authLinks : guestLinks}</Fragment>) }
         </nav>
     )
 }
+Navabr.propTypes = {
+  //setAlert: PropTypes.func.isRequired,
+  logout: PropTypes.func.isRequired,
+  auth: PropTypes.object.isRequired
+};
 
-  
-export default Navabr;
+const mapStateToProps = (state) => ({
+  auth: state.auth
+});
+
+export default connect(mapStateToProps, { logout })(Navabr);
