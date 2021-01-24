@@ -7,17 +7,17 @@ import {
     AUTH_ERROR,
     LOGOUT
   } from './types';
-  //import setAuthToken from '../utils/setAuthToken';
+import setAuthToken from '../utils/setAuthToken';
 import { Alert } from 'reactstrap';
 import axios from 'axios';
 const API = process.env.REACT_APP_API;
 
 // Load User
 export const loadUser = () => async dispatch => {
-  /*if(localStorage.token) {
+  if(localStorage.token) {
       console.log('calling Localstorage');
       setAuthToken(localStorage.token);
-  }*/
+  }
   try {
     const res = await axios.get(`${API}/users`);
     console.log('Auth response ',res);
@@ -73,15 +73,15 @@ export const login = (email, password) => async dispatch => {
   
   try {
     const res = await axios.post(`${API}/login`, body, config);
-
+    console.log('Login response', res.data.data);
     dispatch({
       type: LOGIN_SUCCESS,
-      payload: res.data
+      payload: res.data.data
     });
     dispatch(loadUser());
   } catch (err) {
-    const errors = err.response.data.errors;
-
+    const errors = err.response;
+    console.log(errors);
     if (errors) {
       <Alert>{errors}</Alert>
       //errors.forEach(error => dispatch(setAlert(error.msg, 'danger')));
@@ -94,7 +94,8 @@ export const login = (email, password) => async dispatch => {
 };
 
 // Logout
-export const logout = ()=> dispatch => { 
+export const logout = () => dispatch => { 
   //dispatch( { type : CLEAR_PROFILE });
   dispatch( {type: LOGOUT} );
+  //dispatch(loadUser());
 };

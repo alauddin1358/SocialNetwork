@@ -1,26 +1,16 @@
-import React, { useState, useEffect } from 'react'
+import React, { useState } from 'react';
 import { Alert } from 'reactstrap';
 import { connect } from 'react-redux';
 import { Link, Redirect } from 'react-router-dom';
 import { register } from '../../actions/auth';
 import PropTypes from 'prop-types';
-import {Helmet} from "react-helmet";
-//import ScriptTag from 'react-script-tag';
-//import { RegisterVanillaJsCode } from './RegisterVanillaJsCode'
+
+import '../../css/login.css';
+import '../../css/responsive.css';
+
 
 const Register = ({register, isAuthenticated}) => {
-    /*useEffect(() => {
-        const script = document.createElement('script');
-      
-        script.src = "./RegisterVanillaJsCode.js";
-        script.async = true;
-      
-        document.body.appendChild(script);
-      
-        return () => {
-          document.body.removeChild(script);
-        }
-      }, []);*/
+    
 
     const [formData, setFormData] = useState({
         firstname: '',
@@ -64,19 +54,19 @@ const Register = ({register, isAuthenticated}) => {
     };
     return (
         <div>
-            <div className="form-wrapper">
+            <div className="form-wrapper widthDiv">
 		        <form onSubmit={onSubmit} id="registration-form">
                     <h2>
                         <span>Registration</span>
                     </h2>
-                    <div className="flex-inline items-3">		
+                    <div className="flex-inline items-3 widthDiv">		
                         <label>Name: *</label>	
-                        <div className="flex-inline">
+                        <div className="flex-inline widthDiv">
                             <input type="text" 
                                     name="firstname" 
                                     placeholder="Enter First Name"
                                     value={firstname}
-                                    onChange={onChange} />
+                                    onChange={onChange}  />
                             <input type="text"
                                    name="middlename" 
                                    placeholder="Enter Middle Name"
@@ -89,10 +79,10 @@ const Register = ({register, isAuthenticated}) => {
                                    onChange={onChange} />
                         </div>
                     </div>
-                    <div className="flex-inline items-3">
+                    <div className="flex-inline items-3 widthDiv">
                         <label>Type: *</label>
-                        <div className="flex-inline">
-                            <div className="custom-select">
+                        <div className="flex-inline widthDiv">
+                            <div className="widthDiv">
                                 <select name="student_type" 
                                         value={student_type}
                                         onChange={onChange}>
@@ -102,7 +92,7 @@ const Register = ({register, isAuthenticated}) => {
                                     <option value="phd">PhD</option>
                                 </select>
                             </div>
-                            <div className="custom-select">
+                            <div className=" widthDiv">
                                 <select name="job_type"
                                         value={job_type}
                                         onChange={onChange}>
@@ -112,7 +102,7 @@ const Register = ({register, isAuthenticated}) => {
                                     <option value="job3">Job 3</option>
                                 </select>
                             </div>
-                            <div className="custom-select">
+                            <div className=" widthDiv">
                                 <select name="specialization_type"
                                         value={specialization_type}
                                         onChange={onChange} >
@@ -124,7 +114,7 @@ const Register = ({register, isAuthenticated}) => {
                             </div>
                         </div>
                     </div>
-                    <div className="flex-inline">
+                    <div className="flex-inline widthDiv">
                         <label>Email: *</label>
                         <input type="email" 
                                name="email" 
@@ -132,7 +122,7 @@ const Register = ({register, isAuthenticated}) => {
                                value={email}
                                onChange={onChange} />
                     </div>
-                    <div className="flex-inline">
+                    <div className="flex-inline widthDiv">
                         <label>Phone: </label>
                         <input type="text" 
                                name="phone" 
@@ -140,7 +130,7 @@ const Register = ({register, isAuthenticated}) => {
                                value={phone}
                                onChange={onChange} />
                     </div>
-                    <div className="flex-inline">
+                    <div className="flex-inline widthDiv">
                         <label htmlFor="password">Password: *</label>
                         <input type="password" 
                                name="password" 
@@ -148,7 +138,7 @@ const Register = ({register, isAuthenticated}) => {
                                value={password}
                                onChange={onChange} />
                     </div>
-                    <div className="flex-inline">
+                    <div className="flex-inline widthDiv">
                         <label>Confirm Password: *</label>
                         <input type="password" 
                                name="passwordconfirm" 
@@ -156,7 +146,7 @@ const Register = ({register, isAuthenticated}) => {
                                value={passwordconfirm}
                                onChange={onChange} />
                     </div>
-                    <div className="flex-inline">
+                    <div className="flex-inline widthDiv">
                         <label>Address:</label>
                         <input type="text" 
                                 name="address" 
@@ -164,9 +154,9 @@ const Register = ({register, isAuthenticated}) => {
                                 value={address}
                                 onChange={onChange} />
                     </div>
-                    <div className="flex-inline">
+                    <div className="flex-inline widthDiv">
                         <label>Country:</label>
-                        <div className="custom-select">
+                        <div className="widthDiv">
                             <select id="country" 
                                     name="country" 
                                     className="form-control"
@@ -419,16 +409,29 @@ const Register = ({register, isAuthenticated}) => {
                                 <option value="Zimbabwe">Zimbabwe</option>
                             </select>
                         </div>
-                    </div>	     
-                    <div className="flex-inline">
+                    </div>	
+                    <div class="flex-inline">
                         <label>Profile Picture:</label>
-                        <input type="file" 
-                                name="profile_picture"
-                                value={profile_picture}
-                                onChange={onChange} />
-                    </div>
+                        <div id="registration-image">
+                            <div id="registration-image-container">
+                                <div className="full-row">
+                                    <img src="img/profile-picture.png" alt="profile" />
+                                </div>
+                                <div class="full-row">
+                                    <input type="file" 
+                                        name="profile_picture" 
+                                        class="custom-file-input"
+                                        value={profile_picture}
+                                        onChange={onChange} />
+                                </div>
+                                <div class="full-row">
+                                    <a href="">Remove Image</a>
+                                </div>
+                            </div>
+                        </div>
+                    </div>     
                     <h4>Referred By: </h4>   
-                    <div className="flex-inline">
+                    <div className="flex-inline widthDiv">
                         <label>Name: * </label>
                         <input type="text" 
                                 name="referrer_name" 
@@ -436,7 +439,7 @@ const Register = ({register, isAuthenticated}) => {
                                 value={referrer_name}
                                 onChange={onChange} />
                     </div> 
-                    <div className="flex-inline">
+                    <div className="flex-inline widthDiv">
                         <label>Email: *</label>
                         <input type="email" 
                                 name="referrer_email" 
@@ -451,9 +454,6 @@ const Register = ({register, isAuthenticated}) => {
                     </p>
 		        </form>
 	        </div>
-            <Helmet>
-                <script src="./RegisterVanillaJsCode.js" type="text/javascript" />
-            </Helmet>
         </div>
         
     )

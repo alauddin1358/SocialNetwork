@@ -6,8 +6,11 @@ import { Link, Redirect} from 'react-router-dom';
 //import { setAlert } from '../../actions/alert';
 import { login } from '../../actions/auth';
 import PropTypes from 'prop-types';
+import '../../css/login.css';
+import '../../css/responsive.css';
+import { LOGOUT } from '../../actions/types';
 
-const Login = ({isAuthenticated, login}) => {
+const Login = ({auth:{isAuthenticated, token}, login}) => {
     const [formData, setFormData] = useState({
         email: '',
         password: ''
@@ -21,10 +24,12 @@ const Login = ({isAuthenticated, login}) => {
     const onSubmit = async (e) => {
         e.preventDefault();
         login(email, password);
-      };
-      if (isAuthenticated) {
+        //console.log('IsAuthenticated = ', isAuthenticated);
+        
+    };
+    if (isAuthenticated && token !== null) {
         return <Redirect to="/dashboard" />;
-      }
+    }
     return (
         <Fragment>
             <div className="form-wrapper">
@@ -54,10 +59,10 @@ const Login = ({isAuthenticated, login}) => {
 Login.propTypes = {
     //setAlert: PropTypes.func.isRequired,
     login: PropTypes.func.isRequired,
-    isAuthenticated: PropTypes.bool
+    auth: PropTypes.object.isRequired
   };
   
 const mapStateToProps = (state) => ({
-    isAuthenticated: state.auth.isAuthenticated
+    auth: state.auth
 });
 export default connect(mapStateToProps, { login })(Login);

@@ -15,7 +15,7 @@ a {
   text-decoration: none;
 }
 /* Utilities */
-.container {
+.navContainer {
   max-width: 100%;
   overflow: hidden;
 
