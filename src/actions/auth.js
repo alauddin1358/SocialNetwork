@@ -7,24 +7,46 @@ import {
     AUTH_ERROR,
     LOGOUT
   } from './types';
-import setAuthToken from '../utils/setAuthToken';
-import { Alert } from 'reactstrap';
+//import setAuthToken from '../utils/setAuthToken';
 import axios from 'axios';
+import {instance} from './instance';
+import { setAlert } from './alert';
+//import {config} from './config';
 const API = process.env.REACT_APP_API;
+
+
 
 // Load User
 export const loadUser = () => async dispatch => {
   if(localStorage.token) {
       console.log('calling Localstorage');
-      setAuthToken(localStorage.token);
+      axios.defaults.headers.common['x-auth-token'] = localStorage.token;
+        //axios.defaults.headers.common['Authorization'] = token;
+      console.log("Token = ", localStorage.token);
+      //localStorage.setItem('token', token);
+      //setAuthToken(localStorage.token);
   }
+  else {
+    axios.defaults.headers.common['x-auth-token']='';
+  }
+  const config = {
+    headers : {
+        'Authorization': `Bearer ${localStorage.token}`,
+        'Content-Type':'application/json',
+        'Access-Control-Allow-Origin': '*',
+        'Access-Control-Allow-Credentials': true
+    }
+  };
   try {
-    const res = await axios.get(`${API}/users`);
-    console.log('Auth response ',res);
-    dispatch({
-      type: USER_LOADED,
-      payload: res.data
-    });
+    const res = await instance.get(`${API}/user`, config);
+    console.log('Auth response = ',JSON.parse(res.data.data));
+    if(res.data.result.isError === 'false') {
+      dispatch({
+        type: USER_LOADED,
+        payload: res.data
+      });
+    }
+    
   } catch (err) {
     dispatch({
       type: AUTH_ERROR
@@ -33,30 +55,35 @@ export const loadUser = () => async dispatch => {
 };
 
 // Register User
-export const register = ({formData}) => async dispatch => {
+export const register = ({form_data}) => async dispatch => {
     const config = {
         headers : {
-            'Content-Type':'application/json'
+            'Content-Type':'application/json',
+            'Access-Control-Allow-Origin': '*'
         }
     };
     //const body = JSON.stringify({name, email, password});
     
   try {
-    console.log(API);
-    const res = await axios.post(`${API}/add`, formData, config);
+    const res = await axios.post(`${API}/add`, form_data);
     console.log('Users data', res.data);
-    dispatch({
-      type: REGISTER_SUCCESS,
-      payload: res.data
-    });
+    if(res.data.result.isError === 'true') {
+      dispatch(setAlert(res.data.result.message, 'danger'));
+    }
+    else {
+      dispatch({
+        type: REGISTER_SUCCESS,
+        payload: res.data
+      });
+    }
+    
     //dispatch(loadUser());
   } catch (err) {
+    console.log("Error in registration = ", err);
+    dispatch(setAlert('Server Error', 'danger'));
     const errors = err.response;
     console.log(errors);
-    <Alert>{errors}</Alert>
-    if (errors) {
-        <Alert>{errors}</Alert>
-    }
+    
     dispatch({
       type: REGISTER_FAIL
     });
@@ -66,7 +93,8 @@ export const register = ({formData}) => async dispatch => {
 export const login = (email, password) => async dispatch => {
   const config = {
       headers : {
-          'Content-Type':'application/json'
+          'Content-Type':'application/json',
+          'Access-Control-Allow-Origin': '*'
       }
   };
   const body = {email, password};
@@ -74,18 +102,24 @@ export const login = (email, password) => async dispatch => {
   try {
     const res = await axios.post(`${API}/login`, body, config);
     console.log('Login response', res.data.data);
-    dispatch({
-      type: LOGIN_SUCCESS,
-      payload: res.data.data
-    });
-    dispatch(loadUser());
+    if(res.data.result.isError === 'true') {
+      dispatch(setAlert(res.data.result.message, 'danger'));
+    }
+    else {
+      dispatch({
+        type: LOGIN_SUCCESS,
+        payload: res.data.data
+      });
+      dispatch(loadUser());
+    }
   } catch (err) {
     const errors = err.response;
-    console.log(errors);
-    if (errors) {
-      <Alert>{errors}</Alert>
-      //errors.forEach(error => dispatch(setAlert(error.msg, 'danger')));
-    }
+    dispatch(setAlert('Server Error', 'danger'));
+    console.log('Error in login = ',errors);
+    // if (errors) {
+    //   <Alert>{errors}</Alert>
+    //   //errors.forEach(error => dispatch(setAlert(error.msg, 'danger')));
+    // }
 
     dispatch({
       type: LOGIN_FAIL

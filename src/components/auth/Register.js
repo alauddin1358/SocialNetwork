@@ -1,5 +1,4 @@
 import React, { useState } from 'react';
-import { Alert } from 'reactstrap';
 import { connect } from 'react-redux';
 import { Link, Redirect } from 'react-router-dom';
 import { register } from '../../actions/auth';
@@ -8,10 +7,13 @@ import PropTypes from 'prop-types';
 import '../../css/login.css';
 import '../../css/responsive.css';
 
+import { setAlert } from '../../actions/alert';
+import Alert from '../layout/Alert';
 
-const Register = ({register, isAuthenticated}) => {
+const Register = ({register, isAuthenticated, dispatch}) => {
     
-
+    const [file, setFile] = useState('');
+    const [image, setImage] = useState('../../img/user-profile.png');
     const [formData, setFormData] = useState({
         firstname: '',
         middlename: '',
@@ -25,7 +27,6 @@ const Register = ({register, isAuthenticated}) => {
         passwordconfirm: '',
         address: '',
         country: '',
-        profile_picture: '',
         referrer_name: '',
         referrer_email: ''
 
@@ -34,24 +35,40 @@ const Register = ({register, isAuthenticated}) => {
       const { firstname, middlename, lastname, student_type,
       job_type, specialization_type, email, phone,
       password, passwordconfirm, address, country,
-      profile_picture, referrer_name, referrer_email } = formData;
+       referrer_name, referrer_email } = formData;
     
     const onChange = (e) =>
           setFormData({ ...formData, [e.target.name]: e.target.value });
+    const imageHandler = (e) => {
+        setFile(e.target.files[0]);
+        const reader = new FileReader();
+        reader.onload = () =>{
+            if(reader.readyState === 2){
+            setImage( reader.result)
+            }
+        }
+        reader.readAsDataURL(e.target.files[0])
+    
+    };
+    const getFormData = object => Object.keys(object).reduce((formData, key) => {
+        formData.append(key, object[key]);
+        return formData;
+    }, new FormData());
     const onSubmit = async (e) => {
         e.preventDefault();
         if (password !== passwordconfirm) {
-            <Alert>Passwords do not match</Alert>
+            dispatch(setAlert('Passwords do not match', 'danger'));
         }  
         else {
             console.log(formData);
-            register({ formData });
-            if(isAuthenticated) {
-                return <Redirect to="/login" />
-            }
-        }
-            
+            const form_data = getFormData(formData);
+            form_data.append('file', file);
+            register({ form_data });   
+        }    
     };
+    if(isAuthenticated) {
+        return <Redirect to="/login" />
+    }
     return (
         <div>
             <div className="form-wrapper widthDiv">
@@ -82,36 +99,35 @@ const Register = ({register, isAuthenticated}) => {
                     <div className="flex-inline items-3 widthDiv">
                         <label>Type: *</label>
                         <div className="flex-inline widthDiv">
-                            <div className="widthDiv">
-                                <select name="student_type" 
-                                        value={student_type}
-                                        onChange={onChange}>
-                                    <option value="">Select Student</option>
-                                    <option value="bsc">BSc.</option>
-                                    <option value="msc">MSc</option>
-                                    <option value="phd">PhD</option>
-                                </select>
-                            </div>
-                            <div className=" widthDiv">
-                                <select name="job_type"
-                                        value={job_type}
-                                        onChange={onChange}>
-                                    <option value="">Select Job</option>
-                                    <option value="job1">Job 1</option>
-                                    <option value="job2">Job 2</option>
-                                    <option value="job3">Job 3</option>
-                                </select>
-                            </div>
-                            <div className=" widthDiv">
-                                <select name="specialization_type"
-                                        value={specialization_type}
-                                        onChange={onChange} >
-                                    <option value="">Select Specialization</option>
-                                    <option value="1">Option1</option>
-                                    <option value="2">Option1</option>
-                                    <option value="3">Option1</option>
-                                </select>
-                            </div>
+                            <select name="student_type" 
+                                    value={student_type}
+                                    onChange={onChange}>
+                                <option value="">Select Student</option>
+                                <option value="bsc">BSc.</option>
+                                <option value="msc">MSc</option>
+                                <option value="phd">PhD</option>
+                            </select>
+                            
+                            
+                            <select name="job_type"
+                                    value={job_type}
+                                    onChange={onChange}>
+                                <option value="">Select Job</option>
+                                <option value="job1">Job 1</option>
+                                <option value="job2">Job 2</option>
+                                <option value="job3">Job 3</option>
+                            </select>
+                            
+                            
+                            <select name="specialization_type"
+                                    value={specialization_type}
+                                    onChange={onChange} >
+                                <option value="">Select Specialization</option>
+                                <option value="1">Option1</option>
+                                <option value="2">Option1</option>
+                                <option value="3">Option1</option>
+                            </select>
+                            
                         </div>
                     </div>
                     <div className="flex-inline widthDiv">
@@ -410,21 +426,20 @@ const Register = ({register, isAuthenticated}) => {
                             </select>
                         </div>
                     </div>	
-                    <div class="flex-inline">
+                    <div className="flex-inline">
                         <label>Profile Picture:</label>
                         <div id="registration-image">
                             <div id="registration-image-container">
                                 <div className="full-row">
-                                    <img src="img/profile-picture.png" alt="profile" />
+                                    <img src={image} alt="profile" />
                                 </div>
-                                <div class="full-row">
+                                <div className="full-row">
                                     <input type="file" 
                                         name="profile_picture" 
-                                        class="custom-file-input"
-                                        value={profile_picture}
-                                        onChange={onChange} />
+                                        className="customFileInput"
+                                        onChange={imageHandler} />
                                 </div>
-                                <div class="full-row">
+                                <div className="full-row">
                                     <a href="">Remove Image</a>
                                 </div>
                             </div>
@@ -449,6 +464,7 @@ const Register = ({register, isAuthenticated}) => {
                     </div>
                 
                     <button>Registration</button>
+                    <Alert />
                     <p text-align="center">* Marked fields are required. Please fill up these fields <br/><br/>
                         Already have an account? <Link to="/login">Login Here</Link>
                     </p>

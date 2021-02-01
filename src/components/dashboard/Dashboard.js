@@ -8,6 +8,8 @@ import Sidebar from './Sidebar';
 import Footer from './Footer';
 import PropTypes from 'prop-types';
 import '../../css/style.css';
+//import '../../css/sb-admin-2.min.css';
+
 const Dashboard = ({logout, auth: {isAuthenticated}}) => {
     // const clickLogout = () => {
     //     logout();

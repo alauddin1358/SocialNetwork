@@ -4,8 +4,8 @@ import { connect } from 'react-redux';
 import PostItem from './PostItem';
 import PropTypes from 'prop-types';
 import { getPosts } from '../../actions/post';
-
-const Pages = ({ getPosts, post: {posts}}) => {
+import Spinner from '../layout/Spinner';
+const Pages = ({ getPosts, post: {posts, loading}}) => {
     useEffect(() => {
         getPosts();
     }, [getPosts]);
@@ -27,9 +27,9 @@ const Pages = ({ getPosts, post: {posts}}) => {
                             </div>
                             <div id="posts-list" className="card-body">
                                 <div className="post-card card">
-                                        {posts.map((post) => (
+                                        {loading || posts === null ? (<Spinner />) : (posts.map((post) => (
                                             <PostItem key={post._id.$oid} post={post} />
-                                        ))}
+                                        )))}
                                 </div>
                                 <div id="pagination">
                                     <a href="#" className="inactive">Previous</a>

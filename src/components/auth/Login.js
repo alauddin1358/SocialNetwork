@@ -8,7 +8,9 @@ import { login } from '../../actions/auth';
 import PropTypes from 'prop-types';
 import '../../css/login.css';
 import '../../css/responsive.css';
-import { LOGOUT } from '../../actions/types';
+//import { LOGOUT } from '../../actions/types';
+//import { setAlert } from '../../actions/alert';
+import Alert from '../layout/Alert';
 
 const Login = ({auth:{isAuthenticated, token}, login}) => {
     const [formData, setFormData] = useState({
@@ -22,6 +24,7 @@ const Login = ({auth:{isAuthenticated, token}, login}) => {
         setFormData({ ...formData, [e.target.name]: e.target.value });
     
     const onSubmit = async (e) => {
+    
         e.preventDefault();
         login(email, password);
         //console.log('IsAuthenticated = ', isAuthenticated);
@@ -51,6 +54,7 @@ const Login = ({auth:{isAuthenticated, token}, login}) => {
                     <button>Login</button>
                     <span>Not a user? <Link to="/register">Register Here</Link></span>
                     <span><a href="#">Forgot Password?</a></span>
+                    <Alert />
 		        </form>
 	        </div>
         </Fragment>

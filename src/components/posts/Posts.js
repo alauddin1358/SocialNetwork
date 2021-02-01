@@ -1,9 +1,19 @@
 import React, { Fragment } from 'react';
 import PostDetail from './PostDetail';
+//import { connect } from 'react-redux';
 import Sidebar from '../dashboard/Sidebar';
 import Footer from '../dashboard/Footer';
 import Topbar from '../dashboard/Topbar';
-const Posts = ({match}) => {
+//import {getPost} from '../../actions/post';
+//import PropTypes from 'prop-types';
+import '../../css/style.css';
+//import '../../css/sb-admin-2.min.css';
+
+const Posts = ({ match }) => {
+    
+    //getPost(match.params.id);
+    //console.log(post);
+    //console.log(match.params.id);
     return (
         <Fragment>
             <div id="wrapper">
@@ -19,4 +29,13 @@ const Posts = ({match}) => {
         </Fragment>
     )
 }
+// Posts.propTypes = {
+//     getPost: PropTypes.func.isRequired,
+//     post: PropTypes.object.isRequired
+// };
+  
+// const mapStateToProps = (state) => ({
+//     post : state.post
+// });
+// export default connect(mapStateToProps, { getPost })(Posts);
 export default Posts;

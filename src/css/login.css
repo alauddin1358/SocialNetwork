@@ -95,7 +95,7 @@ select option:hover {
 }
 .items-3 input[type="text"],
 .items-3 .custom-select,
-.items-3 select, {
+.items-3 select {
 	width: 30%;
 } 
 .items-3 .select-selected {
@@ -116,7 +116,7 @@ input[type="file"] {
 #registration-image img {
 	color: green;
     font-size: 45px;
-    background: #fff;
+    background: #fff !important;
     border: 5px solid green;
     border-radius: 50%;
     padding: 20px;
@@ -127,30 +127,30 @@ input[type="file"] {
 	margin-bottom: 20px;
 	width: 149px;
 }
-.custom-file-input::-webkit-file-upload-button {
+.customFileInput::-webkit-file-upload-button {
   visibility: hidden;
 }
-.custom-file-input::before {
+.customFileInput::before {
 	content: 'Upload Picture';
 	display: inline-block;
-	color: #000;
+	color: #000 !important;
 	padding: 5px 8px;
 	white-space: nowrap;
 	-webkit-user-select: none;
 	cursor: pointer;
 	font-size: 16px;
 	border: 1px solid #fff;
-    background: #fff;
+    background: #fff !important;
     outline: 0;
     border-radius: 5px;
     clear: both;
     padding: 10px 17px;
 }
-.custom-file-input:hover::before {
-	background: #2E7F08;
-	color: #fff;
+.customFileInput:hover::before {
+	background: #2E7F08 !important;
+	color: #fff !important;
 }
-.custom-file-input:active::before {
+.customFileInput:active::before {
   background: -webkit-linear-gradient(top, #e3e3e3, #f9f9f9);
 }
 button {
