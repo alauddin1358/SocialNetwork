@@ -5,12 +5,14 @@ import {
     ADD_POST,
     GET_POST,
     ADD_COMMENT,
-    REMOVE_COMMENT
+    REMOVE_COMMENT,
+    GET_FILE
   } from '../actions/types';
   
   const initialState = {
     posts: [],
     post: null,
+    file: null,
     loading: true,
     isSuccess: false,
     error: {}
@@ -31,6 +33,12 @@ import {
           ...state,
           post: payload,
           loading: false
+        };
+      case GET_FILE:
+        return {
+            ...state,
+            file: payload,
+            loading: false
         };
       case ADD_POST:
         return {

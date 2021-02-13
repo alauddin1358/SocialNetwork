@@ -10,7 +10,7 @@ const CommentItem = ({postId, comment}) => {
     return (
         <Fragment>
             <div className="comment">
-                <img src="../../img/user-profile.png" alt="user" />
+                <img src={comment.user.image} alt="user" />
                 <span>
                     {comment.cmntBody}
                 </span>

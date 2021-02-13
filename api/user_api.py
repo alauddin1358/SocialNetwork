@@ -1,5 +1,5 @@
 from flask import Flask, redirect, url_for, make_response, json, jsonify, request, render_template, session
-#from flask_session import Session
+# from flask_session import Session
 # for react calling
 from flask_cors import CORS, cross_origin
 # for sending mail
@@ -22,6 +22,12 @@ import datetime
 # generate random number
 from random import randint
 import pandas as pd
+import os
+from werkzeug.utils import secure_filename
+
+UPLOAD_FOLDER = os.getcwd()
+ALLOWED_EXTENSIONS = set(['png', 'jpg', 'jpeg', 'gif'])
+
 
 # initialize the app
 app = Flask(__name__, static_folder='../build', static_url_path='/')
@@ -37,6 +43,7 @@ app.config['MAIL_PASSWORD'] = 'pqqtueejjyhgskii'
 
 app.config['MAIL_USE_TLS'] = False
 app.config['MAIL_USE_SSL'] = True
+app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
 
 # SESSION_TYPE = 'filesystem'
 # app.config.from_object(__name__)
@@ -55,7 +62,7 @@ def token_required(f):
     def decorator(*args, **kwargs):
         token = ''
         print(request.headers)
-        #token = request.headers['X-Auth-Token']
+        # token = request.headers['X-Auth-Token']
         # print(token)
         if 'Authorization' in request.headers:
             token = request.headers['Authorization']
@@ -82,6 +89,10 @@ def token_required(f):
     return decorator
 
 
+def allowed_file(filename):
+    return '.' in filename and filename.rsplit('.', 1)[1].lower() in ALLOWED_EXTENSIONS
+
+
 @app.route('/')
 def index():
     return app.send_static_file('index.html')
@@ -101,7 +112,6 @@ def unprotected():
 @token_required
 def protected():
     print('hello')
-
     return jsonify({'message': 'Available with valid tokens'})
 
 
@@ -193,7 +203,6 @@ def add_user():
 
     _json = request.form
     print(_json)
-    print(request.files)
     _file = request.files['file']
     _firstname = _json['firstname']
     _middlename = _json['middlename']
@@ -201,13 +210,13 @@ def add_user():
     _name = _firstname + ' ' + _middlename + ' ' + _lastname
 
     print(_name)
-    _student_type = _json['student_type']
-    _job_type = _json['job_type']
-    _specialization_type = _json['specialization_type']
+    _user_category = _json['user_category']
     _email = _json['email']
     _phone = _json['phone']
     _address = _json['address']
     _country = _json['country']
+    _image = _json['image']
+    print(_image)
     _referrer_name = _json['referrer_name']
     _referrer_email = _json['referrer_email']
 
@@ -221,23 +230,26 @@ def add_user():
         _hashed_password = _password
         # insert details and generate id
 
-        mongo.save_file(_file.filename, _file)
+        #mongo.save_file(_file.filename, _file)
         mongo.db.userReg.insert({'name': _name, 'email': _email, 'password': _hashed_password,
-                                 'passwordconfirm': _passwordconfirm, 'student_type': _student_type, 'job_type': _job_type,
-                                 'specialization_type': _specialization_type, 'address': _address, 'phone': _phone,
-                                 'country': _country, 'profile_picture': _file.filename, 'referrer_name': _referrer_name,
+                                 'passwordconfirm': _passwordconfirm, 'user_category': _user_category, 'address': _address, 'phone': _phone,
+                                 'country': _country, 'image': _image, 'referrer_name': _referrer_name,
                                  'referrer_email': _referrer_email,
                                  'roles': [], 'groups': [], 'ts': [], 'friends': []})
 
-        #mongo.db.upload.insert({'upload_file_name': _file.filename})
+        # mongo.db.upload.insert({'upload_file_name': _file.filename})
         # for json response
         message = {
             'data': "null",
-            'result': {'isError': 'false', 'message': 'user_added_successfully', 'status': 200, }
+            'result': {'isError': 'false', 'message': 'user added successfully', 'status': 200, }
         }
         return jsonify(message)
     else:
-        return not_found()
+        message = {
+            'data': "null",
+            'result': {'isError': 'true', 'message': 'User added insuccessfull', 'status': 200, }
+        }
+        return jsonify(message)
 
 # showing all user
 
@@ -246,7 +258,7 @@ def add_user():
 @cross_origin(supports_credentials=True)
 @token_required
 def getUser():
-    #data = jwt.decode(token, app.config['SECRET_KEY'])
+    # data = jwt.decode(token, app.config['SECRET_KEY'])
     user = session['user']
     # print(user)
     # mongo query for finding all value
@@ -301,10 +313,28 @@ def delete_user(id):
 @app.route('/update/<id>', methods=['PUT'])
 def update_user(id):
     _id = id
-    _json = request.json
-    _name = _json['name']
+    _json = request.form
+    print(_json)
+    _file = request.files['file']
+    _firstname = _json['firstname']
+    _middlename = _json['middlename']
+    _lastname = _json['lastname']
+    _name = _firstname + ' ' + _middlename + ' ' + _lastname
+    print(_name)
+    _user_category = _json['user_category']
     _email = _json['email']
-    _password = _json['pwd']
+    _phone = _json['phone']
+    _address = _json['address']
+    _country = _json['country']
+    _image = _json['image']
+    print(_image)
+    _referrer_name = _json['referrer_name']
+    _referrer_email = _json['referrer_email']
+    _password = bcrypt.generate_password_hash(
+        _json['password']).decode('utf-8')
+    _passwordconfirm = bcrypt.generate_password_hash(
+        _json['passwordconfirm']).decode('utf-8')
+    existing_user = mongo.db.userReg.find_one({'email': _email})
     if _name and _email and _id and request.method == 'PUT':
         _hashed_password = bcrypt.generate_password_hash(
             _password).decode('utf-8')
@@ -373,27 +403,31 @@ def create_post():
         _tags = _json['tags']
         _post_date = datetime.datetime.now()
         print(session)
+        print(_json)
         try:
             # inserting new post
             user = mongo.db.userReg.find_one({'email': session['user']})
             print(user['name'])
-            print(user['profile_picture'])
-            _file = mongo.send_file(user['profile_picture'])
+            #_file = mongo.send_file(user['image'])
             insertData = mongo.db.posts.insert({
                 'title': _title,
                 'body': _body,
                 'category': _category,
                 'tags': _tags,
                 'user': {
-                    'status': user['name']
+                    'status': user['name'],
+                    'image': user['image']
                 },
                 'comments': [],
                 'date': _post_date
             })
-            print(insertData)
             print('Ending Post')
         except:
-            return "error"
+            message = {
+                'data': 'null',
+                'result': {'isError': 'true', 'message': 'post created Unsuccessfull', 'status': 201, }
+            }
+            return jsonify(message)
         message = {
             'data': 'null',
             'result': {'isError': 'false', 'message': 'post created successfully', 'status': 201, }
@@ -407,14 +441,12 @@ def create_post():
 def get_post(id):
     # print(ObjectId(id))
     post = mongo.db.posts.find_one({'_id': ObjectId(id)})
-    user = mongo.db.userReg.find_one({'email': session['user']})
-    print(user['name'])
-    print(user['profile_picture'])
-    _file = mongo.send_file(user['profile_picture'])
+    # user = mongo.db.userReg.find_one({'email': session['user']})
+    # print(user['name'])
     # print(post)
     if post and request.method == 'GET':
         message = {
-            'data': {'user': dumps(user), 'post': dumps(post)},
+            'data': {'post': dumps(post)},
             'result': {'isError': 'false', 'message': 'Post return successfully', 'status': 200, }
         }
         return jsonify(message)
@@ -466,17 +498,8 @@ def new_comment(id):
         _post_id = id
         _json = request.json
         _cmnt_body = _json['cmntBody']
-        print(session)
-        # print(request.headers)
-        _user = session['user']
-        #_user = 'ali'
-        print(_user)
         user = mongo.db.userReg.find_one({'email': session['user']})
-        print('User = ', user)
-        print(user['name'])
-        print(user['profile_picture'])
-        _file = mongo.send_file(user['profile_picture'])
-        print(_file)
+        print(session)
     except:
         message = {
             'data': "null",
@@ -489,7 +512,8 @@ def new_comment(id):
         '_id': ObjectId(),
         'cmntBody': _cmnt_body,
         'user': {
-            'name': user['name']
+            'name': user['name'],
+            'image': user['image']
         },
         'date': datetime.datetime.now()
     }
@@ -545,23 +569,61 @@ def comment_reply(pid, cid):
 # file upload with user name
 @app.route('/file_upload', methods=['POST'])
 def file_upload():
-
+    # if 'file' not in request.files:
+    #     message = {
+    #         'data': "null",
+    #         'result': {'isError': 'true', 'message': 'No File added in request', 'status': 200, }
+    #     }
+    #     return jsonify(message)
+    # file = request.files['file']
+    # if file.filename == '':
+    #     message = {
+    #         'data': "null",
+    #         'result': {'isError': 'true', 'message': 'No image selected for uploading', 'status': 200, }
+    #     }
+    #     return jsonify(message)
+    # if file and allowed_file(file.filename):
+    #     filename = secure_filename(file.filename)
+    #     print('FileName = ', os.getcwd())
+    #     target = os.path.join(UPLOAD_FOLDER, 'test')
+    #     print('target = ', target)
+    #     if not os.path.isdir(target):
+    #         os.mkdir(target)
+    #     destination = "/".join([target, filename])
+    #     print('Path = ', destination)
+    #     file.save(destination)
+    #     #file.save(os.path.join(app.config['UPLOAD_FOLDER'], filename))
+    #     message = {
+    #         'data': "null",
+    #         'result': {'isError': 'false', 'message': 'Image successfully uploaded and displayed', 'status': 200, }
+    #     }
+    #     return jsonify(message)
+    # else:
+    #     message = {
+    #         'data': "null",
+    #         'result': {'isError': 'false', 'message': 'Allowed image types are -> png, jpg, jpeg, gif', 'status': 200, }
+    #     }
+    #     return jsonify(message)
     _file = request.files['file']
-    # print(_file)
-    # print(_file.filename)
-    # print(_file)
-
+    _json = request.form
+    print(_file.filename)
     print(_file)
-    _json = request.form['firstname']
-    # _name = _json['firstname']
-    print(_json)
+    _title = _json['title']
+    _desc = _json['description']
+    _filedata = _json['filedata']
+    _filename = _file.filename
+    _file_mimetype = _file.content_type
+    # print(_image)
+    # print(_json)
 
-    # _user = session['user']
+    # _user = 'sami@gmail.com'
+    # print('User in file = ', _user)
     mongo.save_file(_file.filename, _file)
+    # # mongo.db.upload.insert(
+    # #     {'upload_file_name': _file.filename})
     mongo.db.upload.insert(
-        {'upload_file_name': _file.filename})
-    # mongo.db.upload.insert(
-    #     {'username': _user, 'upload_file_name': _file.filename})
+        {'title': _title, 'desc': _desc, 'filedata': _filedata, 'filename': _filename,
+         'file_mimetype': _file_mimetype, 'date': datetime.datetime.now()})
     # mongo.db.upload.insert({'upload_file_name': _file.filename})
     message = {
         # 'data': dumps(_file.filename),
@@ -575,7 +637,23 @@ def file_upload():
 
 @app.route('/file/<filename>')
 def file(filename):
+    # response = make_response(send_file(filename, mimetype='image/png'))
+    # response.headers['Content-Transfer-Encoding'] = 'base64'
+    # return response
     return mongo.send_file(filename)
+
+
+@app.route('/getAllFiles')
+def getfile():
+    files = mongo.db.upload.find().sort("date", -1)
+    message = {
+        # 'data': dumps(_file.filename),
+        'data': dumps(files),
+        'result': {'isError': 'false', 'message': 'File data return', 'status': 200, }
+    }
+    return jsonify(message)
+# @app.route('/image_upload', methods=['POST'])
+# def image_upload():
 
 # for browser view(optional)
 
@@ -1126,4 +1204,4 @@ def rmFriend(id):
 
 if __name__ == "__main__":
     app.run(debug=True)
-    #app.run(host='188.166.178.99', port=5000, debug=True)
+    # app.run(host='188.166.178.99', port=5000, debug=True)

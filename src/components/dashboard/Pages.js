@@ -1,10 +1,11 @@
 import React, { Fragment, useEffect } from 'react'
-import { Link } from 'react-router-dom';
+//import { Link } from 'react-router-dom';
 import { connect } from 'react-redux';
 import PostItem from './PostItem';
 import PropTypes from 'prop-types';
 import { getPosts } from '../../actions/post';
 import Spinner from '../layout/Spinner';
+import Advertisement from './Advertisement';
 const Pages = ({ getPosts, post: {posts, loading}}) => {
     useEffect(() => {
         getPosts();
@@ -31,32 +32,13 @@ const Pages = ({ getPosts, post: {posts, loading}}) => {
                                             <PostItem key={post._id.$oid} post={post} />
                                         )))}
                                 </div>
-                                <div id="pagination">
-                                    <a href="#" className="inactive">Previous</a>
-                                    <a href="#">1</a>
-                                    <a href="#">2</a>
-                                    <a href="#" className="active">3</a>
-                                    <a href="#">4</a>
-                                    <a href="#">5</a>
-                                    <a href="#">Next</a>
-                                </div>
                             </div>
                         </div>
                     </div>
     
-                    <div className="col-sm-12 col-md-6 col-lg-3">
-                        <div className="card shadow mb-4">
-                            <div className="card-header py-3">
-                                <h6 className="m-0 font-weight-bold text-primary">Advertisements</h6>
-                            </div>
-                            <div id="advertisements" className="card-body">
-                                <div className="advertisement"></div>
-                                <div className="advertisement"></div>
-                                <div className="advertisement"></div>
-                            </div>
-                        </div>
-                    </div>
+                    <Advertisement />
                 </div>
+                <img src="../../img/Ad matter FSCTT Project-Mujib Borsho.jpg" alt="Agriculture"/>
             </div>
         </Fragment>
     )

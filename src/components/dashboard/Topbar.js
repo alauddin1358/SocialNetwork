@@ -1,6 +1,15 @@
 import React, { Fragment } from 'react'
-
-const Topbar = () => {
+import { connect } from 'react-redux';
+import {Link} from 'react-router-dom';
+const Topbar = ({auth:{user}}) => {
+    // let userInfo;
+    // if(user !== null) {
+    //     userInfo = JSON.parse(user.data);
+    // }
+    // else {
+    //     userInfo = null;
+    // }
+    console.log("User in Topbar = ", user);
     return (
         <Fragment>
             <nav className="navbar navbar-expand navbar-light 
@@ -65,12 +74,12 @@ const Topbar = () => {
                     </li>
 
                     <li className="nav-item dropdown no-arrow mx-1">
-                        <a className="nav-link dropdown-toggle" href="#" 
+                        <a className="nav-link dropdown-toggle" href="" 
                            id="alertsDropdown" role="button"
                            data-toggle="dropdown" aria-haspopup="true" 
                            aria-expanded="false">
                                 <i className="fas fa-bell fa-fw"></i>
-                                <span className="badge badge-danger badge-counter">3+</span>
+                                <span className="badge badge-danger badge-counter"></span>
                         </a>
                         <div className="dropdown-list dropdown-menu dropdown-menu-right 
                                     shadow animated--grow-in"
@@ -78,7 +87,7 @@ const Topbar = () => {
                             <h6 className="dropdown-header">
                                 Alerts Center
                             </h6>
-                            <a className="dropdown-item d-flex align-items-center" href="#">
+                            <a className="dropdown-item d-flex align-items-center" href="">
                                 <div className="mr-3">
                                     <div className="icon-circle bg-primary">
                                         <i className="fas fa-file-alt text-white"></i>
@@ -90,7 +99,7 @@ const Topbar = () => {
                                         A new monthly report is ready to download!</span>
                                 </div>
                             </a>
-                            <a className="dropdown-item d-flex align-items-center" href="#">
+                            <a className="dropdown-item d-flex align-items-center" href="">
                                 <div className="mr-3">
                                     <div className="icon-circle bg-success">
                                         <i className="fas fa-donate text-white"></i>
@@ -113,18 +122,18 @@ const Topbar = () => {
                                 </div>
                             </a>
                             <a className="dropdown-item text-center small text-gray-500" 
-                                href="#">Show All Alerts
+                                href="">Show All Alerts
                             </a>
                         </div>
                     </li>
 
                     <li className="nav-item dropdown no-arrow mx-1">
-                        <a  className="nav-link dropdown-toggle" href="#" 
+                        <a  className="nav-link dropdown-toggle" href="" 
                             id="messagesDropdown" role="button"
                             data-toggle="dropdown" aria-haspopup="true" 
                             aria-expanded="false">
                                 <i className="fas fa-envelope fa-fw"></i>
-                                <span className="badge badge-danger badge-counter">7
+                                <span className="badge badge-danger badge-counter">
                                 </span>
                         </a>
                         <div className="dropdown-list dropdown-menu dropdown-menu-right 
@@ -136,7 +145,7 @@ const Topbar = () => {
                             <a className="dropdown-item d-flex align-items-center" href="#">
                                 <div className="dropdown-list-image mr-3">
                                     <img className="rounded-circle" 
-                                         src="img/undraw_profile_1.svg"
+                                         src=""
                                          alt="undraw_profile_1" />
                                     <div className="status-indicator bg-success"></div>
                                 </div>
@@ -151,10 +160,10 @@ const Topbar = () => {
                                 </div>
                             </a>
                             <a className="dropdown-item d-flex align-items-center" 
-                                href="#">
+                                href="">
                                 <div className="dropdown-list-image mr-3">
                                     <img className="rounded-circle" 
-                                         src="img/undraw_profile_2.svg"
+                                         src=""
                                          alt="undraw_profile_2" />
                                     <div className="status-indicator"></div>
                                 </div>
@@ -167,10 +176,10 @@ const Topbar = () => {
                                 </div>
                             </a>
                             <a className="dropdown-item d-flex align-items-center" 
-                                href="#">
+                                href="">
                                 <div className="dropdown-list-image mr-3">
                                     <img className="rounded-circle" 
-                                         src="img/undraw_profile_3.svg"
+                                         src=""
                                          alt="undraw_profile_3" />
                                     <div className="status-indicator bg-warning"></div>
                                 </div>
@@ -203,7 +212,7 @@ const Topbar = () => {
                                 </div>
                             </a>
                             <a className="dropdown-item text-center small text-gray-500" 
-                                href="#"> Read More Messages </a>
+                                href=""> Read More Messages </a>
                         </div>
                     </li>
 
@@ -212,40 +221,32 @@ const Topbar = () => {
                     </div>
 
                     <li className="nav-item dropdown no-arrow">
-                        <a className="nav-link dropdown-toggle" 
-                            href="#" id="userDropdown" role="button"
+                        <Link className="nav-link dropdown-toggle" 
+                            id="userDropdown" role="button"
                             data-toggle="dropdown" aria-haspopup="true" 
                             aria-expanded="false">
                                 <span className="mr-2 d-none d-lg-inline text-gray-600 small">
-                                    Douglas McGee</span>
+                                    {user !== null ? user.name : 'UserName'} </span>
                                 <img className="img-profile rounded-circle"
-                                    src="img/undraw_profile.svg" 
-                                    alt="undraw_profile"
+                                    src={user !== null ? user.image : null}
+                                    alt="userName"
                                 />
-                        </a>
+                        </Link>
                         <div className="dropdown-menu dropdown-menu-right 
                                     shadow animated--grow-in"
                              aria-labelledby="userDropdown">
-                            <a className="dropdown-item" href="#">
+                            <Link to="/profile" className="dropdown-item">
                                 <i className="fas fa-user fa-sm fa-fw mr-2 text-gray-400"></i>
                                     Profile
-                            </a>
-                            <a className="dropdown-item" href="#">
-                                <i className="fas fa-cogs fa-sm fa-fw mr-2 text-gray-400"></i>
-                                    Settings
-                            </a>
-                            <a className="dropdown-item" href="#">
-                                <i className="fas fa-list fa-sm fa-fw mr-2 text-gray-400"></i>
-                                    Activity Log
-                            </a>
+                            </Link>
                             <div className="dropdown-divider">
 
                             </div>
-                            <a className="dropdown-item" href="#" 
+                            <Link className="dropdown-item" 
                                 data-toggle="modal" data-target="#logoutModal">
                                     <i className="fas fa-sign-out-alt fa-sm fa-fw mr-2 text-gray-400"></i>
                                     Logout
-                            </a>
+                            </Link>
                         </div>
                     </li>
                 </ul>
@@ -253,4 +254,7 @@ const Topbar = () => {
         </Fragment>
     )
 }
-export default Topbar;
+const mapStateToProps = (state) => ({
+    auth: state.auth
+});
+export default connect(mapStateToProps, null)(Topbar);

@@ -6,8 +6,8 @@ import { Link, Redirect} from 'react-router-dom';
 //import { setAlert } from '../../actions/alert';
 import { login } from '../../actions/auth';
 import PropTypes from 'prop-types';
-import '../../css/login.css';
-import '../../css/responsive.css';
+// import '../../css/login.css';
+// import '../../css/responsive.css';
 //import { LOGOUT } from '../../actions/types';
 //import { setAlert } from '../../actions/alert';
 import Alert from '../layout/Alert';
@@ -35,7 +35,7 @@ const Login = ({auth:{isAuthenticated, token}, login}) => {
     }
     return (
         <Fragment>
-            <div className="form-wrapper">
+            <div className="form-wrapper auth">
 		        <form onSubmit={onSubmit}>
                     <h2>
                         <i className="fa fa-user"></i>
@@ -43,7 +43,7 @@ const Login = ({auth:{isAuthenticated, token}, login}) => {
                     </h2>
                     <input type="text" 
                             name="email" 
-                            placeholder="Enter Username or Email"
+                            placeholder="Enter Username"
                             value={email}
                             onChange={onChange} />
                     <input type="password" 
@@ -53,7 +53,7 @@ const Login = ({auth:{isAuthenticated, token}, login}) => {
                             onChange={onChange} />
                     <button>Login</button>
                     <span>Not a user? <Link to="/register">Register Here</Link></span>
-                    <span><a href="#">Forgot Password?</a></span>
+                    <span><a href="">Forgot Password?</a></span>
                     <Alert />
 		        </form>
 	        </div>

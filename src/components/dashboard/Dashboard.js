@@ -7,13 +7,18 @@ import Pages from './Pages';
 import Sidebar from './Sidebar';
 import Footer from './Footer';
 import PropTypes from 'prop-types';
-import '../../css/style.css';
+import Alert from '../layout/Alert';
+//import '../../css/style.css';
 //import '../../css/sb-admin-2.min.css';
 
 const Dashboard = ({logout, auth: {isAuthenticated}}) => {
     // const clickLogout = () => {
     //     logout();
     // };
+    // useEffect(() => {
+    //     console.log('calling useEffect');
+    //     loadUser();
+    //   }, [loadUser()]);
     console.log('IsAuthenticated', isAuthenticated);
     if(!isAuthenticated) {
         return <Redirect to="/login" />
@@ -25,6 +30,7 @@ const Dashboard = ({logout, auth: {isAuthenticated}}) => {
                 <div id="content-wrapper" className="d-flex flex-column">
                     <div id="content">
                         <Topbar />
+                        <Alert />
                         <Pages />
                     </div>
                     <Footer />
@@ -51,9 +57,9 @@ const Dashboard = ({logout, auth: {isAuthenticated}}) => {
                         </div>
                         <div className="modal-footer">
                             <button className="btn btn-secondary" type="button" data-dismiss="modal">Cancel</button>
-                            <a className="btn btn-primary" onClick={logout} >
+                            <Link to="/" className="btn btn-primary" onClick={logout} >
                                 Logout
-                            </a>
+                            </Link>
                         </div>
                     </div>
                 </div>

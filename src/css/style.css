@@ -49,7 +49,7 @@ img { max-width: 100%; }
 .sidebar-dark .nav-item .nav-link {
     color: #fff;
 }
-.bg-gradient-primary {
+.bgGradientPrimary {
     background-color: #34A853;
     background-image: none;
     background-size: cover;

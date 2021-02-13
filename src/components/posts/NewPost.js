@@ -4,6 +4,7 @@ import { connect } from 'react-redux';
 import { Redirect } from 'react-router-dom';
 import { addPost } from '../../actions/post';
 import PropTypes from 'prop-types';
+import Alert from '../layout/Alert';
 import '../../css/style.css';
 const NewPost = ({isSuccess, addPost}) => {
     const [postData, setPostData] = useState({
@@ -74,6 +75,7 @@ const NewPost = ({isSuccess, addPost}) => {
                                             onChange={onChange} />
                             </div>
                             <button type="submit" className="btn btn-primary">Add Post</button>
+                            <Alert />
                         </form>
                                     
                     </div>

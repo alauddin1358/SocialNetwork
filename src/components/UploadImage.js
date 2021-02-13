@@ -7,6 +7,7 @@ const UploadImage = () => {
     const [file, setFile] = useState('');
     //const [filename, setFilename] = useState('');
     const [image, setImage] = useState('../../img/user-profile.png');
+    const [fileimg, setFileimg] = useState('');
     const [formData, setFormData] = useState({
         firstname:'',
         middlename:''
@@ -24,7 +25,8 @@ const UploadImage = () => {
             setImage( reader.result)
           }
         }
-        reader.readAsDataURL(e.target.files[0])
+        const urlFile = reader.readAsDataURL(e.target.files[0])
+        console.log('URL = ',reader);
        
       };
       const getFormData = object => Object.keys(object).reduce((formData, key) => {
@@ -39,19 +41,25 @@ const UploadImage = () => {
         //   form_data.append(key, formData[key]);
         // }
         //form_data.append('data', formData);
-        form_data.append('file', file);
+        form_data.append('image', image);
+        //form_data.append('file', file);
         //form_data.append('filename', filename);
         
         try {
-          const res = await axios.post(`${API}/file_upload`, form_data);
+          // const res = await axios.post(`${API}/file_upload`, form_data);
     
-          const { fileName } = res.data;
-          console.log('Response File = ', res.data);
-          //setUploadedFile({ fileName, filePath });
-    
+          // const { fileName } = res.data;
+          
+          // //setUploadedFile({ fileName, filePath });
+          // <Alert>{res.data.result.message}</Alert>
           //setMessage('File Uploaded');
+          const resFile = await axios.get(`${API}/getfile`);
+          const dataFile = JSON.parse(resFile.data.data);
+          console.log('Get Response File = ', dataFile[0].name );
+          setFileimg(dataFile[0].image)
+          //setFileimg(res.data)
         } catch (err) {
-          if (err.response.status === 500) {
+          if (err) {
             <Alert>There was a problem with the server</Alert>;
           } else {
             <Alert>{err.response.data.msg}</Alert>;
@@ -93,7 +101,9 @@ const UploadImage = () => {
                                <div className="full-row">
                                    <a href="">Remove Image</a>
                                </div>
-                               
+                               <div className="full-row">
+                                   <img src={fileimg} alt="profile" />
+                               </div>
                            </div>
                        </div>
                 </div>

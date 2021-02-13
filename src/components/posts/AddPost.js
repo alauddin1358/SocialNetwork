@@ -3,7 +3,7 @@ import NewPost from './NewPost';
 import Sidebar from '../dashboard/Sidebar';
 import Footer from '../dashboard/Footer';
 import Topbar from '../dashboard/Topbar';
-import '../../css/style.css';
+//import '../../css/style.css';
 //import '../../css/sb-admin-2.min.css';
 
 const Posts = () => {

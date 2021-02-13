@@ -6,7 +6,6 @@ import Footer from '../dashboard/Footer';
 import Topbar from '../dashboard/Topbar';
 //import {getPost} from '../../actions/post';
 //import PropTypes from 'prop-types';
-import '../../css/style.css';
 //import '../../css/sb-admin-2.min.css';
 
 const Posts = ({ match }) => {

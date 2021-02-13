@@ -18,6 +18,7 @@ const API = process.env.REACT_APP_API;
 
 // Load User
 export const loadUser = () => async dispatch => {
+  console.log(API);
   if(localStorage.token) {
       console.log('calling Localstorage');
       axios.defaults.headers.common['x-auth-token'] = localStorage.token;
@@ -38,12 +39,13 @@ export const loadUser = () => async dispatch => {
     }
   };
   try {
+   
     const res = await instance.get(`${API}/user`, config);
     console.log('Auth response = ',JSON.parse(res.data.data));
     if(res.data.result.isError === 'false') {
       dispatch({
         type: USER_LOADED,
-        payload: res.data
+        payload: JSON.parse(res.data.data)
       });
     }
     
@@ -56,15 +58,16 @@ export const loadUser = () => async dispatch => {
 
 // Register User
 export const register = ({form_data}) => async dispatch => {
-    const config = {
-        headers : {
-            'Content-Type':'application/json',
-            'Access-Control-Allow-Origin': '*'
-        }
-    };
+    // const config = {
+    //     headers : {
+    //         'Content-Type':'application/json',
+    //         'Access-Control-Allow-Origin': '*'
+    //     }
+    // };
     //const body = JSON.stringify({name, email, password});
     
   try {
+    console.log(API);
     const res = await axios.post(`${API}/add`, form_data);
     console.log('Users data', res.data);
     if(res.data.result.isError === 'true') {
@@ -75,6 +78,7 @@ export const register = ({form_data}) => async dispatch => {
         type: REGISTER_SUCCESS,
         payload: res.data
       });
+      dispatch(setAlert(res.data.result.message, 'success'));
     }
     
     //dispatch(loadUser());
@@ -129,7 +133,9 @@ export const login = (email, password) => async dispatch => {
 
 // Logout
 export const logout = () => dispatch => { 
+  
   //dispatch( { type : CLEAR_PROFILE });
   dispatch( {type: LOGOUT} );
+  window.location.replace("http://agriculturist.org");
   //dispatch(loadUser());
 };
