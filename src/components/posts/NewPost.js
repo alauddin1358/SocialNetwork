@@ -1,19 +1,42 @@
-import React, { Fragment, useState } from 'react';
+import React, { Fragment, useState, useEffect } from 'react';
 //import { Alert } from 'reactstrap';
 import { connect } from 'react-redux';
 import { Redirect } from 'react-router-dom';
-import { addPost } from '../../actions/post';
+import { addPost, getPost } from '../../actions/post';
 import PropTypes from 'prop-types';
 import Alert from '../layout/Alert';
 import '../../css/style.css';
-const NewPost = ({isSuccess, addPost}) => {
-    const [postData, setPostData] = useState({
-        title : '',
-        body : '',
-        category: '',
-        tags: ''
-    })
-
+const initialState = {
+    title : '',
+    body : '',
+    category: '',
+    tags: ''
+}
+const NewPost = ({propsFromLink, isSuccess, addPost, getPost, post:{posts,post, loading}}) => {
+    const [postData, setPostData] = useState(initialState)
+    useEffect(() => {
+        let {id, edit} = propsFromLink;
+        let post;
+        console.log('Posts in newPost = ', posts);
+        if (edit) {
+            //getPost(id);
+            post = posts.filter((post) => post._id.$oid === id)
+            post = Object.assign({}, post[0]);
+            console.log('Post Filter = ', post);
+        } 
+        console.log('Loading in newPost = ', loading);
+        if (!loading && post) {
+          const postData = { ...initialState };
+          for (const key in post) {
+            if (key in postData) {
+                postData[key] = post[key];
+                console.log(postData[key]);
+            }
+          }
+          console.log("Post Data = ", postData);
+          setPostData(postData);
+        }
+      },[loading,posts, propsFromLink]);
     const { title, body, category, tags } = postData;
     const onChange = (e) =>
         setPostData({ ...postData, [e.target.name]: e.target.value });
@@ -21,8 +44,7 @@ const NewPost = ({isSuccess, addPost}) => {
     const onPostSubmit = async (e) => {
         e.preventDefault();
         console.log(postData);
-        addPost({ postData });
-       
+        addPost(postData,  propsFromLink.id, propsFromLink.edit);
     };
     if(isSuccess) {
         return <Redirect to = "/dashboard" />;
@@ -87,10 +109,12 @@ const NewPost = ({isSuccess, addPost}) => {
 NewPost.propTypes = {
     //setAlert: PropTypes.func.isRequired,
     addPost: PropTypes.func.isRequired,
+    getPost: PropTypes.func.isRequired,
     isSuccess: PropTypes.bool
   };
   
 const mapStateToProps = (state) => ({
-    isSuccess: state.post.isSuccess
+    isSuccess: state.post.isSuccess,
+    post:state.post
 });
-export default connect(mapStateToProps, { addPost })(NewPost);    
+export default connect(mapStateToProps, { addPost, getPost })(NewPost);    

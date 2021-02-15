@@ -3,13 +3,13 @@ import React, { Fragment, useEffect } from 'react'
 import { connect } from 'react-redux';
 import PostItem from './PostItem';
 import PropTypes from 'prop-types';
-import { getPosts } from '../../actions/post';
+import { getPosts, deletePost } from '../../actions/post';
 import Spinner from '../layout/Spinner';
 import Advertisement from './Advertisement';
-const Pages = ({ getPosts, post: {posts, loading}}) => {
+const Pages = ({ getPosts, deletePost, post: {posts, loading}}) => {
     useEffect(() => {
         getPosts();
-    }, [getPosts]);
+    }, [getPosts, deletePost]);
 
     return (
         <Fragment>
@@ -29,7 +29,7 @@ const Pages = ({ getPosts, post: {posts, loading}}) => {
                             <div id="posts-list" className="card-body">
                                 <div className="post-card card">
                                         {loading || posts === null ? (<Spinner />) : (posts.map((post) => (
-                                            <PostItem key={post._id.$oid} post={post} />
+                                            <PostItem key={post._id.$oid} post={post} deletePost={deletePost} />
                                         )))}
                                 </div>
                             </div>
@@ -38,7 +38,6 @@ const Pages = ({ getPosts, post: {posts, loading}}) => {
     
                     <Advertisement />
                 </div>
-                <img src="../../img/Ad matter FSCTT Project-Mujib Borsho.jpg" alt="Agriculture"/>
             </div>
         </Fragment>
     )
@@ -46,10 +45,11 @@ const Pages = ({ getPosts, post: {posts, loading}}) => {
 Pages.propTypes = {
     //setAlert: PropTypes.func.isRequired,
     getPosts: PropTypes.func.isRequired,
+    deletePost: PropTypes.func.isRequired,
     isSuccess: PropTypes.bool
   };
   
 const mapStateToProps = (state) => ({
     post : state.post
 });
-export default connect(mapStateToProps, { getPosts })(Pages); 
+export default connect(mapStateToProps, { getPosts, deletePost })(Pages); 

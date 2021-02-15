@@ -1,5 +1,4 @@
 import React, { Fragment } from 'react'
-
 const Advertisement = () => {
     return (
         <Fragment>
@@ -10,10 +9,10 @@ const Advertisement = () => {
                     </div>
                     <div id="advertisements" className="card-body">
                         <div className="advertisement">
-                            <img src="../../img/green-bg-1.jpg" alt="Agriculture"/>
+                            <img src='../../img/mujibborsho.jpg' alt="Agriculture"/>
                         </div>
                         <div className="advertisement">
-                            <img src="../../img/Ad_matter-SSAO_Quarter_Final.jpg" alt="Agriculture"/>
+                            <img src='../../img/quarterfinal.jpg' alt="Agriculture"/>
                         </div>
                     </div>
                 </div>

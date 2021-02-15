@@ -87,7 +87,6 @@ export const register = ({form_data}) => async dispatch => {
     dispatch(setAlert('Server Error', 'danger'));
     const errors = err.response;
     console.log(errors);
-    
     dispatch({
       type: REGISTER_FAIL
     });
@@ -130,12 +129,38 @@ export const login = (email, password) => async dispatch => {
     });
 }
 };
+export const updateProfile = (id, {form_data}) => async dispatch => {
+    const config = {
+      headers : {
+          'Authorization': `Bearer ${localStorage.token}`,
+          'Content-Type':'application/json',
+          'Access-Control-Allow-Origin': '*',
+          'Access-Control-Allow-Credentials': true
+      }
+    };
+    console.log("id = ", id);
+    console.log("Updated Formdata", {form_data});
+    try {
+    const res = await instance.put(`${API}/update/${id}`, form_data,config);
+    console.log('Profile Updated', res.data);
+    if(res.data.result.isError === 'true') {
+      dispatch(setAlert(res.data.result.message, 'danger'));
+    }
+    else {
+      dispatch(loadUser());
+      dispatch(setAlert('Profile Updated', 'success'));
+    }
+    } catch (err) {
+      console.log(err.response);
+      dispatch(setAlert('Server Error Profile Not Updated', 'danger'));
+    }
+};
 
 // Logout
 export const logout = () => dispatch => { 
   
   //dispatch( { type : CLEAR_PROFILE });
   dispatch( {type: LOGOUT} );
-  window.location.replace("http://agriculturist.org");
+  window.location.replace("http://localhost:3000");
   //dispatch(loadUser());
 };

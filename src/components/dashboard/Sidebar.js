@@ -29,7 +29,13 @@ const Sidebar = () => {
                         </Link>
                         <div id="collapsePosts" className="collapse" aria-labelledby="headingPages" data-parent="#accordionSidebar">
                             <div className="bg-white py-2 collapse-inner rounded">
-                                <Link className="collapse-item" to="/addpost">Add Post</Link>
+                                <Link className="collapse-item" to={{
+                                    pathname: '/addpost',
+                                    state: {
+                                        id: null,
+                                        edit: false
+                                    }
+                                }}>Add Post</Link>
                                 <Link className="collapse-item" to="/dashboard">Show All Posts</Link>
                             </div>
                         </div>

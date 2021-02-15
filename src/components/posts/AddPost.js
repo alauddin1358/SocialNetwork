@@ -3,10 +3,14 @@ import NewPost from './NewPost';
 import Sidebar from '../dashboard/Sidebar';
 import Footer from '../dashboard/Footer';
 import Topbar from '../dashboard/Topbar';
+import { connect } from 'react-redux';
+import { withRouter } from 'react-router-dom';
 //import '../../css/style.css';
 //import '../../css/sb-admin-2.min.css';
 
-const Posts = () => {
+const AddPost = (props) => {
+    const propsFromLink = props.location.state;
+    console.log('Props From Link = ', propsFromLink);
     return (
         <Fragment>
             <div id="wrapper">
@@ -14,7 +18,7 @@ const Posts = () => {
                 <div id="content-wrapper" className="d-flex flex-column">
                     <div id="content">
                         <Topbar />
-                        <NewPost />
+                        <NewPost propsFromLink={propsFromLink}/>
                     </div>
                     <Footer />
                 </div>
@@ -22,4 +26,4 @@ const Posts = () => {
         </Fragment>
     )
 }
-export default Posts;
+export default withRouter(connect()(AddPost));

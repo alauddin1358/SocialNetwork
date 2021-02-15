@@ -19,6 +19,9 @@ const Register = ({register, isAuthenticated, dispatch}) => {
         middlename: '',
         lastname: '',
         user_category: '',
+        student_type: '',
+        job_type: '',
+        specialization_type: '',
         email: '',
         phone: '',
         password: '',
@@ -41,7 +44,7 @@ const Register = ({register, isAuthenticated, dispatch}) => {
         const reader = new FileReader();
         reader.onload = () =>{
             if(reader.readyState === 2){
-            setImage( reader.result)
+            setImage(reader.result)
             }
         }
         reader.readAsDataURL(e.target.files[0])

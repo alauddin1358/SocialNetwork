@@ -36,7 +36,7 @@ const App = () => {
               
               <PrivateRoute exact path="/postdetail" component={ PostDetail } />
               <PrivateRoute exact path="/post/:id" component={ Posts } />
-              <PrivateRoute exact path="/addpost" component={ AddPost } />
+              <Route exact path="/addpost" component={ AddPost } />
               <Route exact path="/file" component={ FileHome } />
               <Route exact path="/upload" component={Upload}  />
               <Route exact path="/list" component={FilesList}  />
