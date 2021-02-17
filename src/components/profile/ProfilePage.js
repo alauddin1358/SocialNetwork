@@ -74,7 +74,8 @@ const ProfilePage = ({auth: {user, loading}, loadUser, updateProfile}) => {
         e.preventDefault();
         const form_data = getFormData(formData);
         form_data.append('file', file);
-        form_data.append('viewImage', viewImage);
+        if(showImageFlag) form_data.append('viewImage', viewImage);
+        else form_data.append('viewImage', image);
         form_data.append('student_type',student_type);
         form_data.append('job_type',job_type);
         form_data.append('specialization_type', specialization_type)
@@ -479,7 +480,7 @@ const ProfilePage = ({auth: {user, loading}, loadUser, updateProfile}) => {
                                                     </div>
                                                     <div className="form-group">
                                                         <label htmlFor="name">Profile Picture:</label>
-                                                        <input type="file" className="form-control-file" 
+                                                        <input type="file" className="custom-select-input" 
                                                                 id="exampleFormControlFile1" 
                                                                 onChange={imageHandler}
                                                                 />
@@ -509,7 +510,7 @@ const ProfilePage = ({auth: {user, loading}, loadUser, updateProfile}) => {
                                 
 
                                                 <div className="modal-footer">
-                                                    <button className="btn btn-danger" type="button" data-dismiss="modal">Cancel</button>
+                                                    <button className="btn btn-danger" type="button" data-dismiss="modal">Close</button>
                                                     <button type="submit" className="btn btn-secondary">Save</button>
                                                 </div>
                                             </form>

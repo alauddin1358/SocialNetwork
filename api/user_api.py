@@ -30,7 +30,7 @@ ALLOWED_EXTENSIONS = set(['png', 'jpg', 'jpeg', 'gif'])
 
 
 # initialize the app
-app = Flask(__name__, static_folder='../build', static_url_path='/')
+app = Flask(__name__)
 # random secrect key initialization
 app.secret_key = "thisisthesecretkey"
 # db config
@@ -202,7 +202,6 @@ def add_user():
     # _json = request.get_json()
 
     _json = request.form
-    _file = request.files['file']
     _firstname = _json['firstname']
     _middlename = _json['middlename']
     _lastname = _json['lastname']
@@ -317,7 +316,6 @@ def delete_user(id):
 def update_user(id):
     _id = id
     _json = request.form
-    _file = request.files['file']
     print(_id)
     _firstname = _json['firstname']
     print(_firstname)
@@ -333,8 +331,9 @@ def update_user(id):
     _phone = _json['phone']
     _address = _json['address']
     _country = _json['country']
-    print(_country)
+
     _image = _json['viewImage']
+    print(_country)
     _referrer_name = _json['referrer_name']
     _referrer_email = _json['referrer_email']
     _password = _json['password']
@@ -575,6 +574,93 @@ def new_comment(id):
     }
     return jsonify(message)
 
+# Comment Updated
+
+
+@app.route('/update_comment/<pid>/<cid>', methods=['PUT'])
+@cross_origin(supports_credentials=True)
+@token_required
+def update_comment(pid, cid):
+    try:
+        _json = request.json
+        _cmnt_body = _json['cmntBody']
+        print(_cmnt_body)
+        cmnt = mongo.db.posts.update_one(
+            {'_id': ObjectId(pid), 'comments._id': ObjectId(cid)},
+            {'$set': {'comments.$.cmntBody': _cmnt_body}}
+        )
+        print(cmnt)
+        # user = mongo.db.userReg.find_one({'email': session['user']})
+        # print(_cmnt_body)
+        # mongo.db.posts.update_one(
+        #     {'_id': ObjectId(pid)},
+        #     {'$pull': {'comments': {'_id': ObjectId(cid)}}}
+        # )
+        # comment = {
+        #     '_id': ObjectId(),
+        #     'cmntBody': _cmnt_body,
+        #     'user': {
+        #         'name': user['name'],
+        #         'image': user['image']
+        #     },
+        #     'date': datetime.datetime.now()
+        # }
+        # mongo.db.posts.update(
+        #     {'_id': ObjectId(pid)},
+        #     {
+        #         '$push': {
+        #             'comments': comment
+        #         }
+        #     }
+        # )
+        message = {
+            'data': 'null',
+            'result': {'isError': 'false', 'message': 'Comment Updated successfully', 'status': 201, }
+        }
+        return jsonify(message)
+        # if _cmnt_body and request.method == 'PUT':
+        #     try:
+        #         mongo.db.posts.comments.update_one({'_id': ObjectId(_id['$oid']) if '$oid' in _id else ObjectId(_id)},
+        #                                            {'$set': {
+        #                                                'cmntBody': _cmnt_body,
+        #                                                'date': datetime.datetime.now()
+        #                                            }
+        #         })
+        #         message = {
+        #             'data': 'null',
+        #             'result': {'isError': 'false', 'message': 'comment updated successfull', 'status': 201, }
+        #         }
+        #         return jsonify(message)
+        #     except:
+        #         message = {
+        #             'data': 'null',
+        #             'result': {'isError': 'true', 'message': 'comment updated Unsuccessfull', 'status': 201, }
+        #         }
+        #         return jsonify(message)
+    except:
+        return 'error'
+
+# delete comment
+
+
+@app.route('/delete_comment/<pid>/<cid>', methods=['DELETE'])
+@cross_origin(supports_credentials=True)
+@token_required
+def delete_comment(pid, cid):
+    try:
+        # # mongo query for deleting specific id
+        mongo.db.posts.update_one(
+            {'_id': ObjectId(pid)},
+            {'$pull': {'comments': {'_id': ObjectId(cid)}}}
+        )
+        # for json response
+        message = {
+            'data': "null",
+            'result': {'isError': 'false', 'message': 'Comment deleted successfully', 'status': 200, }
+        }
+        return jsonify(message)
+    except:
+        return not_found()
 # comment reply
 
 

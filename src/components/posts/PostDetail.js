@@ -33,7 +33,7 @@ const PostDetail = ({getPost, post:{post, loading}, match}) => {
                                 {post.body}
                                 </p>
                                 <p>
-                                    <img src={post.user.image}  alt="UserPictures" width="600" />
+                                    <img src={post.user.image} className="post-image"  alt="UserPictures" width="600" />
                                 </p>
                             </div>
                         </div>

@@ -184,14 +184,57 @@ export const deleteComment = (postId, commentId) => async dispatch => {
     }
   };
   try {
-    await instance.delete(`/api/posts/comment/${postId}/${commentId}`,config);
-    dispatch({
-      type: REMOVE_COMMENT,
-      payload: commentId
-    });
-
-    //dispatch(setAlert('Comment Removed', 'success'));
+    const res = await instance.delete(`${API}/delete_comment/${postId}/${commentId}`,config);
+    if(res.data.result.isError === 'true') {
+      dispatch(setAlert(res.data.result.message, 'danger'));
+    }
+    else {
+      dispatch({
+        type: REMOVE_COMMENT,
+        payload: commentId
+      });
+  
+      dispatch(setAlert('Comment Removed', 'success'));
+    }
+    
   } catch (err) {
+    dispatch({
+      type: POST_ERROR,
+      payload: { msg: err.response }
+    });
+  }
+}
+// Update comment
+export const updateComment = (postId, commentId, cmntBody) => async dispatch => {
+  const config = {
+    headers : {
+        'Authorization': `Bearer ${localStorage.token}`,
+        'Content-Type':'application/json',
+        'Access-Control-Allow-Origin': '*',
+        'Access-Control-Allow-Credentials': true
+    }
+  };
+  console.log('Comment Id in update Comment = ',typeof {cmntBody});
+  try {
+    const res = await instance.put(`${API}/update_comment/${postId}/${commentId}`,{cmntBody},config);
+    console.log('Update comment', res.data);
+    if(res.data.result.isError === 'true') {
+      dispatch(setAlert(res.data.result.message, 'danger'));
+    }
+    else {
+      // dispatch({
+      //   type: REMOVE_COMMENT,
+      //   payload: commentId
+      // });
+      // dispatch({
+      //   type: ADD_COMMENT,
+      //   payload: JSON.parse(res.data.data)
+      // });
+      dispatch(getPost(postId));
+      dispatch(setAlert('Comment Updated', 'success'));
+    } 
+  } catch (err) {
+    dispatch(setAlert('Server Error', 'danger'));
     dispatch({
       type: POST_ERROR,
       payload: { msg: err.response }

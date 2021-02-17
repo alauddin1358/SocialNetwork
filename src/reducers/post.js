@@ -65,7 +65,7 @@ import {
           post: {
             ...state.post,
             comments: state.post.comments.filter(
-              (comment) => comment._id !== payload
+              (comment) => comment._id.$oid !== payload
             )
           },
           loading: false

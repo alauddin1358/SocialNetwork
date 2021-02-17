@@ -161,6 +161,6 @@ export const logout = () => dispatch => {
   
   //dispatch( { type : CLEAR_PROFILE });
   dispatch( {type: LOGOUT} );
-  window.location.replace("http://localhost:3000");
+  window.location.replace("http://agriculturist.org");
   //dispatch(loadUser());
 };

@@ -41,13 +41,14 @@ const Register = ({register, isAuthenticated, dispatch}) => {
           setFormData({ ...formData, [e.target.name]: e.target.value });
     const imageHandler = (e) => {
         setFile(e.target.files[0]);
+        var fileUpload = e.target.files[0];
         const reader = new FileReader();
         reader.onload = () =>{
             if(reader.readyState === 2){
             setImage(reader.result)
             }
         }
-        reader.readAsDataURL(e.target.files[0])
+        if(fileUpload) reader.readAsDataURL(e.target.files[0])
     
     };
     

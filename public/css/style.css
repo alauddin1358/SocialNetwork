@@ -12,7 +12,7 @@ a:hover {
 p {
 	text-align: justify !important;
 }
-img {
+.post-image img {
 	max-height: 100% !important; 
 	max-width: 100% !important; 
 }
@@ -134,6 +134,18 @@ img {
     width: 18%;
     max-width: 60px;
 }
+
+.comment-edit textarea {
+	display: block;
+	border-radius: 8px;
+	margin-left: auto;
+	margin-top: 10px;
+	padding: 15px 20px;
+	position: relative;
+	outline: 0;
+    width: 90%;
+}
+
 .comment span {
     float: right;
     background-color: #2B53C5;
@@ -161,7 +173,13 @@ img {
 .comment .comment span::before {
     background-color: #1CA261;
 }
-
+.edit-delete small {
+	font-size: medium;
+	margin: 10px;
+}
+.edit-delete small Link {
+	margin-left: 5px;
+}
 /* Profile Page */
 .common-card {
 	background: #fff;
