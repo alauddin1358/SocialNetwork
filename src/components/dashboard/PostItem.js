@@ -2,8 +2,7 @@ import React from 'react';
 import { Link } from 'react-router-dom';
 import formatDate from '../../utils/formatDate';
 
-const PostItem = ({deletePost, post:{_id, title, body, date,user}}) => {
-    console.log("PostItem = ", _id.$oid);
+const PostItem = ({deletePost, postOwner, post:{_id, title, body, date,user}}) => {
     return (
         <div className="card-body">
             <h5><Link to={`/post/${_id.$oid}`}>
@@ -25,7 +24,7 @@ const PostItem = ({deletePost, post:{_id, title, body, date,user}}) => {
                         comment
                     </Link>
                 </small>
-                <small>
+                {postOwner.name === user.status ? (<small>
                     <i className="fas fa-pen"></i>
                     <Link to={{
                         pathname: '/addpost',
@@ -36,13 +35,14 @@ const PostItem = ({deletePost, post:{_id, title, body, date,user}}) => {
                     }}>
                         edit
                     </Link>
-                </small>
-                <small>
+                </small>):null }
+                { postOwner.name === user.status ?
+                (<small>
                     <i className="fa fa-trash" aria-hidden="true"></i>
                     <Link to="/dashboard" onClick={()=>deletePost(_id.$oid)}>
                         delete
                     </Link>
-                </small>
+                </small> ): null}
             </div>
         </div>
     )

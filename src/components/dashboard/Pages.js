@@ -6,7 +6,7 @@ import PropTypes from 'prop-types';
 import { getPosts, deletePost } from '../../actions/post';
 import Spinner from '../layout/Spinner';
 import Advertisement from './Advertisement';
-const Pages = ({ getPosts, deletePost, post: {posts, loading}}) => {
+const Pages = ({ getPosts, deletePost, user:{user}, post: {posts, loading}}) => {
     useEffect(() => {
         getPosts();
     }, [getPosts, deletePost]);
@@ -29,7 +29,7 @@ const Pages = ({ getPosts, deletePost, post: {posts, loading}}) => {
                             <div id="posts-list" className="card-body">
                                 <div className="post-card card">
                                         {loading || posts === null ? (<Spinner />) : (posts.map((post) => (
-                                            <PostItem key={post._id.$oid} post={post} deletePost={deletePost} />
+                                            <PostItem key={post._id.$oid} post={post} postOwner={user} deletePost={deletePost} />
                                         )))}
                                 </div>
                             </div>
@@ -50,6 +50,7 @@ Pages.propTypes = {
   };
   
 const mapStateToProps = (state) => ({
-    post : state.post
+    post : state.post,
+    user: state.auth
 });
 export default connect(mapStateToProps, { getPosts, deletePost })(Pages); 

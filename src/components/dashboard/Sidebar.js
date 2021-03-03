@@ -22,23 +22,13 @@ const Sidebar = () => {
                     </div>
 
                     <li className="nav-item">
-                        <Link className="nav-link collapsed" data-toggle="collapse" data-target="#collapsePosts"
-                            aria-expanded="true" aria-controls="collapsePosts">
-                            <i className="fas fa-fw fa-folder"></i>
-                            <span>Posts</span>
-                        </Link>
-                        <div id="collapsePosts" className="collapse" aria-labelledby="headingPages" data-parent="#accordionSidebar">
-                            <div className="bg-white py-2 collapse-inner rounded">
-                                <Link className="collapse-item" to={{
+                        <Link className="nav-link" to={{
                                     pathname: '/addpost',
                                     state: {
                                         id: null,
                                         edit: false
                                     }
-                                }}>Add Post</Link>
-                                <Link className="collapse-item" to="/dashboard">Show All Posts</Link>
-                            </div>
-                        </div>
+                            }}>Add Post</Link>
                     </li>
                     <li className="nav-item active">
                         <Link className="nav-link" to="/upload">

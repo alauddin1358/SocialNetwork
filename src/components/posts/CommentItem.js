@@ -82,7 +82,7 @@ class CommentItem extends Component {
                                 delete
                             </Link>
                         </small>
-                       </div>
+                    </div>
                 </div>
             </Fragment>
         )

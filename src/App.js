@@ -11,6 +11,8 @@ import Upload from './components/file/Upload';
 import FilesList from './components/file/FilesList';
 import FileView from './components/file/FileView';
 import Profile from './components/profile/Profile';
+import ForgotPassword from './components/auth/ForgotPassword';
+//import ProfileSearchView from './components/profile/ProfileSearchView';
 import store from './store';
 import { BrowserRouter as Router, Route, Switch } from 'react-router-dom';
 import { Provider } from 'react-redux';
@@ -33,6 +35,7 @@ const App = () => {
               <Route exact path="/register" component={ Register } />
               <Route exact path="/dashboard" component={ Dashboard } />
               <Route exact path="/login" component={ Login } />
+              <Route exact path="/forgotpassword" component={ ForgotPassword } />
               
               <PrivateRoute exact path="/postdetail" component={ PostDetail } />
               <PrivateRoute exact path="/post/:id" component={ Posts } />
@@ -41,7 +44,9 @@ const App = () => {
               <Route exact path="/upload" component={Upload}  />
               <Route exact path="/list" component={FilesList}  />
               <Route exact path="/view/:filename" component={FileView}  />
-              <Route exact path="/profile" component={Profile}  />
+              <Route exact path="/profile" render={(props) => <Profile {...props}/>}  />
+              
+              
             </Switch>
           
         </Fragment>

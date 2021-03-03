@@ -2,17 +2,14 @@ import React, { Fragment, useState } from 'react';
 //import {Alert} from 'reactstrap';
 //import axios from 'axios';
 import { connect } from 'react-redux';
+//import { bindActionCreators } from 'redux';
 import { Link, Redirect} from 'react-router-dom';
 //import { setAlert } from '../../actions/alert';
 import { login } from '../../actions/auth';
 import PropTypes from 'prop-types';
-// import '../../css/login.css';
-// import '../../css/responsive.css';
-//import { LOGOUT } from '../../actions/types';
-//import { setAlert } from '../../actions/alert';
 import Alert from '../layout/Alert';
-
-const Login = ({auth:{isAuthenticated, token}, login}) => {
+import { Alert as AlertStrap } from 'reactstrap';
+const Login = ({auth:{isAuthenticated, token}, login, dispatch}) => {
     const [formData, setFormData] = useState({
         email: '',
         password: ''
@@ -26,7 +23,8 @@ const Login = ({auth:{isAuthenticated, token}, login}) => {
     const onSubmit = async (e) => {
     
         e.preventDefault();
-        login(email, password);
+        if(email === '' || password ==='') <AlertStrap color="danger">Email and Password is required</AlertStrap>
+        else login(email, password);
         //console.log('IsAuthenticated = ', isAuthenticated);
         
     };
@@ -37,15 +35,18 @@ const Login = ({auth:{isAuthenticated, token}, login}) => {
         <Fragment>
             <div className="form-wrapper auth">
 		        <form onSubmit={onSubmit}>
+                    {/* <div id="brand-image">	
+                        <img src="../../img/fish-logo.png" alt="logo" />
+                    </div> */}
                     <h2>
-                        <i className="fa fa-user"></i>
-                        <span>Login</span>
+                        <span>Log in to Agriculturist</span>
                     </h2>
+                   
                     <input type="text" 
                             name="email" 
-                            placeholder="Enter Username"
+                            placeholder="Enter Email"
                             value={email}
-                            onChange={onChange} />
+                            onChange={onChange} required/>
                     <input type="password" 
                             name="password" 
                             placeholder="Enter Password"
@@ -53,7 +54,7 @@ const Login = ({auth:{isAuthenticated, token}, login}) => {
                             onChange={onChange} />
                     <button>Login</button>
                     <span>Not a user? <Link to="/register">Register Here</Link></span>
-                    <span><a href="">Forgot Password?</a></span>
+                    <span><Link to="/forgotpassword">Forgot Password?</Link></span>
                     <Alert />
 		        </form>
 	        </div>
@@ -69,4 +70,5 @@ Login.propTypes = {
 const mapStateToProps = (state) => ({
     auth: state.auth
 });
+
 export default connect(mapStateToProps, { login })(Login);

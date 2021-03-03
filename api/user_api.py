@@ -24,17 +24,23 @@ from random import randint
 import pandas as pd
 import os
 from werkzeug.utils import secure_filename
-
+from itsdangerous import URLSafeTimedSerializer, SignatureExpired
+from flask_email_verifier import EmailVerifier
+# from flask_email_verifier import Client
+# from flask_email_verifier import exceptions
 UPLOAD_FOLDER = os.getcwd()
 ALLOWED_EXTENSIONS = set(['png', 'jpg', 'jpeg', 'gif'])
 
 
 # initialize the app
 app = Flask(__name__)
+
 # random secrect key initialization
 app.secret_key = "thisisthesecretkey"
 # db config
-app.config['MONGO_URI'] = "mongodb://localhost:27017/userReg"
+# app.config['MONGO_URI'] = "mongodb://localhost:27017/userReg"
+app.config['MONGO_URI'] = "mongodb://admin:iritadb2021@localhost:27020/userReg?authSource=admin"
+# app.config['MONGO_URI'] = "mongodb://admin:iritadb2021@localhost:27020/userReg?authSource=admin"
 # configuration for flask-mail
 app.config["MAIL_SERVER"] = 'smtp.gmail.com'
 app.config["MAIL_PORT"] = 465
@@ -50,10 +56,13 @@ app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
 # Session(app)
 CORS(app, supports_credentials=True)
 mail = Mail(app)
+#verifier = EmailVerifier(app)
+# EMAIL_VERIFIER_KEY = 'at_4WGDL75Kbnd4H7dLhDHOKZU6E0xY5'
+
 # connects to the mongoDB server
 mongo = PyMongo(app)
 bcrypt = Bcrypt(app)
-
+safeSerializer = URLSafeTimedSerializer(app.config['SECRET_KEY'])
 # -----------login Start-------------
 
 
@@ -114,6 +123,27 @@ def protected():
     print('hello')
     return jsonify({'message': 'Available with valid tokens'})
 
+# Email Verification
+
+
+# @app.route('/email_test', methods=['POST'])
+# @cross_origin(supports_credentials=True)
+# def email_test():
+#     _json = request.json
+#     print(_json)
+#     # _name = _json['name']
+#     _email = _json['email']
+#     # Retrieve an info for the given email address
+#     email_address_info = verifier.verify(_email)
+#     print(email_address_info)
+#     if email_address_info is not None:
+#         data = dumps(loads(email_address_info.json_string), indent=4)
+#         resp = make_response(data, 200)
+#         resp.headers['Content-Type'] = 'application/json'
+#     else:
+#         resp = 'Not found'
+#     return resp
+
 
 @app.route('/login', methods=['GET', 'POST'])
 @cross_origin(supports_credentials=True)
@@ -126,28 +156,23 @@ def login():
     # if email & name is matched
     response = mongo.db.userReg.find_one({'email': _email})
     if response:
-        if bcrypt.check_password_hash(response['password'], _password):
-            # OTP generate & pass to user mail
-            # _otp = randint(100000, 999999)
-            # msg = Message(subject='OTP', sender='ali.ak133058@gmail.com', recipients=[_email])
-            # msg.body = str(_otp)
-            # mail.send(msg)
-            # inserting OTP info into userOtp collection
-            # id = mongo.db.userOtp.insert({'email': _email, 'otp': _otp})
-            # Login & OTP success message
-            # message = { 'data': 'null', 'result': {'isError': 'false', 'message': 'Matched & OTP sent to user mail', 'status': 200, }}
+        if response['emailconfirm']:
+            if bcrypt.check_password_hash(response['password'], _password):
+                # generating token and set token time 60 minutes
+                token = jwt.encode({'user': response['email'], 'exp': datetime.datetime.utcnow(
+                ) + datetime.timedelta(minutes=1060)}, app.config['SECRET_KEY'])
+                # usermail
 
-            # adding user to session
-            # session['user'] = _name
-            # generating token and set token time 60 minutes
-            token = jwt.encode({'user': response['email'], 'exp': datetime.datetime.utcnow(
-            ) + datetime.timedelta(minutes=1060)}, app.config['SECRET_KEY'])
-            # usermail
-
-            # returning the token
+                # returning the token
+                message = {
+                    'data': {'token': token.decode('UTF-8')},
+                    'result': {'isError': 'false', 'message': 'Login Successful', 'status': 200, }
+                }
+                return jsonify(message)
+        else:
             message = {
-                'data': {'token': token.decode('UTF-8')},
-                'result': {'isError': 'false', 'message': 'Login Successful', 'status': 200, }
+                'data': 'null',
+                'result': {'isError': 'true', 'message': 'User Account is not activated', 'status': 401, }
             }
             return jsonify(message)
     message = {
@@ -200,58 +225,148 @@ def otp_verify():
 def add_user():
     # convert json
     # _json = request.get_json()
+    try:
+        _json = request.form
+        _firstname = _json['firstname']
+        _middlename = _json['middlename']
+        _lastname = _json['lastname']
+        _name = _firstname + ' ' + _middlename + ' ' + _lastname
+        print(_name)
+        _user_category = _json['user_category']
+        _student_type = _json['student_type']
+        _job_type = _json['job_type']
+        _specialization_type = _json['specialization_type']
+        _email = _json['email']
+        _phone = _json['phone']
+        _address = _json['address']
+        _country = _json['country']
+        _image = _json['image']
+        _referrer_name = _json['referrer_name']
+        _referrer_email = _json['referrer_email']
+        _emailconfirm = False
+        print(_emailconfirm)
+        _password = bcrypt.generate_password_hash(
+            _json['password']).decode('utf-8')
+        _passwordconfirm = bcrypt.generate_password_hash(
+            _json['passwordconfirm']).decode('utf-8')
+        existing_user = mongo.db.userReg.find_one({'email': _email})
+        if(existing_user):
+            message = {
+                'data': "null",
+                'result': {'isError': 'true', 'message': 'Email is already exists', 'status': 200, }
+            }
+            return jsonify(message)
+        # existing_referrer = mongo.db.userReg.find_one(
+        #     {'referrer_email': _referrer_email})
+        # if(existing_referrer):
+        #     message = {
+        #         'data': "null",
+        #         'result': {'isError': 'true', 'message': 'Referrer Email is invalid or not exist in our system', 'status': 200, }
+        #     }
+        #     return jsonify(message)
+        if _name and _email and _password and request.method == 'POST' and (existing_user is None):
 
-    _json = request.form
-    _firstname = _json['firstname']
-    _middlename = _json['middlename']
-    _lastname = _json['lastname']
-    _name = _firstname + ' ' + _middlename + ' ' + _lastname
+            # insert details and generate id
+            # mongo.save_file(_file.filename, _file)
+            _insertId = mongo.db.userReg.insert({'firstname': _firstname, 'middlename': _middlename, 'lastname': _lastname, 'name': _name,
+                                                 'email': _email, 'password': _password,
+                                                 'passwordconfirm': _passwordconfirm, 'user_category': _user_category,
+                                                 'student_type': _student_type, 'job_type': _job_type,
+                                                 'specialization_type': _specialization_type, 'address': _address, 'phone': _phone,
+                                                 'country': _country, 'image': _image, 'referrer_name': _referrer_name,
+                                                 'referrer_email': _referrer_email, 'emailconfirm': _emailconfirm,
+                                                 'roles': [], 'groups': [], 'ts': [], 'friends': []})
 
-    print(_name)
-    _user_category = _json['user_category']
-    _student_type = _json['student_type']
-    _job_type = _json['job_type']
-    _specialization_type = _json['specialization_type']
-    _email = _json['email']
-    _phone = _json['phone']
-    _address = _json['address']
-    _country = _json['country']
-    _image = _json['image']
-    _referrer_name = _json['referrer_name']
-    _referrer_email = _json['referrer_email']
+            # mongo.db.upload.insert({'upload_file_name': _file.filename})
+            # for json response
+            print(_insertId)
+            token = safeSerializer.dumps(_referrer_email, salt='email-confirm')
+            msg = Message(subject='Account Confirmation',
+                          sender='ali.ak133058@gmail.com', recipients=[_referrer_email])
+            link = url_for('confirm_email', token=token,
+                           id=_insertId, _external=True)
+            msg.body = """A user wants to create account using your reference.
+            The user acivation link is {}""".format(link)
+            msgReply = mail.send(msg)
+            print('Token = ', token)
+            message = {
+                'data': "null",
+                'result': {'isError': 'false', 'message': 'User data insert and mail sending successfully', 'status': 200, }
+            }
+            return jsonify(message)
+        else:
+            message = {
+                'data': "null",
+                'result': {'isError': 'true', 'message': 'User added unsuccessfull', 'status': 200, }
+            }
+            return jsonify(message)
+    except:
+        return internal_error()
 
-    _password = bcrypt.generate_password_hash(
-        _json['password']).decode('utf-8')
-    _passwordconfirm = bcrypt.generate_password_hash(
-        _json['passwordconfirm']).decode('utf-8')
-    existing_user = mongo.db.userReg.find_one({'email': _email})
-    if _name and _email and _password and request.method == 'POST' and (existing_user is None):
+# Confirm Email
 
-        # insert details and generate id
 
-        # mongo.save_file(_file.filename, _file)
-        mongo.db.userReg.insert({'firstname': _firstname, 'middlename': _middlename, 'lastname': _lastname, 'name': _name,
-                                 'email': _email, 'password': _password,
-                                 'passwordconfirm': _passwordconfirm, 'user_category': _user_category,
-                                 'student_type': _student_type, 'job_type': _job_type,
-                                 'specialization_type': _specialization_type, 'address': _address, 'phone': _phone,
-                                 'country': _country, 'image': _image, 'referrer_name': _referrer_name,
-                                 'referrer_email': _referrer_email,
-                                 'roles': [], 'groups': [], 'ts': [], 'friends': []})
+@app.route('/confirm_account')
+def confirm_account():
+    return 'Successful'
 
-        # mongo.db.upload.insert({'upload_file_name': _file.filename})
-        # for json response
+
+@app.route('/confirm_email/<token>/<id>')
+def confirm_email(token, id):
+    try:
+        _id = id
+        # print('ID = ', _id)
+        _email = safeSerializer.loads(
+            token, salt='email-confirm', max_age=3600)
+        _emailconfirm = True
+        _date = datetime.datetime.now()
+        _update = mongo.db.userReg.update_one(
+            {'_id': ObjectId(_id['$oid']) if '$oid' in _id else ObjectId(_id)},
+            {'$set': {'emailconfirm': _emailconfirm, 'date': _date}}
+        )
+        # print(_email)
+        # print(_update)
+        user = mongo.db.userReg.find_one({'_id': ObjectId(_id)})
+        if(user):
+            _userEmail = user['email']
+            token = safeSerializer.dumps(_userEmail, salt='email-confirm')
+            msg = Message(subject='Account Confirmation',
+                          sender='ali.ak133058@gmail.com', recipients=[_userEmail])
+            link = url_for('confirm_account', _external=True)
+            msg.body = """Hello, Your account was successfully created in http://agriculturist.org
+            Please click the link to login"""
+            msgReply = mail.send(msg)
+    except SignatureExpired:
+        return '<h1>The session is expired! The user have to be registered again!</h1>'
+    except:
+        _id = id
+        # print('Id in except = ', _id)
+        existing_user = mongo.db.userReg.find_one({'_id': ObjectId(_id)})
+        # print(existing_user)
+        if(existing_user):
+            mongo.db.userReg.delete_one({'_id': ObjectId(_id)})
+        return '<h1>The account is not registered</h1>'
+    return '<h1>The account is activated! Now the user can login.</h1>'
+
+# Getting All user
+
+
+@app.route('/getAllUser')
+@cross_origin(supports_credentials=True)
+@token_required
+def getAllUser():
+
+    # mongo query for finding all value
+    users = mongo.db.userReg.find()
+    # print(user)
+    if users:
         message = {
-            'data': "null",
-            'result': {'isError': 'false', 'message': 'user added successfully', 'status': 200, }
+            'data': dumps(users),
+            'result': {'isError': 'false', 'message': 'Valid', 'status': 200, }
         }
         return jsonify(message)
     else:
-        message = {
-            'data': "null",
-            'result': {'isError': 'true', 'message': 'User added unsuccessfull', 'status': 200, }
-        }
-        return jsonify(message)
+        return not_found()
 
 # showing all user
 
@@ -266,13 +381,41 @@ def getUser():
     # mongo query for finding all value
     user = mongo.db.userReg.find_one({'email': user})
     # print(user)
-    message = {
-        'data': dumps(user),
-        'result': {'isError': 'false', 'message': 'Valid', 'status': 200, }
-    }
-    return jsonify(message)
+    if user:
+        message = {
+            'data': dumps(user),
+            'result': {'isError': 'false', 'message': 'Valid', 'status': 200, }
+        }
+        return jsonify(message)
+    else:
+        return not_found()
 
 # showing specific user
+
+
+@app.route('/searchUser', methods=['POST'])
+@cross_origin(supports_credentials=True)
+def searchUser():
+    _json = request.json
+    _searchUserData = _json['search_user']
+    print(_searchUserData)
+    # mongo query for finding all value
+    _searchUser = mongo.db.userReg.find_one({'email': _searchUserData})
+    if _searchUser:
+        message = {
+            'data': dumps(_searchUser),
+            'result': {'isError': 'false', 'message': 'Valid', 'status': 200, }
+        }
+        return jsonify(message)
+    _searchUser = mongo.db.userReg.find_one({'name': _searchUserData})
+    if _searchUser:
+        print(_searchUser)
+        message = {
+            'data': dumps(_searchUser),
+            'result': {'isError': 'false', 'message': 'Valid', 'status': 200, }
+        }
+        return jsonify(message)
+    return not_found()
 
 
 @app.route('/user/<id>')
@@ -286,6 +429,10 @@ def user(id):
         'result': {'isError': 'false', 'message': 'Valid', 'status': 200, }
     }
     return jsonify(message)
+
+
+# Showing search user
+
 
 # delete specific user
 
@@ -413,13 +560,14 @@ def create_post(id):
     if _id != 'null':
         if _title and _body:
             try:
-                mongo.db.posts.update_one({'_id': ObjectId(_id['$oid']) if '$oid' in _id else ObjectId(_id)},
-                                          {'$set': {
-                                              'title': _title, 'body': _body,
-                                              'category': _category,
-                                              'tags': _tags, 'date': _post_date
-                                          }
+                postId = mongo.db.posts.update_one({'_id': ObjectId(_id['$oid']) if '$oid' in _id else ObjectId(_id)},
+                                                   {'$set': {
+                                                       'title': _title, 'body': _body,
+                                                       'category': _category,
+                                                       'tags': _tags, 'date': _post_date
+                                                   }
                 })
+                print('PostId = ', postId)
                 message = {
                     'data': 'null',
                     'result': {'isError': 'false', 'message': 'post updated successfull', 'status': 201, }
@@ -443,12 +591,14 @@ def create_post(id):
                 'category': _category,
                 'tags': _tags,
                 'user': {
+                    'userId': user['_id'],
                     'status': user['name'],
                     'image': user['image']
                 },
                 'comments': [],
                 'date': _post_date
             })
+            print('PostId = ', insertData)
             message = {
                 'data': 'null',
                 'result': {'isError': 'false', 'message': 'post created successfull', 'status': 201, }

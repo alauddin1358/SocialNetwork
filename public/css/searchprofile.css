@@ -1,0 +1,20 @@
+.suggestion-container {
+  width: 22.5rem;
+  border: 1px solid grey;
+  border-radius: .35rem;
+  box-shadow: 0 0 0 1px rgba(0, 0, 0, 0.1), 0 2px 4px 1px rgba(0, 0, 0, 0.18);
+  position: absolute;
+  top: 60px;
+  left: 158px;
+}
+.suggestion-container ul {
+  list-style-type: none;
+  margin: 0;
+  padding: 0;
+}
+.suggestion-container li {
+  padding: 5px 10px;
+}
+.suggestion-container li:hover {
+  background-color: rgba(128, 128, 128, 0.2);
+}

@@ -3,7 +3,8 @@ import Topbar from '../dashboard/Topbar';
 import Sidebar from '../dashboard/Sidebar';
 import Footer from '../dashboard/Footer';
 import ProfilePage from './ProfilePage';
-const profile = () => {
+const Profile = (props) => {
+    
     return (
         <Fragment>
             <div id="wrapper">
@@ -11,7 +12,7 @@ const profile = () => {
                 <div id="content-wrapper" className="d-flex flex-column">
                     <div id="content">
                         <Topbar />
-                        <ProfilePage />
+                        <ProfilePage props={props}/>
                     </div>
                     <Footer />
                 </div>
@@ -20,4 +21,4 @@ const profile = () => {
     )
 }
 
-export default profile
+export default Profile

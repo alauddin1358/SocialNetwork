@@ -5,6 +5,7 @@ import {
     LOGIN_FAIL,
     USER_LOADED,
     AUTH_ERROR,
+    ALLUSER_LOADED,
     LOGOUT
   } from './types';
 //import setAuthToken from '../utils/setAuthToken';
@@ -55,7 +56,36 @@ export const loadUser = () => async dispatch => {
     });
   }
 };
-
+//Load All user
+export const getAllUsers = () => async dispatch => {
+  const config = {
+    headers : {
+        'Authorization': `Bearer ${localStorage.token}`,
+        'Content-Type':'application/json',
+        'Access-Control-Allow-Origin': '*',
+        'Access-Control-Allow-Credentials': true
+    }
+  };
+  try {
+    const res = await axios.get(`${API}/getAllUser`, config);
+    if(res.data.result.isError === 'true') {
+      dispatch(setAlert(res.data.result.message, 'danger'));
+    }
+    else {
+      dispatch({
+        type: ALLUSER_LOADED,
+        payload: JSON.parse(res.data.data)
+      });
+    }
+  } catch (err) {
+    const errors = err.response;
+    dispatch(setAlert('Server Error', 'danger'));
+    console.log('Error in login = ',errors);
+    dispatch({
+      type: AUTH_ERROR
+    });
+  }
+}
 // Register User
 export const register = ({form_data}) => async dispatch => {
     // const config = {
@@ -101,6 +131,8 @@ export const login = (email, password) => async dispatch => {
       }
   };
   const body = {email, password};
+  // const res = await axios.post(`${API}/email_test`, body, config);
+  // console.log('Login response', res.data);
   
   try {
     const res = await axios.post(`${API}/login`, body, config);
@@ -127,7 +159,7 @@ export const login = (email, password) => async dispatch => {
     dispatch({
       type: LOGIN_FAIL
     });
-}
+  }
 };
 export const updateProfile = (id, {form_data}) => async dispatch => {
     const config = {
@@ -162,5 +194,6 @@ export const logout = () => dispatch => {
   //dispatch( { type : CLEAR_PROFILE });
   dispatch( {type: LOGOUT} );
   window.location.replace("http://agriculturist.org");
+  //window.location.replace("http://localhost:3000");
   //dispatch(loadUser());
 };

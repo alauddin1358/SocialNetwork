@@ -1,37 +1,35 @@
 import React, { useState } from 'react';
 import { connect } from 'react-redux';
-import { Link, Redirect } from 'react-router-dom';
+//import { bindActionCreators } from 'redux';
+import { Link } from 'react-router-dom';
 import { register } from '../../actions/auth';
 import PropTypes from 'prop-types';
-
-// import '../../css/login.css';
-// import '../../css/responsive.css';
-
-import { setAlert } from '../../actions/alert';
+//import { setAlert } from '../../actions/alert';
 import Alert from '../layout/Alert';
-
-const Register = ({register, isAuthenticated, dispatch}) => {
+import { Alert as AlertStrap } from 'reactstrap';
+const initialState = {
+    firstname: '',
+    middlename: '',
+    lastname: '',
+    user_category: '',
+    student_type: '',
+    job_type: '',
+    specialization_type: '',
+    email: '',
+    phone: '',
+    password: '',
+    passwordconfirm: '',
+    address: '',
+    country: '',
+    referrer_name: '',
+    referrer_email: '',
+    emailconfirm: false
+  }
+const Register = ({register, isAuthenticated}) => {
     
     const [file, setFile] = useState('');
     const [image, setImage] = useState('../../img/user-profile.png');
-    const [formData, setFormData] = useState({
-        firstname: '',
-        middlename: '',
-        lastname: '',
-        user_category: '',
-        student_type: '',
-        job_type: '',
-        specialization_type: '',
-        email: '',
-        phone: '',
-        password: '',
-        passwordconfirm: '',
-        address: '',
-        country: '',
-        referrer_name: '',
-        referrer_email: ''
-
-      });
+    const [formData, setFormData] = useState(initialState);
     
       const { firstname, middlename, lastname, user_category, email, phone,
       password, passwordconfirm, address, country,
@@ -58,24 +56,37 @@ const Register = ({register, isAuthenticated, dispatch}) => {
     }, new FormData());
     const onSubmit = async (e) => {
         e.preventDefault();
-        if (password !== passwordconfirm) {
-            dispatch(setAlert('Passwords do not match', 'danger'));
-        }  
+        
+        if(email === '' || referrer_email===''){
+            <AlertStrap color="danger">Email is required</AlertStrap>
+            //dispatch(setAlert('Email is required', 'danger'));
+        } 
+        else if(password === '' || passwordconfirm ==='') <AlertStrap color="danger">Password is required</AlertStrap>
+        else if (password !== passwordconfirm) {
+            <AlertStrap color="danger">Passwords do not match</AlertStrap>
+        }
+        // else if(email === referrer_email){
+        //     <AlertStrap color="danger">User email and referrer email must be different</AlertStrap>
+        // } 
         else {
             console.log(formData);
             const form_data = getFormData(formData);
             form_data.append('file', file);
             form_data.append('image', image);
-            register({ form_data });   
+            register({ form_data });  
+            setFormData(initialState); 
         }    
     };
-    if(isAuthenticated) {
-        return <Redirect to="/login" />
-    }
+    // if(isAuthenticated) {
+    //     return <Redirect to="/login" />
+    // }
     return (
         <div>
             <div className="form-wrapper auth">
 		        <form onSubmit={onSubmit} id="registration-form">
+                    {/* <div id="brand-image">	
+                        <img src="../../img/fish-logo.png" alt="logo" />
+                    </div> */}
                     <h2>
                         <span>Registration</span>
                     </h2>
@@ -474,5 +485,12 @@ Register.propTypes = {
 const mapStateToProps = (state) => ({
     isAuthenticated: state.auth.isAuthenticated
 });
-  
-export default connect(mapStateToProps, { register })(Register);
+// const mapDispatchToProps = (dispatch) => {
+//     return {
+//         actions: bindActionCreators({
+//             setAlert,
+//             register
+//         }, dispatch)
+//     }
+// }
+export default connect(mapStateToProps, {register})(Register);

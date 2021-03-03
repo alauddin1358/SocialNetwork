@@ -1,15 +1,53 @@
-import React, { Fragment } from 'react'
+import React, { Fragment, useState, useRef, useEffect } from 'react'
 import { connect } from 'react-redux';
+//import { Modal, ModalHeader, ModalBody } from 'reactstrap';
 import {Link} from 'react-router-dom';
-const Topbar = ({auth:{user}}) => {
-    // let userInfo;
-    // if(user !== null) {
-    //     userInfo = JSON.parse(user.data);
-    // }
-    // else {
-    //     userInfo = null;
-    // }
-    console.log("User in Topbar = ", user);
+import { logout } from '../../actions/auth';
+const Topbar = ({auth:{user, allUsers}, logout}) => {
+    const [search_data, setSearch_data] = useState('');
+    const [searchUser, setSearchUser] = useState([]);
+    const [display, setDisplay] = useState(false);
+    const wrapperRef = useRef(null);
+    //var users = [];
+    //const toggle = () => setDisplay(!display);
+    useEffect(() => {
+        setSearchUser(allUsers);
+        window.addEventListener("mousedown", handleClickOutside);
+        return () => {
+          window.removeEventListener("mousedown", handleClickOutside);
+        };
+      },[allUsers]);
+    
+      const handleClickOutside = event => {
+        const { current: wrap } = wrapperRef;
+        if (wrap && !wrap.contains(event.target)) {
+          setDisplay(false);
+        }
+      };
+    
+    //   const updatePokeDex = poke => {
+    //     setSearch_data(poke);
+    //     setDisplay(false);
+    //   };
+    const editSearch= (e) => {
+        setSearch_data(e.target.value);
+        //const value = e.target.value;
+        let users = [];
+        console.log('====================================');
+        console.log(search_data);
+        console.log('====================================');
+        if(search_data.length > 0) {
+            // const regex = new RegExp(`^${value}`, 'i');
+            // users = allUsers.sort().filter(v => regex.test(v));
+            users = allUsers.filter(users => users.name.toLowerCase().includes(search_data.toLowerCase()))
+        }
+        //users = allUsers.filter((user ) => user.name.toLowerCase().indexOf(search_data.toLowerCase()) > -1)
+        //users = allUsers.filter(users => users.name.toLowerCase().includes(search_data.toLowerCase()))   
+        console.log('UserList = ', users);
+        setSearchUser(users);
+        setDisplay(true);
+        //onClick={() => setDisplay(!display)}
+    }
     return (
         <Fragment>
             <nav className="navbar navbar-expand navbar-light 
@@ -31,21 +69,62 @@ const Topbar = ({auth:{user}}) => {
                         <a className="dropdown-item" href="#">Groups</a>
                     </div>
                 </div>
-
-                <form className="d-none d-sm-inline-block form-inline mr-auto ml-md-3 my-2 my-md-0 mw-100 navbar-search">
-                    <div className="input-group">
-                        <input type="text" 
-                               className="form-control bg-light border-0 small" 
-                               placeholder="Search for..."
-                               aria-label="Search" aria-describedby="basic-addon2" />
-                        <div className="input-group-append">
-                            <button className="btn btn-primary" type="button">
-                                <i className="fas fa-search fa-sm"></i>
-                            </button>
-                        </div>
-                    </div>
-                </form>
-
+                
+                    <form className="d-none d-sm-inline-block form-inline mr-auto ml-md-3 my-2 my-md-0 mw-100 navbar-search"
+                            onSubmit={e => {
+                                e.preventDefault();
+                                setSearch_data('');
+                            }}
+                    >
+                        <div className="input-group">
+                            <input type="search" 
+                                className="form-control bg-light border-0 small" 
+                                placeholder="Search for..."
+                                value={search_data}
+                                onChange={editSearch}
+                                aria-autocomplete="list" 
+                                autoComplete="false"
+                                aria-invalid="false"
+                                aria-label="Search" aria-describedby="basic-addon2" />
+                            <div className="input-group-append">
+                                <button className="btn btn-primary" type="submit">
+                                        <i className="fas fa-search fa-sm"></i>
+                                </button>
+                            </div>
+                        </div>  
+                    </form>
+                    {display && (
+                    <div ref={wrapperRef} aria-busy="false" className="suggestion-container">
+                        <ul className="autoContainer" role="grid">
+                            {searchUser
+                            .map((value, i) => {
+                                    return (
+                                        <li
+                                            aria-selected="false"
+                                            onClick={() => {
+                                                setSearch_data('');
+                                                setDisplay(false);
+                                                }}
+                                            className="option"
+                                            key={i}
+                                            tabIndex="0"
+                                            role="row"
+                                        >
+                                            <Link to={{
+                                                pathname: '/profile',
+                                                state: {
+                                                    id: value._id.$oid
+                                                }}} 
+                                               >
+                                                    {value.name}
+                                            </Link>
+            
+                                        </li>
+                                    );
+                                })}
+                            </ul>
+                      
+                    </div>   )}
                 <ul className="navbar-nav ml-auto">  
                     <li className="nav-item dropdown no-arrow d-sm-none">
                         <a className="nav-link dropdown-toggle" href="#" 
@@ -81,50 +160,6 @@ const Topbar = ({auth:{user}}) => {
                                 <i className="fas fa-bell fa-fw"></i>
                                 <span className="badge badge-danger badge-counter"></span>
                         </a>
-                        <div className="dropdown-list dropdown-menu dropdown-menu-right 
-                                    shadow animated--grow-in"
-                             aria-labelledby="alertsDropdown">
-                            <h6 className="dropdown-header">
-                                Alerts Center
-                            </h6>
-                            <a className="dropdown-item d-flex align-items-center" href="">
-                                <div className="mr-3">
-                                    <div className="icon-circle bg-primary">
-                                        <i className="fas fa-file-alt text-white"></i>
-                                    </div>
-                                </div>
-                                <div>
-                                    <div className="small text-gray-500">December 12, 2019</div>
-                                    <span className="font-weight-bold">
-                                        A new monthly report is ready to download!</span>
-                                </div>
-                            </a>
-                            <a className="dropdown-item d-flex align-items-center" href="">
-                                <div className="mr-3">
-                                    <div className="icon-circle bg-success">
-                                        <i className="fas fa-donate text-white"></i>
-                                    </div>
-                                </div>
-                                <div>
-                                    <div className="small text-gray-500">December 7, 2019</div>
-                                    $290.29 has been deposited into your account!
-                                </div>
-                            </a>
-                            <a className="dropdown-item d-flex align-items-center" href="#">
-                                <div className="mr-3">
-                                    <div className="icon-circle bg-warning">
-                                        <i className="fas fa-exclamation-triangle text-white"></i>
-                                    </div>
-                                </div>
-                                <div>
-                                    <div className="small text-gray-500">December 2, 2019</div>
-                                     Spending Alert: We've noticed unusually high spending for your account.
-                                </div>
-                            </a>
-                            <a className="dropdown-item text-center small text-gray-500" 
-                                href="">Show All Alerts
-                            </a>
-                        </div>
                     </li>
 
                     <li className="nav-item dropdown no-arrow mx-1">
@@ -136,84 +171,6 @@ const Topbar = ({auth:{user}}) => {
                                 <span className="badge badge-danger badge-counter">
                                 </span>
                         </a>
-                        <div className="dropdown-list dropdown-menu dropdown-menu-right 
-                                    shadow animated--grow-in"
-                             aria-labelledby="messagesDropdown">
-                            <h6 className="dropdown-header">
-                                Message Center
-                            </h6>
-                            <a className="dropdown-item d-flex align-items-center" href="#">
-                                <div className="dropdown-list-image mr-3">
-                                    <img className="rounded-circle" 
-                                         src=""
-                                         alt="undraw_profile_1" />
-                                    <div className="status-indicator bg-success"></div>
-                                </div>
-                                <div className="font-weight-bold">
-                                    <div className="text-truncate">Hi there! I am wondering 
-                                            if you can help me with a problem 
-                                            I've been having.
-                                    </div>
-                                    <div className="small text-gray-500">
-                                        Emily Fowler · 58m
-                                    </div>
-                                </div>
-                            </a>
-                            <a className="dropdown-item d-flex align-items-center" 
-                                href="">
-                                <div className="dropdown-list-image mr-3">
-                                    <img className="rounded-circle" 
-                                         src=""
-                                         alt="undraw_profile_2" />
-                                    <div className="status-indicator"></div>
-                                </div>
-                                <div>
-                                    <div className="text-truncate">
-                                        I have the photos that you ordered last month, 
-                                        how would you like them sent to you?
-                                    </div>
-                                    <div className="small text-gray-500">Jae Chun · 1d</div>
-                                </div>
-                            </a>
-                            <a className="dropdown-item d-flex align-items-center" 
-                                href="">
-                                <div className="dropdown-list-image mr-3">
-                                    <img className="rounded-circle" 
-                                         src=""
-                                         alt="undraw_profile_3" />
-                                    <div className="status-indicator bg-warning"></div>
-                                </div>
-                                <div>
-                                    <div className="text-truncate">
-                                        Last month's report looks great, 
-                                        I am very happy with the progress so far, 
-                                        keep up the good work!
-                                    </div>
-                                    <div className="small text-gray-500">
-                                        Morgan Alvarez · 2d
-                                    </div>
-                                </div>
-                            </a>
-                            <a className="dropdown-item d-flex align-items-center" 
-                               href="#">
-                                <div className="dropdown-list-image mr-3">
-                                    <img className="rounded-circle" 
-                                         src="https://source.unsplash.com/Mv9hjnEUHR4/60x60"
-                                         alt="" />
-                                    <div className="status-indicator bg-success"></div>
-                                </div>
-                                <div>
-                                    <div className="text-truncate">
-                                        Am I a good boy? The reason I ask is because someone
-                                        told me that people say this to all dogs, 
-                                        even if they aren't good...
-                                    </div>
-                                    <div className="small text-gray-500">Chicken the Dog · 2w</div>
-                                </div>
-                            </a>
-                            <a className="dropdown-item text-center small text-gray-500" 
-                                href=""> Read More Messages </a>
-                        </div>
                     </li>
 
                     <div className="topbar-divider d-none d-sm-block">
@@ -221,7 +178,7 @@ const Topbar = ({auth:{user}}) => {
                     </div>
 
                     <li className="nav-item dropdown no-arrow">
-                        <Link className="nav-link dropdown-toggle" 
+                        <a href="#" className="nav-link dropdown-toggle" 
                             id="userDropdown" role="button"
                             data-toggle="dropdown" aria-haspopup="true" 
                             aria-expanded="false">
@@ -231,30 +188,66 @@ const Topbar = ({auth:{user}}) => {
                                     src={user !== null ? user.image : null}
                                     alt="userName"
                                 />
-                        </Link>
+                        </a>
                         <div className="dropdown-menu dropdown-menu-right 
                                     shadow animated--grow-in"
                              aria-labelledby="userDropdown">
-                            <Link to="/profile" className="dropdown-item">
+                            <Link  className="dropdown-item" to="/profile">
                                 <i className="fas fa-user fa-sm fa-fw mr-2 text-gray-400"></i>
                                     Profile
                             </Link>
                             <div className="dropdown-divider">
 
                             </div>
-                            <Link className="dropdown-item" 
+                            <a href="" className="dropdown-item" 
                                 data-toggle="modal" data-target="#logoutModal">
                                     <i className="fas fa-sign-out-alt fa-sm fa-fw mr-2 text-gray-400"></i>
                                     Logout
-                            </Link>
+                            </a>
                         </div>
                     </li>
                 </ul>
+                
             </nav>
+            {/* {searchUser.length > 0 ? 
+                        <ListGroup className="list-group">
+                            {searchUser.map(user=>(<ListGroupItem key={user.key}><Link to="/profile">{user.name}</Link></ListGroupItem>))}
+                        </ListGroup> : null
+                    } */}
+            <div className="modal fade" id="logoutModal" tabIndex="-1" 
+                role="dialog" aria-labelledby="exampleModalLabel"
+                aria-hidden="true">
+                <div className="modal-dialog" role="document">
+                    <div className="modal-content">
+                        <div className="modal-header">
+                            <h5 className="modal-title" id="exampleModalLabel">Ready to Leave?</h5>
+                            <button className="close" type="button" data-dismiss="modal" aria-label="Close">
+                                <span aria-hidden="true">×</span>
+                            </button>
+                        </div>
+                        <div className="modal-body">Select "Logout" below if you are ready to end your current session.
+                        </div>
+                        <div className="modal-footer">
+                            <button className="btn btn-secondary" type="button" data-dismiss="modal">Cancel</button>
+                            <Link to="/" className="btn btn-primary" onClick={logout} >
+                                Logout
+                            </Link>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            {/* <div>
+                <Modal isOpen={display} toggle={toggle} className="suggestion-container">
+                    <ModalHeader toggle={toggle}>Users List</ModalHeader>
+                    <ModalBody>
+                        hello
+                    </ModalBody>
+                </Modal>
+            </div>  */}
         </Fragment>
     )
 }
 const mapStateToProps = (state) => ({
     auth: state.auth
 });
-export default connect(mapStateToProps, null)(Topbar);
+export default connect(mapStateToProps, {logout})(Topbar);
