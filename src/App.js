@@ -12,7 +12,7 @@ import FilesList from './components/file/FilesList';
 import FileView from './components/file/FileView';
 import Profile from './components/profile/Profile';
 import ForgotPassword from './components/auth/ForgotPassword';
-//import ProfileSearchView from './components/profile/ProfileSearchView';
+import ProfileSearchView from './components/profile/ProfileSearchView';
 import store from './store';
 import { BrowserRouter as Router, Route, Switch } from 'react-router-dom';
 import { Provider } from 'react-redux';
@@ -45,7 +45,7 @@ const App = () => {
               <Route exact path="/list" component={FilesList}  />
               <Route exact path="/view/:filename" component={FileView}  />
               <Route exact path="/profile" render={(props) => <Profile {...props}/>}  />
-              
+              <Route exact path="/search" component={ProfileSearchView}  />
               
             </Switch>
           
