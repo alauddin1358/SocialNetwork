@@ -1,14 +1,15 @@
 import React, { useState, useRef, Fragment } from 'react';
 import Dropzone from 'react-dropzone';
-import axios from 'axios';
 import Sidebar from '../dashboard/Sidebar';
 import Topbar from '../dashboard/Topbar';
 import Footer from '../dashboard/Footer';
 import FileHeader from './FileHeader';
+import {Redirect} from 'react-router-dom';
+import { connect } from 'react-redux';
 import { Container, Form, Row, Col, Button } from 'react-bootstrap';
-const API = process.env.REACT_APP_API;
-
-const Upload = (props) => {
+import { addFile } from '../../actions/file';
+import Alert from '../layout/Alert';
+const Upload = ({props, addFile, file: {isSuccess}}) => {
   const [file, setFile] = useState(null); // state for storing actual image
   const [previewSrc, setPreviewSrc] = useState(''); // state for storing previewImage
   const [state, setState] = useState({
@@ -16,9 +17,11 @@ const Upload = (props) => {
     description: ''
   });
   const [errorMsg, setErrorMsg] = useState('');
-  const [isPreviewAvailable, setIsPreviewAvailable] = useState(false); // state to show preview only for images
+  //const [isPreviewAvailable, setIsPreviewAvailable] = useState(false); // state to show preview only for images
   const dropRef = useRef(); // React ref for managing the hover state of droppable area
-
+  console.log('====================================');
+  console.log('IsSuccess',isSuccess);
+  console.log('====================================');
   const handleInputChange = (event) => {
     setState({
       ...state,
@@ -35,7 +38,7 @@ const Upload = (props) => {
       setPreviewSrc(fileReader.result);
     };
     fileReader.readAsDataURL(uploadedFile);
-    setIsPreviewAvailable(uploadedFile.name.match(/\.(jpeg|jpg|png)$/));
+    //setIsPreviewAvailable(uploadedFile.name.match(/\.(jpeg|jpg|png)$/));
     dropRef.current.style.border = '2px dashed #e9ebeb';
   };
 
@@ -59,13 +62,8 @@ const Upload = (props) => {
           formData.append('title', title);
           formData.append('description', description);
           formData.append('filedata', previewSrc);
-          
           setErrorMsg('');
-          await axios.post(`${API}/file_upload`, formData, {
-            headers: {
-              'Content-Type': 'multipart/form-data'
-            }
-          });
+          addFile(formData);
           props.history.push('/list');
         } else {
           setErrorMsg('Please select a file to add.');
@@ -76,8 +74,11 @@ const Upload = (props) => {
     } catch (error) {
       error.response && setErrorMsg(error.response.data);
     }
+    
   };
-
+  if(isSuccess) {
+    return <Redirect to = "/list" />;
+  } 
   return (
     <Fragment>
       <div id="wrapper" className="file">
@@ -85,6 +86,7 @@ const Upload = (props) => {
           <div id="content-wrapper" className="d-flex flex-column">
               <div id="content">
                   <Topbar />
+                  <Alert />
                   <Container>
                       <FileHeader />
                       <Form className="search-form" onSubmit={handleOnSubmit}>
@@ -120,11 +122,13 @@ const Upload = (props) => {
                           onDrop={onDrop}
                           onDragEnter={() => updateBorder('over')}
                           onDragLeave={() => updateBorder('leave')}
+                          accept="application/pdf"
+                          maxFiles={1}
                         >
                           {({ getRootProps, getInputProps }) => (
                             <div {...getRootProps({ className: 'drop-zone' })} ref={dropRef}>
                               <input {...getInputProps()} />
-                              <p>Drag and drop a file OR click here to select a file</p>
+                              <p>Drag and drop a pdf file OR click here to select a pdf file</p>
                               {file && (
                                 <div>
                                   <strong>Selected file:</strong> {file.name}
@@ -133,7 +137,7 @@ const Upload = (props) => {
                             </div>
                           )}
                         </Dropzone>
-                        {previewSrc ? (
+                        {/* {previewSrc ? (
                           isPreviewAvailable ? (
                             <div className="image-preview">
                               <img className="preview-image" src={previewSrc} alt="Preview" />
@@ -147,7 +151,7 @@ const Upload = (props) => {
                           <div className="preview-message">
                             <p>Image preview will be shown here after selection</p>
                           </div>
-                        )}
+                        )} */}
                       </div>
                       <Button variant="primary" type="submit">
                         Submit
@@ -163,5 +167,7 @@ const Upload = (props) => {
     
   )
 }
-
-export default Upload;
+const mapStateToProps = (state) => ({
+  file: state.file
+});
+export default connect(mapStateToProps, {addFile})(Upload);

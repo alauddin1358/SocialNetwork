@@ -67,22 +67,24 @@ class CommentItem extends Component {
                         <img src={this.props.comment.user.image} alt="user" />
                         {this.state.editMode ? this.renderCommentEdit() : this.renderCommentRead()}
                     </div>
-                    <div className="text-right edit-delete">
-                       <small>
-                            <i className="fas fa-pen"></i>
-                            <Link to={`/post/${this.props.postId}`} 
-                                onClick={()=>this.enterEditMode()} 
-                            >
-                                edit
-                            </Link>
-                        </small>
+                    {this.props.user._id.$oid === this.props.comment.user.userId.$oid ? 
+                        <div className="text-right edit-delete">
                         <small>
-                            <i className="fa fa-trash" aria-hidden="true"></i>
-                            <Link to={`/post/${this.props.postId}`} onClick={()=>this.props.deleteComment(this.props.postId, this.props.comment._id.$oid)}>
-                                delete
-                            </Link>
-                        </small>
-                    </div>
+                                <i className="fas fa-pen"></i>
+                                <Link to={`/post/${this.props.postId}`} 
+                                    onClick={()=>this.enterEditMode()} 
+                                >
+                                    edit
+                                </Link>
+                            </small>
+                            <small>
+                                <i className="fa fa-trash" aria-hidden="true"></i>
+                                <Link to={`/post/${this.props.postId}`} onClick={()=>this.props.deleteComment(this.props.postId, this.props.comment._id.$oid)}>
+                                    delete
+                                </Link>
+                            </small>
+                        </div> : null
+                    }
                 </div>
             </Fragment>
         )

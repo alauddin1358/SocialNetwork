@@ -28,7 +28,7 @@ export const getPosts = () => async dispatch => {
   };
   try {
     const res = await instance.get(`${API}/getAllPost`,config);
-    console.log('All posts = ',res.data);
+    console.log('All posts = ',JSON.parse(res.data.data));
     dispatch({
       type: GET_POSTS,
       payload: JSON.parse(res.data.data)

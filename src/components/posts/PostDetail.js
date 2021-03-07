@@ -8,7 +8,7 @@ import CommentForm from './CommentForm';
 import CommentItem from './CommentItem';
 import Spinner from '../layout/Spinner';
 import Alert from '../layout/Alert';
-const PostDetail = ({getPost, post:{post, loading}, match}) => {
+const PostDetail = ({getPost, post:{post, loading}, match, auth:{user}}) => {
     useEffect(() => {
         console.log("Calling Getpost in useeffect");
         getPost(match.params.id);
@@ -43,7 +43,7 @@ const PostDetail = ({getPost, post:{post, loading}, match}) => {
                             <Alert />
                             <div id="comments">
                                 {post.comments !== null ? (post.comments.map((comment) => (
-                                    <CommentItem key={comment._id.$oid} comment={comment} postId={post._id.$oid} />
+                                    <CommentItem key={comment._id.$oid} user={user} comment={comment} postId={post._id.$oid} />
                                 ))): null }
                             
                             </div>
@@ -62,7 +62,8 @@ PostDetail.propTypes = {
   };
   
 const mapStateToProps = (state) => ({
-    post : state.post
+    post : state.post,
+    auth: state.auth
 });
 export default connect(mapStateToProps, { getPost })(PostDetail);
 

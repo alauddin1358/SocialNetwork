@@ -1,53 +1,76 @@
-import React, { Fragment, useState, useRef, useEffect } from 'react'
+import React, { Fragment, useState } from 'react'
 import { connect } from 'react-redux';
 //import { Modal, ModalHeader, ModalBody } from 'reactstrap';
 import {Link} from 'react-router-dom';
 import { logout } from '../../actions/auth';
+import Autosuggest from 'react-autosuggest';
+import AutosuggestHighlightMatch from 'autosuggest-highlight/match';
+import AutosuggestHighlightParse from 'autosuggest-highlight/parse';
+
 const Topbar = ({auth:{user, allUsers}, logout}) => {
-    const [search_data, setSearch_data] = useState('');
-    const [searchUser, setSearchUser] = useState([]);
-    const [display, setDisplay] = useState(false);
-    const wrapperRef = useRef(null);
-    //var users = [];
-    //const toggle = () => setDisplay(!display);
-    useEffect(() => {
-        setSearchUser(allUsers);
-        window.addEventListener("mousedown", handleClickOutside);
-        return () => {
-          window.removeEventListener("mousedown", handleClickOutside);
-        };
-      },[allUsers]);
+    const [value, setValue] = useState('');
+    const [suggestions, setSuggestions] = useState([]);
     
-      const handleClickOutside = event => {
-        const { current: wrap } = wrapperRef;
-        if (wrap && !wrap.contains(event.target)) {
-          setDisplay(false);
+    
+    function escapeRegexCharacters(str) {
+        return str.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+    }
+      
+    function getSuggestions(value) {
+        const escapedValue = escapeRegexCharacters(value.trim());
+        
+        if (escapedValue === '') {
+          return [];
         }
+      
+        const regex = new RegExp('\\b' + escapedValue, 'i');
+        
+        return allUsers.filter(user => regex.test(getSuggestionValue(user)));
+      }
+      
+      function getSuggestionValue(suggestion) {
+        console.log(suggestion);
+        return `${suggestion.firstname} ${suggestion.middlename} ${suggestion.lastname}`;
+      }
+      
+      function renderSuggestion(suggestion, { query }) {
+        const suggestionText = `${suggestion.firstname} ${suggestion.middlename} ${suggestion.lastname}`;
+        const matches = AutosuggestHighlightMatch(suggestionText, query);
+        const parts = AutosuggestHighlightParse(suggestionText, matches);
+      
+        return (
+          <span className={'suggestion-content ' + suggestion.twitter}>
+            <span className="name">
+              {
+                parts.map((part, index) => {
+                  const className = part.highlight ? 'highlight' : null;
+      
+                  return (
+                    <span className={className} key={index}>{part.text}</span>
+                  );
+                })
+              }
+            </span>
+          </span>
+        );
+      }
+     const onChange = (event, { newValue, method }) => {
+        setValue(newValue)
+      };
+      
+    const onSuggestionsFetchRequested = ({ value }) => {
+        console.log('SuggestionFetchRequest = ', value);
+        setSuggestions(getSuggestions(value))
       };
     
-    //   const updatePokeDex = poke => {
-    //     setSearch_data(poke);
-    //     setDisplay(false);
-    //   };
-    const editSearch= (e) => {
-        setSearch_data(e.target.value);
-        //const value = e.target.value;
-        let users = [];
-        console.log('====================================');
-        console.log(search_data);
-        console.log('====================================');
-        if(search_data.length > 0) {
-            // const regex = new RegExp(`^${value}`, 'i');
-            // users = allUsers.sort().filter(v => regex.test(v));
-            users = allUsers.filter(users => users.name.toLowerCase().includes(search_data.toLowerCase()))
-        }
-        //users = allUsers.filter((user ) => user.name.toLowerCase().indexOf(search_data.toLowerCase()) > -1)
-        //users = allUsers.filter(users => users.name.toLowerCase().includes(search_data.toLowerCase()))   
-        console.log('UserList = ', users);
-        setSearchUser(users);
-        setDisplay(true);
-        //onClick={() => setDisplay(!display)}
-    }
+    const onSuggestionsClearRequested = () => {
+        setSuggestions([]);
+      };
+    const inputProps = {
+        placeholder: "Search for...",
+        value,
+        onChange: onChange
+      };
     return (
         <Fragment>
             <nav className="navbar navbar-expand navbar-light 
@@ -70,61 +93,27 @@ const Topbar = ({auth:{user, allUsers}, logout}) => {
                     </div>
                 </div>
                 
-                    <form className="d-none d-sm-inline-block form-inline mr-auto ml-md-3 my-2 my-md-0 mw-100 navbar-search"
-                            onSubmit={e => {
-                                e.preventDefault();
-                                setSearch_data('');
-                            }}
-                    >
-                        <div className="input-group">
-                            <input type="search" 
-                                className="form-control bg-light border-0 small" 
-                                placeholder="Search for..."
-                                value={search_data}
-                                onChange={editSearch}
-                                aria-autocomplete="list" 
-                                autoComplete="false"
-                                aria-invalid="false"
-                                aria-label="Search" aria-describedby="basic-addon2" />
-                            <div className="input-group-append">
-                                <button className="btn btn-primary" type="submit">
-                                        <i className="fas fa-search fa-sm"></i>
-                                </button>
-                            </div>
-                        </div>  
-                    </form>
-                    {display && (
-                    <div ref={wrapperRef} aria-busy="false" className="suggestion-container">
-                        <ul className="autoContainer" role="grid">
-                            {searchUser
-                            .map((value, i) => {
-                                    return (
-                                        <li
-                                            aria-selected="false"
-                                            onClick={() => {
-                                                setSearch_data('');
-                                                setDisplay(false);
-                                                }}
-                                            className="option"
-                                            key={i}
-                                            tabIndex="0"
-                                            role="row"
-                                        >
-                                            <Link to={{
-                                                pathname: '/profile',
-                                                state: {
-                                                    id: value._id.$oid
-                                                }}} 
-                                               >
-                                                    {value.name}
-                                            </Link>
-            
-                                        </li>
-                                    );
-                                })}
-                            </ul>
-                      
-                    </div>   )}
+                <form className="d-none d-sm-inline-block form-inline mr-auto ml-md-3 my-2 my-md-0 mw-100 navbar-search"
+                        onSubmit={e => {
+                            e.preventDefault();
+                        }}
+                >
+                    <div className="input-group">
+                        <Autosuggest 
+                            suggestions={suggestions}
+                            onSuggestionsFetchRequested={onSuggestionsFetchRequested}
+                            onSuggestionsClearRequested={onSuggestionsClearRequested}
+                            getSuggestionValue={getSuggestionValue}
+                            renderSuggestion={renderSuggestion}
+                            inputProps={inputProps} />
+                        <div className="input-group-append">
+                            <button className="btn btn-primary" type="submit">
+                                    <i className="fas fa-search fa-sm"></i>
+                            </button>
+                        </div>
+                    </div>  
+                </form>
+                    
                 <ul className="navbar-nav ml-auto">  
                     <li className="nav-item dropdown no-arrow d-sm-none">
                         <a className="nav-link dropdown-toggle" href="#" 

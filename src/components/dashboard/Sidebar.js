@@ -30,11 +30,18 @@ const Sidebar = () => {
                                     }
                             }}>Add Post</Link>
                     </li>
-                    <li className="nav-item active">
-                        <Link className="nav-link" to="/upload">
-                            <i className="fas fa-fw fa-cog"></i>
+                    <li className="nav-item">
+                        <a className="nav-link collapsed" href="#" data-toggle="collapse" data-target="#collapsePosts"
+                            aria-expanded="true" aria-controls="collapsePosts">
+                            <i className="fas fa-fw fa-folder"></i>
                             <span>Files</span> 
-                        </Link>
+                        </a>
+                        <div id="collapsePosts" className="collapse" aria-labelledby="headingPages" data-parent="#accordionSidebar">
+                            <div className="bg-white py-2 collapse-inner rounded">
+                                <Link className="collapse-item" to="/upload">Add File</Link>
+                                <Link className="collapse-item" to="/list">Show Files</Link>
+                            </div>
+                        </div>
                     </li>
 
                     <hr className="sidebar-divider" />

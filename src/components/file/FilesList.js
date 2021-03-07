@@ -7,25 +7,28 @@ import Footer from '../dashboard/Footer';
 import { Container } from 'reactstrap';
 import FileHeader from './FileHeader';
 import { Link } from 'react-router-dom';
+import { connect } from 'react-redux';
+import { deleteFile, getFile } from '../../actions/file';
+import Alert from '../layout/Alert';
 const API = process.env.REACT_APP_API;
 
-const FilesList = () => {
-  const [filesList, setFilesList] = useState([]);
+const FilesList = ({getFile, deleteFile, auth, file:{files}}) => {
+  //const [filesList, setFilesList] = useState([]);
   const [errorMsg, setErrorMsg] = useState('');
   
   useEffect(() => {
-    const getFilesList = async () => {
-      try {
-        const {data} = await axios.get(`${API}/getAllFiles`);
-        setErrorMsg('');
-        setFilesList(JSON.parse(data.data));
-      } catch (error) {
-        error.response && setErrorMsg(error.response.data);
-      }
-    };
-    getFilesList();
-  }, []);
+    getFile();
+  }, [getFile]);
 
+  // const getFilesList = async () => {
+  //   try {
+  //     const {data} = await axios.get(`${API}/getAllFiles`);
+  //     setErrorMsg('');
+  //     setFilesList(JSON.parse(data.data));
+  //   } catch (error) {
+  //     error.response && setErrorMsg(error.response.data);
+  //   }
+  // };
   
   const downloadFile = async (filename, mimetype) => {
     try {
@@ -44,6 +47,20 @@ const FilesList = () => {
     }
   };
 
+  // const deleteFile = async (id) => {
+  //   try {
+  //     const res = await axios.delete(`${API}/fileDelete/${id}`);
+  //     if(res.data.result.isError === 'false') {
+  //       getFilesList();
+  //       setErrorMsg('');
+  //     }
+  //     else setErrorMsg('Error in deleting file');
+     
+  //   } catch (error) {
+  //     error.response && setErrorMsg(error.response.data);
+  //   }
+  // };
+
   return (
     <Fragment>
         <div id="wrapper">
@@ -51,6 +68,7 @@ const FilesList = () => {
             <div id="content-wrapper" className="d-flex flex-column">
                 <div id="content">
                     <Topbar />
+                    <Alert />
                     <Container>
                         <FileHeader />
                           <div className="files-container">
@@ -62,13 +80,14 @@ const FilesList = () => {
                                   <th>Description</th>
                                   <th>View File</th>
                                   <th>Download File</th>
+                                  <th>Delete File</th>
                                 </tr>
                               </thead>
                               <tbody>
-                                {filesList.length > 0 ? (
-                                  filesList.map(
-                                    ({ _id, title, desc, filename, file_mimetype }) => (
-                                      <tr key={_id}>
+                                {files.length > 0 ? (
+                                  files.map(
+                                    ({ _id, title, desc, filename, user, file_mimetype }, index) => (
+                                      <tr key={index}>
                                         <td className="file-title">{title}</td>
                                         <td className="file-description">{desc}</td>
                                         <td>
@@ -82,6 +101,15 @@ const FilesList = () => {
                                             }>
                                             Download
                                           </Link>
+                                        </td>
+                                        <td>
+                                        { auth.user._id.$oid === user.userId.$oid ?
+                                          (<Link to="/list" onClick={() =>
+                                              deleteFile(_id.$oid)
+                                            }>
+                                            Delete
+                                          </Link>) : null
+                                        }
                                         </td>
                                       </tr>
                                     )
@@ -106,5 +134,8 @@ const FilesList = () => {
     
   );
 };
-
-export default FilesList;
+const mapStateToProps = (state) => ({
+  auth: state.auth,
+  file: state.file
+});
+export default connect(mapStateToProps, {getFile, deleteFile})(FilesList);

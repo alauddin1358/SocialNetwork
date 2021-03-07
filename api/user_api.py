@@ -38,8 +38,8 @@ app = Flask(__name__)
 # random secrect key initialization
 app.secret_key = "thisisthesecretkey"
 # db config
-# app.config['MONGO_URI'] = "mongodb://localhost:27017/userReg"
-app.config['MONGO_URI'] = "mongodb://admin:iritadb2021@localhost:27020/userReg?authSource=admin"
+app.config['MONGO_URI'] = "mongodb://localhost:27017/userReg"
+# app.config['MONGO_URI'] = "mongodb://admin:iritadb2021@localhost:27020/userReg?authSource=admin"
 # app.config['MONGO_URI'] = "mongodb://admin:iritadb2021@localhost:27020/userReg?authSource=admin"
 # configuration for flask-mail
 app.config["MAIL_SERVER"] = 'smtp.gmail.com'
@@ -704,6 +704,7 @@ def new_comment(id):
         '_id': ObjectId(),
         'cmntBody': _cmnt_body,
         'user': {
+            'userId': user['_id'],
             'name': user['name'],
             'image': user['image']
         },
@@ -848,6 +849,8 @@ def comment_reply(pid, cid):
 
 # file upload with user name
 @app.route('/file_upload', methods=['POST'])
+@cross_origin(supports_credentials=True)
+@token_required
 def file_upload():
     # if 'file' not in request.files:
     #     message = {
@@ -887,7 +890,6 @@ def file_upload():
     _file = request.files['file']
     _json = request.form
     print(_file.filename)
-    print(_file)
     _title = _json['title']
     _desc = _json['description']
     _filedata = _json['filedata']
@@ -896,14 +898,13 @@ def file_upload():
     # print(_image)
     # print(_json)
 
-    # _user = 'sami@gmail.com'
-    # print('User in file = ', _user)
+    user = mongo.db.userReg.find_one({'email': session['user']})
     mongo.save_file(_file.filename, _file)
     # # mongo.db.upload.insert(
     # #     {'upload_file_name': _file.filename})
     mongo.db.upload.insert(
         {'title': _title, 'desc': _desc, 'filedata': _filedata, 'filename': _filename,
-         'file_mimetype': _file_mimetype, 'date': datetime.datetime.now()})
+         'file_mimetype': _file_mimetype, 'user': {'userId': user['_id']}, 'date': datetime.datetime.now()})
     # mongo.db.upload.insert({'upload_file_name': _file.filename})
     message = {
         # 'data': dumps(_file.filename),
@@ -916,11 +917,33 @@ def file_upload():
 
 
 @app.route('/file/<filename>')
+@cross_origin(supports_credentials=True)
 def file(filename):
     # response = make_response(send_file(filename, mimetype='image/png'))
     # response.headers['Content-Transfer-Encoding'] = 'base64'
     # return response
     return mongo.send_file(filename)
+
+
+@app.route('/fileDelete/<id>', methods=['DELETE'])
+@cross_origin(supports_credentials=True)
+def fileDelete(id):
+    print(id)
+    existing_file = mongo.db.upload.find_one({'_id': ObjectId(id)})
+    if existing_file and request.method == 'DELETE':
+        # mongo query for pull specific friend from other userRegs
+        # mongo.db.posts.update_many(
+        #     {}, {'$pull': {'friends': DBRef(collection="userReg", id=ObjectId(id))}})
+        # # mongo query for deleting specific id
+        post = mongo.db.upload.delete_one({'_id': ObjectId(id)})
+        # for json response
+        message = {
+            'data': "null",
+            'result': {'isError': 'false', 'message': 'File deleted successfully', 'status': 200, }
+        }
+        return jsonify(message)
+    else:
+        return not_found()
 
 
 @app.route('/getAllFiles')
