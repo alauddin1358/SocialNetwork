@@ -9,7 +9,7 @@ import { login } from '../../actions/auth';
 import PropTypes from 'prop-types';
 import Alert from '../layout/Alert';
 import { Alert as AlertStrap } from 'reactstrap';
-const Login = ({auth:{isAuthenticated, token}, login, dispatch}) => {
+const Login = ({auth:{isAuthenticated, token}, login}) => {
     const [formData, setFormData] = useState({
         email: '',
         password: ''

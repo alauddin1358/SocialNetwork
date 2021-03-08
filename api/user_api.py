@@ -230,7 +230,7 @@ def add_user():
         _firstname = _json['firstname']
         _middlename = _json['middlename']
         _lastname = _json['lastname']
-        _name = _firstname + ' ' + _middlename + ' ' + _lastname
+        _name = _firstname.strip() + ' ' + _middlename.strip() + ' ' + _lastname.strip()
         print(_name)
         _user_category = _json['user_category']
         _student_type = _json['student_type']
@@ -377,7 +377,7 @@ def getAllUser():
 def getUser():
     # data = jwt.decode(token, app.config['SECRET_KEY'])
     user = session['user']
-    # print(user)
+    print(user)
     # mongo query for finding all value
     user = mongo.db.userReg.find_one({'email': user})
     # print(user)

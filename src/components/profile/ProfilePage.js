@@ -53,7 +53,6 @@ const ProfilePage = ({auth: {user, loading, allUsers}, loadUser, updateProfile, 
             user = allUsers.filter((user) => user._id.$oid === props.location.state.id)
             user = Object.assign({}, user[0]);
             isSearch = true;
-            console.log("True", user);
         }
     }
     

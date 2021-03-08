@@ -29,7 +29,6 @@ const Topbar = ({auth:{user, allUsers}, logout}) => {
       }
       
       function getSuggestionValue(suggestion) {
-        console.log(suggestion);
         return `${suggestion.firstname} ${suggestion.middlename} ${suggestion.lastname}`;
       }
       
@@ -37,19 +36,24 @@ const Topbar = ({auth:{user, allUsers}, logout}) => {
         const suggestionText = `${suggestion.firstname} ${suggestion.middlename} ${suggestion.lastname}`;
         const matches = AutosuggestHighlightMatch(suggestionText, query);
         const parts = AutosuggestHighlightParse(suggestionText, matches);
-      
         return (
-          <span className={'suggestion-content ' + suggestion.twitter}>
+          <span className={'suggestion-content ' + user.image}>
             <span className="name">
-              {
-                parts.map((part, index) => {
-                  const className = part.highlight ? 'highlight' : null;
-      
-                  return (
-                    <span className={className} key={index}>{part.text}</span>
-                  );
-                })
-              }
+                <Link to={{
+                                pathname: '/profile',
+                                state: {
+                                        id: suggestion._id.$oid
+                                }}} 
+                        >                       
+                    {
+                        parts.map((part, index) => {
+                        const className = part.highlight ? 'highlight' : null;
+                        return (
+                                <span className={className}>{part.text}</span>                        
+                            );
+                        })
+                    }
+                </Link>
             </span>
           </span>
         );
@@ -59,13 +63,29 @@ const Topbar = ({auth:{user, allUsers}, logout}) => {
       };
       
     const onSuggestionsFetchRequested = ({ value }) => {
-        console.log('SuggestionFetchRequest = ', value);
         setSuggestions(getSuggestions(value))
       };
     
     const onSuggestionsClearRequested = () => {
         setSuggestions([]);
       };
+
+    const submitSearchData = async(e) => {
+        e.preventDefault();
+        let userData = allUsers.filter(user => user.name.toLowerCase() === value.toLowerCase());
+        console.log('User in search = ', userData)
+        userData = Object.assign({}, userData[0]);
+        if (userData) {
+            return(
+                <Link to={{
+                    pathname: '/profile',
+                    state: {
+                            id: userData._id.$oid
+                    }}} 
+                > {value} </Link> 
+            )
+        }
+    } 
     const inputProps = {
         placeholder: "Search for...",
         value,
@@ -94,9 +114,7 @@ const Topbar = ({auth:{user, allUsers}, logout}) => {
                 </div>
                 
                 <form className="d-none d-sm-inline-block form-inline mr-auto ml-md-3 my-2 my-md-0 mw-100 navbar-search"
-                        onSubmit={e => {
-                            e.preventDefault();
-                        }}
+                        onSubmit={submitSearchData}
                 >
                     <div className="input-group">
                         <Autosuggest 
