@@ -49,6 +49,29 @@ p {
     background-image: none;
     background-size: cover;
 }
+/* --- Sidebar Brand Logo --- */
+#brand-image {
+	text-align: center;
+}
+.sidebar #brand-image {
+	padding: 20px;
+}
+#brand-image img {
+	border-radius: 10px;
+	clear: both;
+	width: 150px;
+}
+#brand-image span {
+	color: #fff;
+    display: block;
+    font-size: 19px;
+    font-weight: bold;
+    margin-top: 10px;
+    width: 100%;
+}
+.sidebar.toggled #brand-image span {
+	font-size: 10px;
+}
 
 #posts-list {
 	display: flex;

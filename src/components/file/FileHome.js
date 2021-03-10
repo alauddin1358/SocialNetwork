@@ -4,7 +4,7 @@ import Topbar from '../dashboard/Topbar';
 import Footer from '../dashboard/Footer';
 
 import FileHeader from './FileHeader';
-import '../../css/fileStyle.css';
+
 import { Container } from 'reactstrap';
 import { BrowserRouter as Router } from 'react-router-dom';
 function FileHome() {

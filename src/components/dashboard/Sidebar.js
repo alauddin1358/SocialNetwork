@@ -5,10 +5,15 @@ const Sidebar = () => {
         <Fragment>
             <ul className="navbar-nav bgGradientPrimary sidebar sidebar-dark accordion" 
                     id="accordionSidebar">
-                    <Link to="/dashboard" className="sidebar-brand d-flex align-items-center justify-content-center" >
-                        <div className="sidebar-brand-text mx-3">World Intelligentsia Network</div>
+                    {/* <Link to="/dashboard" className="sidebar-brand d-flex align-items-center justify-content-center" >
+                        <div className="sidebar-brand-text mx-3">
+                            World Intelligentsia Network
+                        </div>
+                    </Link> */}
+                    <Link to="/dashboard" id="brand-image">
+                        <img src="img/Social_Fish2.png" alt="Agriculturist Logo"/>
+                        <span>Agriculturist</span>
                     </Link>
-
                     <hr className="sidebar-divider my-0" />
                     <li className="nav-item active">
                         <Link className="nav-link" to="/dashboard">

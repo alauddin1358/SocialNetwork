@@ -100,7 +100,7 @@ const Topbar = ({auth:{user, allUsers}, logout}) => {
                     <i className="fa fa-bars"></i>
                 </button>
 
-                <div className="dropdown">
+                <div className="dropdown" id="dashboard-header-dropdown">
                     <a className="btn dropdown-toggle" href="#" role="button" 
                        id="dropdownMenuLink" data-toggle="dropdown" 
                        aria-haspopup="true" aria-expanded="false">

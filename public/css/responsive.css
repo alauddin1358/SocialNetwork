@@ -61,6 +61,12 @@
 
 @media screen and (max-width: 500px)  
 {
+	#brand-image span {
+		font-size: 10px;
+	}
+	#dashboard-header-dropdown {
+		display: none;
+	}
 	/* #profile-image,
 	#profile-main-info {
 		text-align: center;

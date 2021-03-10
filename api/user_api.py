@@ -25,7 +25,7 @@ import pandas as pd
 import os
 from werkzeug.utils import secure_filename
 from itsdangerous import URLSafeTimedSerializer, SignatureExpired
-from flask_email_verifier import EmailVerifier
+
 # from flask_email_verifier import Client
 # from flask_email_verifier import exceptions
 UPLOAD_FOLDER = os.getcwd()
@@ -148,37 +148,40 @@ def protected():
 @app.route('/login', methods=['GET', 'POST'])
 @cross_origin(supports_credentials=True)
 def login():
-    _json = request.json
-    print(_json)
-    # _name = _json['name']
-    _email = _json['email']
-    _password = _json['password']
-    # if email & name is matched
-    response = mongo.db.userReg.find_one({'email': _email})
-    if response:
-        if response['emailconfirm']:
-            if bcrypt.check_password_hash(response['password'], _password):
-                # generating token and set token time 60 minutes
-                token = jwt.encode({'user': response['email'], 'exp': datetime.datetime.utcnow(
-                ) + datetime.timedelta(minutes=1060)}, app.config['SECRET_KEY'])
-                # usermail
+    try:
+        _json = request.json
+        print(_json)
+        # _name = _json['name']
+        _email = _json['email']
+        _password = _json['password']
+        # if email & name is matched
+        response = mongo.db.userReg.find_one({'email': _email})
+        if response:
+            if response['emailconfirm']:
+                if bcrypt.check_password_hash(response['password'], _password):
+                    # generating token and set token time 60 minutes
+                    token = jwt.encode({'user': response['email'], 'exp': datetime.datetime.utcnow(
+                    ) + datetime.timedelta(minutes=1060)}, app.config['SECRET_KEY'])
+                    # usermail
 
-                # returning the token
+                    # returning the token
+                    message = {
+                        'data': {'token': token.decode('UTF-8')},
+                        'result': {'isError': 'false', 'message': 'Login Successful', 'status': 200, }
+                    }
+                    return jsonify(message)
+            else:
                 message = {
-                    'data': {'token': token.decode('UTF-8')},
-                    'result': {'isError': 'false', 'message': 'Login Successful', 'status': 200, }
+                    'data': 'null',
+                    'result': {'isError': 'true', 'message': 'User Account is not activated', 'status': 401, }
                 }
                 return jsonify(message)
-        else:
-            message = {
-                'data': 'null',
-                'result': {'isError': 'true', 'message': 'User Account is not activated', 'status': 401, }
-            }
-            return jsonify(message)
-    message = {
-        'data': 'null', 'result': {'isError': 'true', 'message': 'Username or password is invalid', 'status': 401, }
-    }
-    return jsonify(message)
+        message = {
+            'data': 'null', 'result': {'isError': 'true', 'message': 'Username or password is invalid', 'status': 401, }
+        }
+        return jsonify(message)
+    except:
+        return internal_error()
     # return make_response(jsonify(message), 401, {'WWW-Authenticate': 'Basic realm="Login Required" '})
 
 # OTP varify and generate token
@@ -231,7 +234,8 @@ def add_user():
         _middlename = _json['middlename']
         _lastname = _json['lastname']
         _name = _firstname.strip() + ' ' + _middlename.strip() + ' ' + _lastname.strip()
-        print(_name)
+        _name = _name.strip()
+        print(_json)
         _user_category = _json['user_category']
         _student_type = _json['student_type']
         _job_type = _json['job_type']
@@ -244,7 +248,7 @@ def add_user():
         _referrer_name = _json['referrer_name']
         _referrer_email = _json['referrer_email']
         _emailconfirm = False
-        print(_emailconfirm)
+        print(_referrer_email)
         _password = bcrypt.generate_password_hash(
             _json['password']).decode('utf-8')
         _passwordconfirm = bcrypt.generate_password_hash(
@@ -265,7 +269,6 @@ def add_user():
         #     }
         #     return jsonify(message)
         if _name and _email and _password and request.method == 'POST' and (existing_user is None):
-
             # insert details and generate id
             # mongo.save_file(_file.filename, _file)
             _insertId = mongo.db.userReg.insert({'firstname': _firstname, 'middlename': _middlename, 'lastname': _lastname, 'name': _name,
@@ -280,7 +283,8 @@ def add_user():
             # mongo.db.upload.insert({'upload_file_name': _file.filename})
             # for json response
             print(_insertId)
-            token = safeSerializer.dumps(_referrer_email, salt='email-confirm')
+            token = safeSerializer.dumps(
+                _referrer_email, salt='email-confirm')
             msg = Message(subject='Account Confirmation',
                           sender='ali.ak133058@gmail.com', recipients=[_referrer_email])
             link = url_for('confirm_email', token=token,
@@ -288,7 +292,7 @@ def add_user():
             msg.body = """A user wants to create account using your reference.
             The user acivation link is {}""".format(link)
             msgReply = mail.send(msg)
-            print('Token = ', token)
+            print('Token = ', msgReply)
             message = {
                 'data': "null",
                 'result': {'isError': 'false', 'message': 'User data insert and mail sending successfully', 'status': 200, }
@@ -333,7 +337,7 @@ def confirm_email(token, id):
             msg = Message(subject='Account Confirmation',
                           sender='ali.ak133058@gmail.com', recipients=[_userEmail])
             link = url_for('confirm_account', _external=True)
-            msg.body = """Hello, Your account was successfully created in http://agriculturist.org
+            msg.body = """Hello, Your account was successfully created in https://www.agriculturist.org
             Please click the link to login"""
             msgReply = mail.send(msg)
     except SignatureExpired:

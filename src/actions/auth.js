@@ -87,7 +87,7 @@ export const getAllUsers = () => async dispatch => {
   }
 }
 // Register User
-export const register = ({form_data}) => async dispatch => {
+export const userRegister = ({form_data}) => async dispatch => {
     // const config = {
     //     headers : {
     //         'Content-Type':'application/json',

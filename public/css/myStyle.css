@@ -1,0 +1,9 @@
+#logo-image img{
+    height: 70px;
+    width: 70px;
+    margin-right: 5px;
+    padding-bottom: 10px;
+}
+#logo-image span {
+	font-size: 35px;
+}

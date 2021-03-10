@@ -2,41 +2,99 @@ import React, { useState } from 'react';
 import { connect } from 'react-redux';
 //import { bindActionCreators } from 'redux';
 import { Link } from 'react-router-dom';
-import { register } from '../../actions/auth';
+import { userRegister } from '../../actions/auth';
 import PropTypes from 'prop-types';
 //import { setAlert } from '../../actions/alert';
 import Alert from '../layout/Alert';
-import { Alert as AlertStrap } from 'reactstrap';
-const initialState = {
-    firstname: '',
-    middlename: '',
-    lastname: '',
-    user_category: '',
-    student_type: '',
-    job_type: '',
-    specialization_type: '',
-    email: '',
-    phone: '',
-    password: '',
-    passwordconfirm: '',
-    address: '',
-    country: '',
-    referrer_name: '',
-    referrer_email: '',
-    emailconfirm: false
-  }
-const Register = ({register, isAuthenticated}) => {
-    
+
+import { useForm } from "react-hook-form";
+
+// const initialState = {
+//     firstname: '',
+//     middlename: '',
+//     lastname: '',
+//     user_category: '',
+//     student_type: '',
+//     job_type: '',
+//     specialization_type: '',
+//     email: '',
+//     phone: '',
+//     password: '',
+//     passwordconfirm: '',
+//     address: '',
+//     country: '',
+//     referrer_name: '',
+//     referrer_email: '',
+//     emailconfirm: false
+//   }
+const Register = ({userRegister, isAuthenticated}) => {
+    const { register, handleSubmit, errors, getValues, reset } = useForm({
+        mode: 'onTouched',
+        });
+    const {password} = getValues();
+    const registerOptions = {
+        firstname: { 
+                maxLength: {
+                value: 6,
+                message: "Firstname consists of maximum 6 characters"
+            } 
+        },
+        middlename: { required: "Middlename is required" },
+        lastname: { 
+            maxLength: {
+            value: 10,
+            message: "Lastname consists of maximum 10 characters"
+            } 
+        },
+
+        user_category: {required: "User Category is required"},
+        email: { 
+            required: "Email is required",
+            pattern: {
+                value: /^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,4}$/i,
+                message: "Enter a valid e-mail address",
+              }
+        },
+        password: {
+            required: "Password is required",
+            minLength: {
+                value: 6,
+                message: "Password must have at least 6 characters"
+            }
+        },
+        phone: {
+            minLength: {
+                value: 6,
+                message: "Phone must have at least 6 characters"
+            },
+            maxLength: {
+                value: 15,
+                message: "Phone must have maximum 15 characters"
+            },
+            pattern: {
+                value: /^[0-9]+$/,
+                message: "Phone number contains only digit"
+            }
+        },
+        referrer_name: {required: "Referrer Name is required"},
+        referrer_email: {
+            required: "Referrer Email is required",
+            pattern: {
+                value: /^(([^<>()[\]\\.,;:!*&$#\s@"]+(\.[^<>()[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,4}))$/,
+                message: "Enter a valid e-mail address",
+              }
+        }
+    };
     const [file, setFile] = useState('');
     const [image, setImage] = useState('../../img/user-profile.png');
-    const [formData, setFormData] = useState(initialState);
+    // const [formData, setFormData] = useState(initialState);
     
-      const { firstname, middlename, lastname, user_category, email, phone,
-      password, passwordconfirm, address, country,
-       referrer_name, referrer_email } = formData;
+    // const { firstname, middlename, lastname, user_category, email, phone,
+    //    passwordconfirm, address, country,
+    //    referrer_name, referrer_email } = formData;
     
-    const onChange = (e) =>
-          setFormData({ ...formData, [e.target.name]: e.target.value });
+    // const onChange = (e) =>
+    //       setFormData({ ...formData, [e.target.name]: e.target.value });
     const imageHandler = (e) => {
         setFile(e.target.files[0]);
         var fileUpload = e.target.files[0];
@@ -54,36 +112,31 @@ const Register = ({register, isAuthenticated}) => {
         formData.append(key, object[key]);
         return formData;
     }, new FormData());
-    const onSubmit = async (e) => {
-        e.preventDefault();
-        
-        if(email === '' || referrer_email===''){
-            <AlertStrap color="danger">Email is required</AlertStrap>
-            //dispatch(setAlert('Email is required', 'danger'));
-        } 
-        else if(password === '' || passwordconfirm ==='') <AlertStrap color="danger">Password is required</AlertStrap>
-        else if (password !== passwordconfirm) {
-            <AlertStrap color="danger">Passwords do not match</AlertStrap>
-        }
-        // else if(email === referrer_email){
-        //     <AlertStrap color="danger">User email and referrer email must be different</AlertStrap>
-        // } 
-        else {
-            console.log(formData);
-            const form_data = getFormData(formData);
-            form_data.append('file', file);
-            form_data.append('image', image);
-            register({ form_data });  
-            setFormData(initialState); 
-        }    
+    const onSubmit = async (data) => {
+        //alert(data);
+        //e.preventDefault();
+        //console.log(formData);
+        const form_data = getFormData(data);
+        console.log(form_data);
+        //alert(JSON.stringify(form_data))
+        form_data.append('file', file);
+        form_data.append('image', image);
+        form_data.append('emailconfirm', false);
+        form_data.append('job_type','');
+        form_data.append('student_type','');
+        form_data.append('specialization_type','');
+        userRegister({ form_data });  
+        reset();
+        //setValue('');   
     };
+    
     // if(isAuthenticated) {
     //     return <Redirect to="/login" />
     // }
     return (
         <div>
             <div className="form-wrapper auth">
-		        <form onSubmit={onSubmit} id="registration-form">
+		        <form onSubmit={handleSubmit(onSubmit)} id="registration-form">
                     {/* <div id="brand-image">	
                         <img src="../../img/fish-logo.png" alt="logo" />
                     </div> */}
@@ -96,29 +149,30 @@ const Register = ({register, isAuthenticated}) => {
                             <input type="text" 
                                     name="firstname" 
                                     placeholder="Enter First Name"
-                                    value={firstname}
-                                    onChange={onChange}  />
+                                    ref={register(registerOptions.firstname)}
+                                      />
+                            
                             <input type="text"
                                    name="middlename" 
                                    placeholder="Enter Middle Name"
-                                   value={middlename}
-                                   onChange={onChange} />
+                                   ref={register(registerOptions.middlename)} />
                             <input type="text" 
                                    name="lastname" 
                                    placeholder="Enter Last Name"
-                                   value={lastname}
-                                   onChange={onChange} />
+                                   ref={register(registerOptions.lastname)}/>
                         </div>
                     </div>
+                    {errors.firstname && <span className="text-danger">{errors.firstname.message}</span>}
+                    {errors.middlename && <span className="text-danger">{errors.middlename.message}</span>}
+                    {errors.lastname && <span className="text-danger">{errors.lastname.message}</span>}
                     <div className="flex-inline items-3">
                         <label>User Category: *</label>
                         <div className="flex-inline">
                             <div className="select-wrapper">
                                 <select name="user_category"
-                                        value={user_category}
-                                        onChange={onChange}
+                                        ref={register(registerOptions.user_category)}
                                 >
-                                    <option value="">Select User Category</option>
+                                    <option value="">Select User Category </option>
                                     <option value="agriculture">Agriculture</option>  
                                     <option value="veterinary-science">Veterinary Science</option>  
                                     <option value="animal-husbandry">Animal Husbandry</option>  
@@ -131,47 +185,54 @@ const Register = ({register, isAuthenticated}) => {
                                     <option value="student">Student</option>  
                                 </select>
                             </div>
+                            
                         </div>
                     </div>
+                    {errors.user_category && <span className="text-danger">{errors.user_category.message}</span>}
                     <div className="flex-inline ">
                         <label>Email: *</label>
                         <input type="email" 
                                name="email" 
                                placeholder="Enter Email"
-                               value={email}
-                               onChange={onChange} />
+                               ref={register(registerOptions.email)} />
+                        
                     </div>
+                    {errors.email && <span className="text-danger">{errors.email.message}</span>}
                     <div className="flex-inline ">
                         <label>Phone: </label>
                         <input type="text" 
                                name="phone" 
                                placeholder="Enter Phone"
-                               value={phone}
-                               onChange={onChange} />
+                               ref={register(registerOptions.phone)} />
                     </div>
+                    {errors.phone && <span className="text-danger">{errors.phone.message}</span>}
                     <div className="flex-inline ">
                         <label htmlFor="password">Password: *</label>
                         <input type="password" 
                                name="password" 
                                placeholder="Enter Password"
-                               value={password}
-                               onChange={onChange} />
+                               ref={register(registerOptions.password)} />
                     </div>
+                    {errors.password && <span className="text-danger">{errors.password.message}</span>}
                     <div className="flex-inline ">
                         <label>Confirm Password: *</label>
                         <input type="password" 
                                name="passwordconfirm" 
-                               placeholder="Enter Password Again"
-                               value={passwordconfirm}
-                               onChange={onChange} />
+                               placeholder="Enter Password Again" 
+                               ref={register({
+                                        required: true, 
+                                        validate: value => value === password,
+                                   })}
+                               />
                     </div>
+                    {errors.passwordconfirm && errors.passwordconfirm.type === 'required' && <span className="text-danger">Confirm Password is required</span>}
+                    {errors.passwordconfirm && errors.passwordconfirm.type === 'validate' && <span className="text-danger">Password is not matched</span>}
                     <div className="flex-inline ">
                         <label>Address:</label>
                         <input type="text" 
                                 name="address" 
                                 placeholder="Enter Address"
-                                value={address}
-                                onChange={onChange} />
+                                ref={register} />
                     </div>
                     <div className="flex-inline ">
                         <label>Country:</label>
@@ -179,8 +240,7 @@ const Register = ({register, isAuthenticated}) => {
                             <select id="country" 
                                     name="country" 
                                     className="form-control"
-                                    value={country}
-                                    onChange={onChange}>
+                                    ref={register}>
                                 <option value="">Select Country</option>
                                 <option value="Afghanistan">Afghanistan</option>
                                 <option value="Åland Islands">Åland Islands</option>
@@ -454,18 +514,18 @@ const Register = ({register, isAuthenticated}) => {
                         <input type="text" 
                                 name="referrer_name" 
                                 placeholder="Enter Name"
-                                value={referrer_name}
-                                onChange={onChange} />
-                    </div> 
+                                ref={register(registerOptions.referrer_name)} />
+                    </div>
+                    {errors.referrer_name && <span className="text-danger">{errors.referrer_name.message}</span>} 
                     <div className="flex-inline ">
                         <label>Email: *</label>
                         <input type="email" 
                                 name="referrer_email" 
                                 placeholder="Enter Email"
-                                value={referrer_email}
-                                onChange={onChange} />
+                                ref={register(registerOptions.referrer_email)} />
+                       
                     </div>
-                
+                    {errors.referrer_email && <span className="text-danger">{errors.referrer_email.message}</span>}
                     <button>Registration</button>
                     <Alert />
                     <p text-align="center">* Marked fields are required. Please fill up these fields <br/><br/>
@@ -478,7 +538,7 @@ const Register = ({register, isAuthenticated}) => {
     )
 };
 Register.propTypes = {
-    register: PropTypes.func.isRequired,
+    userRegister: PropTypes.func.isRequired,
     isAuthenticated: PropTypes.bool
   };
   
@@ -493,4 +553,4 @@ const mapStateToProps = (state) => ({
 //         }, dispatch)
 //     }
 // }
-export default connect(mapStateToProps, {register})(Register);
+export default connect(mapStateToProps, {userRegister})(Register);
