@@ -12,6 +12,7 @@ import FilesList from './components/file/FilesList';
 import FileView from './components/file/FileView';
 import Profile from './components/profile/Profile';
 import ForgotPassword from './components/auth/ForgotPassword';
+import ResetPassword from './components/auth/ResetPassword';
 import ProfileSearchView from './components/profile/ProfileSearchView';
 import store from './store';
 import { BrowserRouter as Router, Route, Switch } from 'react-router-dom';
@@ -36,7 +37,7 @@ const App = () => {
               <Route exact path="/dashboard" component={ Dashboard } />
               <Route exact path="/login" component={ Login } />
               <Route exact path="/forgotpassword" component={ ForgotPassword } />
-              
+              <Route exact path="/resetpassword" component={ ResetPassword } />
               <PrivateRoute exact path="/postdetail" component={ PostDetail } />
               <PrivateRoute exact path="/post/:id" component={ Posts } />
               <Route exact path="/addpost" component={ AddPost } />

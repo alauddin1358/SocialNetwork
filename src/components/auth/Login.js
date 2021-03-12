@@ -11,7 +11,7 @@ import Alert from '../layout/Alert';
 import { useForm } from "react-hook-form";
 
 const Login = ({auth:{isAuthenticated, token}, login}) => {
-    const { register, handleSubmit, errors, reset, getValues } = useForm({
+    const { register, handleSubmit, errors, getValues } = useForm({
         mode: 'onTouched',
         });
     const { email, password } = getValues();
@@ -33,7 +33,7 @@ const Login = ({auth:{isAuthenticated, token}, login}) => {
     };
     const onSubmit = async () => {
         login(email, password);
-        reset();
+        //reset();
         //console.log('IsAuthenticated = ', isAuthenticated);
         
     };

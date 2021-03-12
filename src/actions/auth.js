@@ -20,17 +20,6 @@ const API = process.env.REACT_APP_API;
 // Load User
 export const loadUser = () => async dispatch => {
   console.log(API);
-  if(localStorage.token) {
-      console.log('calling Localstorage');
-      axios.defaults.headers.common['x-auth-token'] = localStorage.token;
-        //axios.defaults.headers.common['Authorization'] = token;
-      console.log("Token = ", localStorage.token);
-      //localStorage.setItem('token', token);
-      //setAuthToken(localStorage.token);
-  }
-  else {
-    axios.defaults.headers.common['x-auth-token']='';
-  }
   const config = {
     headers : {
         'Authorization': `Bearer ${localStorage.token}`,
@@ -47,6 +36,12 @@ export const loadUser = () => async dispatch => {
       dispatch({
         type: USER_LOADED,
         payload: JSON.parse(res.data.data)
+      });
+    }
+    else {
+      // dispatch(setAlert(res.data.result.message, 'danger'));
+      dispatch({
+        type: AUTH_ERROR
       });
     }
     
@@ -193,7 +188,7 @@ export const logout = () => dispatch => {
   
   //dispatch( { type : CLEAR_PROFILE });
   dispatch( {type: LOGOUT} );
-  window.location.replace("https://agriculturist.org");
+  window.location.replace("https://www.agriculturist.org");
   //window.location.replace("http://localhost:3000");
   //dispatch(loadUser());
 };

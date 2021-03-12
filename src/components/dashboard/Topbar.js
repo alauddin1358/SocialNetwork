@@ -49,7 +49,7 @@ const Topbar = ({auth:{user, allUsers}, logout}) => {
                         parts.map((part, index) => {
                         const className = part.highlight ? 'highlight' : null;
                         return (
-                                <span className={className}>{part.text}</span>                        
+                                <span className={className} key={index}>{part.text}</span>                        
                             );
                         })
                     }
@@ -73,9 +73,9 @@ const Topbar = ({auth:{user, allUsers}, logout}) => {
     const submitSearchData = async(e) => {
         e.preventDefault();
         let userData = allUsers.filter(user => user.name.toLowerCase() === value.toLowerCase());
-        console.log('User in search = ', userData)
         userData = Object.assign({}, userData[0]);
-        if (userData) {
+        console.log('User in search = ', userData)
+        if (userData.length > 0) {
             return(
                 <Link to={{
                     pathname: '/profile',

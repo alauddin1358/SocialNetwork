@@ -38,14 +38,14 @@ app = Flask(__name__)
 # random secrect key initialization
 app.secret_key = "thisisthesecretkey"
 # db config
-app.config['MONGO_URI'] = "mongodb://localhost:27017/userReg"
-# app.config['MONGO_URI'] = "mongodb://admin:iritadb2021@localhost:27020/userReg?authSource=admin"
+# app.config['MONGO_URI'] = "mongodb://localhost:27017/userReg"
+app.config['MONGO_URI'] = "mongodb://root:iritadb2021@127.0.0.1:27020/userReg?authSource=admin"
 # app.config['MONGO_URI'] = "mongodb://admin:iritadb2021@localhost:27020/userReg?authSource=admin"
 # configuration for flask-mail
-app.config["MAIL_SERVER"] = 'smtp.gmail.com'
+app.config["MAIL_SERVER"] = 'mail.iritatech.com'
 app.config["MAIL_PORT"] = 465
-app.config["MAIL_USERNAME"] = 'ali.ak133058@gmail.com'
-app.config['MAIL_PASSWORD'] = 'pqqtueejjyhgskii'
+app.config["MAIL_USERNAME"] = 'admin@iritatech.com'
+app.config['MAIL_PASSWORD'] = 'X5Y[qN!GM3Yu'
 
 app.config['MAIL_USE_TLS'] = False
 app.config['MAIL_USE_SSL'] = True
@@ -85,7 +85,8 @@ def token_required(f):
             }
             return jsonify(message)
         try:
-            data = jwt.decode(token, app.config['SECRET_KEY'])
+            data = jwt.decode(
+                token, app.config['SECRET_KEY'], algorithms=["HS256"])
             print(data)
             session['user'] = data['user']
         except:
@@ -163,10 +164,10 @@ def login():
                     token = jwt.encode({'user': response['email'], 'exp': datetime.datetime.utcnow(
                     ) + datetime.timedelta(minutes=1060)}, app.config['SECRET_KEY'])
                     # usermail
-
+                    print(token)
                     # returning the token
                     message = {
-                        'data': {'token': token.decode('UTF-8')},
+                        'data': {'token': token},
                         'result': {'isError': 'false', 'message': 'Login Successful', 'status': 200, }
                     }
                     return jsonify(message)
@@ -180,7 +181,8 @@ def login():
             'data': 'null', 'result': {'isError': 'true', 'message': 'Username or password is invalid', 'status': 401, }
         }
         return jsonify(message)
-    except:
+    except Exception as e:
+        print(e)
         return internal_error()
     # return make_response(jsonify(message), 401, {'WWW-Authenticate': 'Basic realm="Login Required" '})
 
@@ -286,13 +288,12 @@ def add_user():
             token = safeSerializer.dumps(
                 _referrer_email, salt='email-confirm')
             msg = Message(subject='Account Confirmation',
-                          sender='ali.ak133058@gmail.com', recipients=[_referrer_email])
+                          sender='admin@iritatech.com', recipients=[_referrer_email])
             link = url_for('confirm_email', token=token,
                            id=_insertId, _external=True)
             msg.body = """A user wants to create account using your reference.
             The user acivation link is {}""".format(link)
             msgReply = mail.send(msg)
-            print('Token = ', msgReply)
             message = {
                 'data': "null",
                 'result': {'isError': 'false', 'message': 'User data insert and mail sending successfully', 'status': 200, }
@@ -335,12 +336,18 @@ def confirm_email(token, id):
             _userEmail = user['email']
             token = safeSerializer.dumps(_userEmail, salt='email-confirm')
             msg = Message(subject='Account Confirmation',
-                          sender='ali.ak133058@gmail.com', recipients=[_userEmail])
+                          sender='admin@iritatech.com', recipients=[_userEmail])
             link = url_for('confirm_account', _external=True)
             msg.body = """Hello, Your account was successfully created in https://www.agriculturist.org
             Please click the link to login"""
             msgReply = mail.send(msg)
     except SignatureExpired:
+        _id = id
+        # print('Id in except = ', _id)
+        existing_user = mongo.db.userReg.find_one({'_id': ObjectId(_id)})
+        # print(existing_user)
+        if(existing_user):
+            mongo.db.userReg.delete_one({'_id': ObjectId(_id)})
         return '<h1>The session is expired! The user have to be registered again!</h1>'
     except:
         _id = id
@@ -351,6 +358,68 @@ def confirm_email(token, id):
             mongo.db.userReg.delete_one({'_id': ObjectId(_id)})
         return '<h1>The account is not registered</h1>'
     return '<h1>The account is activated! Now the user can login.</h1>'
+
+# Sending resetForm Link if Forget password
+
+
+@app.route('/forgotPassword', methods=['POST'])
+@cross_origin(supports_credentials=True)
+def forgotPassword():
+    try:
+        _json = request.json
+        print(_json)
+        _email = _json['email']
+        response = mongo.db.userReg.find_one({'email': _email})
+        if response:
+            token = safeSerializer.dumps(
+                _email, salt='email-confirm')
+            msg = Message(subject='Reset password',
+                          sender='admin@iritatech.com', recipients=[_email])
+            link = url_for('confirm_account', token=token, _external=True)
+            msg.body = """Click the link to reset password https://www.agriculturist.org/resetpassword"""
+            # msg.body = """Click the link to reset password https://www.agriculturist.org/resetpassword"""
+            mail.send(msg)
+            message = {
+                'data': "null",
+                'result': {'isError': 'false', 'message': 'A mail is sent your Email, click the link to resetPassword', 'status': 200, }
+            }
+            return jsonify(message)
+        else:
+            message = {
+                'data': "null",
+                'result': {'isError': 'true', 'message': 'Email does not exist, please enter registered email', 'status': 200, }
+            }
+            return jsonify(message)
+    except:
+        return internal_error()
+
+# Reset password
+
+
+@app.route('/resetPassword', methods=['POST'])
+@cross_origin(supports_credentials=True)
+def resetPassword():
+    try:
+        _json = request.json
+        _email = _json['email']
+        response = mongo.db.userReg.find_one({'email': _email})
+        _id = response['_id']
+        _password = bcrypt.generate_password_hash(
+            _json['password']).decode('utf-8')
+        _passwordconfirm = bcrypt.generate_password_hash(
+            _json['passwordconfirm']).decode('utf-8')
+        _update = mongo.db.userReg.update_one(
+            {'_id': ObjectId(_id)},
+            {'$set': {'password': _password, 'passwordconfirm': _passwordconfirm}}
+        )
+        message = {
+            'data': "null",
+            'result': {'isError': 'false', 'message': 'Reset password is successfull', 'status': 200, }
+        }
+        return jsonify(message)
+    except Exception as e:
+        print(e)
+        return internal_error()
 
 # Getting All user
 

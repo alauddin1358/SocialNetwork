@@ -4,9 +4,9 @@ import {
     DELETE_FILE,
     FILE_ERROR
   } from './types';
-  import {instance} from './instance';
-  import { setAlert } from './alert';
-  const API = process.env.REACT_APP_API;
+import {instance} from './instance';
+import { setAlert } from './alert';
+const API = process.env.REACT_APP_API;
 
 const config = {
     headers : {
@@ -42,6 +42,8 @@ export const getFile = () => async dispatch => {
 //Add File
 export const addFile = (formData) => async dispatch => {
       try {
+        console.log(API);
+        console.log(localStorage.token);
         const res = await instance.post(`${API}/file_upload`, formData, config);
         if(res.data.result.isError === 'true') {
             dispatch(setAlert(res.data.result.message, 'danger'));
