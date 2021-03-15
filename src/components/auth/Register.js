@@ -34,16 +34,22 @@ const Register = ({userRegister, isAuthenticated}) => {
     const {password} = getValues();
     const registerOptions = {
         firstname: { 
+                required: "Firstname is required",
                 maxLength: {
-                value: 6,
-                message: "Firstname consists of maximum 6 characters"
+                value: 20,
+                message: "Firstname consists of maximum 20 characters"
             } 
         },
-        middlename: { required: "Middlename is required" },
+        middlename: { 
+            maxLength: {
+                value: 20,
+                message: "Middlename consists of maximum 20 characters"
+            }  
+        },
         lastname: { 
             maxLength: {
-            value: 10,
-            message: "Lastname consists of maximum 10 characters"
+            value: 20,
+            message: "Lastname consists of maximum 20 characters"
             } 
         },
 
@@ -71,10 +77,10 @@ const Register = ({userRegister, isAuthenticated}) => {
                 value: 15,
                 message: "Phone must have maximum 15 characters"
             },
-            pattern: {
-                value: /^[0-9]+$/,
-                message: "Phone number contains only digit"
-            }
+            // pattern: {
+            //     value: /^[0-9]$/,
+            //     message: "Phone number contains only digit"
+            // }
         },
         referrer_name: {required: "Referrer Name is required"},
         referrer_email: {
@@ -125,8 +131,9 @@ const Register = ({userRegister, isAuthenticated}) => {
         form_data.append('job_type','');
         form_data.append('student_type','');
         form_data.append('specialization_type','');
-        userRegister({ form_data });  
-        reset();
+        let returnValue = userRegister({ form_data });  
+        console.log(returnValue);
+        //reset();
         //setValue('');   
     };
     

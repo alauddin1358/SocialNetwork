@@ -12,17 +12,16 @@ const initialState = {
     category: '',
     tags: ''
 }
-const NewPost = ({propsFromLink, isSuccess, addPost, getPost, post:{posts,post, loading}}) => {
+const NewPost = ({propsFromLink, addPost, post:{posts, loading}}) => {
     const [postData, setPostData] = useState(initialState)
+    const [isSubmit, setIsSubmit] = useState(false);
     useEffect(() => {
         let {id, edit} = propsFromLink;
         let post;
-        console.log('Posts in newPost = ', posts);
         if (edit) {
             //getPost(id);
             post = posts.filter((post) => post._id.$oid === id)
             post = Object.assign({}, post[0]);
-            console.log('Post Filter = ', post);
         } 
         console.log('Loading in newPost = ', loading);
         if (!loading && post) {
@@ -30,10 +29,8 @@ const NewPost = ({propsFromLink, isSuccess, addPost, getPost, post:{posts,post, 
           for (const key in post) {
             if (key in postData) {
                 postData[key] = post[key];
-                console.log(postData[key]);
             }
           }
-          console.log("Post Data = ", postData);
           setPostData(postData);
         }
       },[loading,posts, propsFromLink]);
@@ -43,10 +40,13 @@ const NewPost = ({propsFromLink, isSuccess, addPost, getPost, post:{posts,post, 
 
     const onPostSubmit = async (e) => {
         e.preventDefault();
-        console.log(postData);
         addPost(postData,  propsFromLink.id, propsFromLink.edit);
+        setIsSubmit(true);
     };
-    if(isSuccess) {
+    
+    if(isSubmit) {
+        // console.log('IsSubmit  ',isSubmit);
+        // setIsSubmit(false);
         return <Redirect to = "/dashboard" />;
     }
     return (

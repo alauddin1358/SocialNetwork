@@ -38,8 +38,8 @@ app = Flask(__name__)
 # random secrect key initialization
 app.secret_key = "thisisthesecretkey"
 # db config
-# app.config['MONGO_URI'] = "mongodb://localhost:27017/userReg"
-app.config['MONGO_URI'] = "mongodb://root:iritadb2021@127.0.0.1:27020/userReg?authSource=admin"
+app.config['MONGO_URI'] = "mongodb://localhost:27017/userReg"
+#app.config['MONGO_URI'] = "mongodb://root:iritadb2021@127.0.0.1:27020/userReg?authSource=admin"
 # app.config['MONGO_URI'] = "mongodb://admin:iritadb2021@localhost:27020/userReg?authSource=admin"
 # configuration for flask-mail
 app.config["MAIL_SERVER"] = 'mail.iritatech.com'
@@ -291,8 +291,8 @@ def add_user():
                           sender='admin@iritatech.com', recipients=[_referrer_email])
             link = url_for('confirm_email', token=token,
                            id=_insertId, _external=True)
-            msg.body = """A user wants to create account using your reference.
-            The user acivation link is {}""".format(link)
+            msg.body = """A user {} wants to create account using your reference.
+            The user acivation link is {}""".format(_name, link)
             msgReply = mail.send(msg)
             message = {
                 'data': "null",
