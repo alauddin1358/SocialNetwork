@@ -19,9 +19,7 @@ const Upload = ({props, addFile, file: {isSuccess}}) => {
   const [errorMsg, setErrorMsg] = useState('');
   //const [isPreviewAvailable, setIsPreviewAvailable] = useState(false); // state to show preview only for images
   const dropRef = useRef(); // React ref for managing the hover state of droppable area
-  console.log('====================================');
-  console.log('IsSuccess',isSuccess);
-  console.log('====================================');
+  
   const handleInputChange = (event) => {
     setState({
       ...state,

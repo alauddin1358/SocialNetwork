@@ -75,6 +75,7 @@ const Topbar = ({auth:{user, allUsers}, logout}) => {
         let userData = allUsers.filter(user => user.name.toLowerCase() === value.toLowerCase());
         userData = Object.assign({}, userData[0]);
         console.log('User in search = ', userData)
+        if(value === '') alert('User input search data is not given')
         if (userData.length > 0) {
             return(
                 <Link to={{
@@ -84,6 +85,9 @@ const Topbar = ({auth:{user, allUsers}, logout}) => {
                     }}} 
                 > {value} </Link> 
             )
+        }
+        else if(value !== '') {
+            alert('Searching user is not found')
         }
     } 
     const inputProps = {

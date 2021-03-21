@@ -32,9 +32,6 @@ const PostDetail = ({getPost, post:{post, loading}, match, auth:{user}}) => {
                                 <p>
                                 {post.body}
                                 </p>
-                                <p>
-                                    <img src={post.user.image} className="post-image"  alt="UserPictures" width="600" />
-                                </p>
                             </div>
                         </div>
                         <div className="card-body shadow mb-4">

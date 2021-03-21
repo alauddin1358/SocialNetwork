@@ -38,7 +38,12 @@ const Login = ({auth:{isAuthenticated, token}, login}) => {
         
     };
     if (isAuthenticated && token !== null) {
-        return <Redirect to="/dashboard" />;
+        return <Redirect to={{
+            pathname: '/dashboard',
+            state: {
+                showMyPost: false
+            }
+        }} />;
     }
     return (
         <Fragment>

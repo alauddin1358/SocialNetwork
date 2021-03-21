@@ -3671,6 +3671,7 @@ input[type='button'].btn-block {
 .input-group-prepend .btn,
 .input-group-append .btn {
   position: relative;
+  border: 1px solid green !important;
   z-index: 2;
 }
 

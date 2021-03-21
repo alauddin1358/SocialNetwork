@@ -237,7 +237,6 @@ def add_user():
         _lastname = _json['lastname']
         _name = _firstname.strip() + ' ' + _middlename.strip() + ' ' + _lastname.strip()
         _name = _name.strip()
-        print(_json)
         _user_category = _json['user_category']
         _student_type = _json['student_type']
         _job_type = _json['job_type']
@@ -262,14 +261,14 @@ def add_user():
                 'result': {'isError': 'true', 'message': 'Email is already exists', 'status': 200, }
             }
             return jsonify(message)
-        # existing_referrer = mongo.db.userReg.find_one(
-        #     {'referrer_email': _referrer_email})
-        # if(existing_referrer):
-        #     message = {
-        #         'data': "null",
-        #         'result': {'isError': 'true', 'message': 'Referrer Email is invalid or not exist in our system', 'status': 200, }
-        #     }
-        #     return jsonify(message)
+        existing_referrer = mongo.db.userReg.find_one(
+            {'email': _referrer_email})
+        if(existing_referrer is None):
+            message = {
+                'data': "null",
+                'result': {'isError': 'true', 'message': 'Referrer Email is invalid or not exist in our system', 'status': 200, }
+            }
+            return jsonify(message)
         if _name and _email and _password and request.method == 'POST' and (existing_user is None):
             # insert details and generate id
             # mongo.save_file(_file.filename, _file)
@@ -296,7 +295,7 @@ def add_user():
             msgReply = mail.send(msg)
             message = {
                 'data': "null",
-                'result': {'isError': 'false', 'message': 'User data insert and mail sending successfully', 'status': 200, }
+                'result': {'isError': 'false', 'message': 'Registration successfull, Mail has been sent to your referrer email. Tell your referrer to activate the link', 'status': 200, }
             }
             return jsonify(message)
         else:
@@ -381,7 +380,7 @@ def forgotPassword():
             mail.send(msg)
             message = {
                 'data': "null",
-                'result': {'isError': 'false', 'message': 'A mail is sent your Email, click the link to resetPassword', 'status': 200, }
+                'result': {'isError': 'false', 'message': 'A mail is sent to your Email, Click the link to reset password', 'status': 200, }
             }
             return jsonify(message)
         else:
@@ -534,53 +533,55 @@ def delete_user(id):
 
 @app.route('/update/<id>', methods=['PUT'])
 def update_user(id):
-    _id = id
-    _json = request.form
-    print(_id)
-    _firstname = _json['firstname']
-    print(_firstname)
-    _middlename = _json['middlename']
-    _lastname = _json['lastname']
-    _name = _firstname + ' ' + _middlename + ' ' + _lastname
-    _user_category = _json['user_category']
-    print(_user_category)
-    _student_type = _json['student_type']
-    _job_type = _json['job_type']
-    _specialization_type = _json['specialization_type']
-    _email = _json['email']
-    _phone = _json['phone']
-    _address = _json['address']
-    _country = _json['country']
-
-    _image = _json['viewImage']
-    print(_country)
-    _referrer_name = _json['referrer_name']
-    _referrer_email = _json['referrer_email']
-    _password = _json['password']
-    _passwordconfirm = _json['passwordconfirm']
-    if _name and _email and _id and request.method == 'PUT':
-        # update mongoDb (query,set)
-        mongo.db.userReg.update_one({'_id': ObjectId(_id['$oid']) if '$oid' in _id else ObjectId(_id)},
-                                    {'$set': {'firstname': _firstname, 'middlename': _middlename, 'lastname': _lastname,
-                                              'name': _name, 'email': _email, 'password': _password,
-                                              'passwordconfirm': _passwordconfirm, 'user_category': _user_category,
-                                              'student_type': _student_type, 'job_type': _job_type,
-                                              'specialization_type': _specialization_type, 'address': _address, 'phone': _phone,
-                                              'country': _country, 'image': _image, 'referrer_name': _referrer_name,
-                                              'referrer_email': _referrer_email,
-                                              'roles': [], 'groups': [], 'ts': [], 'friends': []}}
-                                    )
-        message = {
-            'data': "null",
-            'result': {'isError': 'false', 'message': 'User updated successfully', 'status': 200, }
-        }
-        return jsonify(message)
-    else:
-        message = {
-            'data': "null",
-            'result': {'isError': 'true', 'message': 'User not updated', 'status': 200, }
-        }
-        return jsonify(message)
+    try:
+        _id = id
+        _json = request.form
+        print(_id)
+        _firstname = _json['firstname']
+        print(_firstname)
+        _middlename = _json['middlename']
+        _lastname = _json['lastname']
+        _name = _firstname.strip() + ' ' + _middlename.strip() + ' ' + _lastname.strip()
+        _name = _name.strip()
+        _user_category = _json['user_category']
+        print(_user_category)
+        _student_type = _json['student_type']
+        _job_type = _json['job_type']
+        _specialization_type = _json['specialization_type']
+        _email = _json['email']
+        _phone = _json['phone']
+        _address = _json['address']
+        _country = _json['country']
+        _image = _json['viewImage']
+        _referrer_name = _json['referrer_name']
+        _referrer_email = _json['referrer_email']
+        _password = _json['password']
+        _passwordconfirm = _json['passwordconfirm']
+        if _name and _email and _id and request.method == 'PUT':
+            # update mongoDb (query,set)
+            mongo.db.userReg.update_one({'_id': ObjectId(_id['$oid']) if '$oid' in _id else ObjectId(_id)},
+                                        {'$set': {'firstname': _firstname, 'middlename': _middlename, 'lastname': _lastname,
+                                                  'name': _name, 'email': _email, 'password': _password,
+                                                  'passwordconfirm': _passwordconfirm, 'user_category': _user_category,
+                                                  'student_type': _student_type, 'job_type': _job_type,
+                                                  'specialization_type': _specialization_type, 'address': _address, 'phone': _phone,
+                                                  'country': _country, 'image': _image, 'referrer_name': _referrer_name,
+                                                  'referrer_email': _referrer_email,
+                                                  'roles': [], 'groups': [], 'ts': [], 'friends': []}}
+                                        )
+            message = {
+                'data': "null",
+                'result': {'isError': 'false', 'message': 'User updated successfully', 'status': 200, }
+            }
+            return jsonify(message)
+        else:
+            message = {
+                'data': "null",
+                'result': {'isError': 'true', 'message': 'User not updated', 'status': 200, }
+            }
+            return jsonify(message)
+    except:
+        return internal_error()
 
 
 @app.errorhandler(404)
@@ -960,31 +961,34 @@ def file_upload():
     #         'result': {'isError': 'false', 'message': 'Allowed image types are -> png, jpg, jpeg, gif', 'status': 200, }
     #     }
     #     return jsonify(message)
-    _file = request.files['file']
-    _json = request.form
-    print(_file.filename)
-    _title = _json['title']
-    _desc = _json['description']
-    _filedata = _json['filedata']
-    _filename = _file.filename
-    _file_mimetype = _file.content_type
-    # print(_image)
-    # print(_json)
+    try:
+        _file = request.files['file']
+        _json = request.form
+        print(_file.filename)
+        _title = _json['title']
+        _desc = _json['description']
+        _filedata = _json['filedata']
+        _filename = _file.filename
+        _file_mimetype = _file.content_type
+        # print(_image)
+        # print(_json)
 
-    user = mongo.db.userReg.find_one({'email': session['user']})
-    mongo.save_file(_file.filename, _file)
-    # # mongo.db.upload.insert(
-    # #     {'upload_file_name': _file.filename})
-    mongo.db.upload.insert(
-        {'title': _title, 'desc': _desc, 'filedata': _filedata, 'filename': _filename,
-         'file_mimetype': _file_mimetype, 'user': {'userId': user['_id']}, 'date': datetime.datetime.now()})
-    # mongo.db.upload.insert({'upload_file_name': _file.filename})
-    message = {
-        # 'data': dumps(_file.filename),
-        'data': "null",
-        'result': {'isError': 'false', 'message': 'File added', 'status': 200, }
-    }
-    return jsonify(message)
+        user = mongo.db.userReg.find_one({'email': session['user']})
+        mongo.save_file(_file.filename, _file)
+        # # mongo.db.upload.insert(
+        # #     {'upload_file_name': _file.filename})
+        mongo.db.upload.insert(
+            {'title': _title, 'desc': _desc, 'filedata': _filedata, 'filename': _filename,
+             'file_mimetype': _file_mimetype, 'user': {'userId': user['_id']}, 'date': datetime.datetime.now()})
+        # mongo.db.upload.insert({'upload_file_name': _file.filename})
+        message = {
+            # 'data': dumps(_file.filename),
+            'data': "null",
+            'result': {'isError': 'false', 'message': 'File added', 'status': 200, }
+        }
+        return jsonify(message)
+    except:
+        return internal_error()
 
 # sending file
 
@@ -1001,33 +1005,41 @@ def file(filename):
 @app.route('/fileDelete/<id>', methods=['DELETE'])
 @cross_origin(supports_credentials=True)
 def fileDelete(id):
-    print(id)
-    existing_file = mongo.db.upload.find_one({'_id': ObjectId(id)})
-    if existing_file and request.method == 'DELETE':
-        # mongo query for pull specific friend from other userRegs
-        # mongo.db.posts.update_many(
-        #     {}, {'$pull': {'friends': DBRef(collection="userReg", id=ObjectId(id))}})
-        # # mongo query for deleting specific id
-        post = mongo.db.upload.delete_one({'_id': ObjectId(id)})
-        # for json response
+    try:
+        print(id)
+        existing_file = mongo.db.upload.find_one({'_id': ObjectId(id)})
+        if existing_file and request.method == 'DELETE':
+            # mongo query for pull specific friend from other userRegs
+            # mongo.db.posts.update_many(
+            #     {}, {'$pull': {'friends': DBRef(collection="userReg", id=ObjectId(id))}})
+            # # mongo query for deleting specific id
+            post = mongo.db.upload.delete_one({'_id': ObjectId(id)})
+            # for json response
+            message = {
+                'data': "null",
+                'result': {'isError': 'false', 'message': 'File deleted successfully', 'status': 200, }
+            }
+            return jsonify(message)
+        else:
+            return not_found()
+    except:
+        return internal_error()
+
+
+@app.route('/getAllFiles/<id>')
+def getfile(id):
+    try:
+        _id = id
+        files = mongo.db.upload.find(
+            {'user.userId': ObjectId(_id)}).sort("date", -1)
         message = {
-            'data': "null",
-            'result': {'isError': 'false', 'message': 'File deleted successfully', 'status': 200, }
+            # 'data': dumps(_file.filename),
+            'data': dumps(files),
+            'result': {'isError': 'false', 'message': 'File data return', 'status': 200, }
         }
         return jsonify(message)
-    else:
-        return not_found()
-
-
-@app.route('/getAllFiles')
-def getfile():
-    files = mongo.db.upload.find().sort("date", -1)
-    message = {
-        # 'data': dumps(_file.filename),
-        'data': dumps(files),
-        'result': {'isError': 'false', 'message': 'File data return', 'status': 200, }
-    }
-    return jsonify(message)
+    except:
+        return internal_error()
 # @app.route('/image_upload', methods=['POST'])
 # def image_upload():
 

@@ -1,7 +1,7 @@
 import React, { Fragment, useEffect } from 'react';
 import Register from './components/auth/Register';
 import Login from './components/auth/Login';
-import Dashboard from './components/dashboard/Dashboard';
+import HomePage from './components/dashboard/HomePage';
 import PostDetail from './components/posts/PostDetail';
 import Posts from './components/posts/Posts';
 import AddPost from './components/posts/AddPost';
@@ -30,11 +30,12 @@ const App = () => {
   return (
     <Provider store={store}>
       <Router>
+       
         <Fragment>
           <Route exact path="/" component={ Login } />
             <Switch>
               <Route exact path="/register" component={ Register } />
-              <Route exact path="/dashboard" component={ Dashboard } />
+              <Route exact path="/dashboard" component={ HomePage } />
               <Route exact path="/login" component={ Login } />
               <Route exact path="/forgotpassword" component={ ForgotPassword } />
               <Route exact path="/resetpassword" component={ ResetPassword } />
@@ -51,6 +52,7 @@ const App = () => {
             </Switch>
           
         </Fragment>
+
       </Router>
     </Provider>
   );

@@ -29,14 +29,14 @@ body {
 .react-autosuggest__input {
   display: block;
   width: 350px;
-  padding: 0.65rem 0.75rem;
+  padding: 0.48rem 0.60rem;
   font-size: 1rem;
   font-weight: 400;
   line-height: 1.5;
   color: #6e707e;
   background-color:#f8f9fc!important;
   background-clip: padding-box;
-  border: 0;
+  border: 1px solid green;
   border-radius: 0.35rem;
   transition: border-color 0.15s ease-in-out, box-shadow 0.15s ease-in-out;
 }
@@ -46,7 +46,7 @@ body {
   background-color: #fff;
   border-color: #bac8f3;
   outline: 0;
-  box-shadow: 0 0 0 0.2rem rgba(78, 115, 223, 0.25);
+  /* box-shadow: 0 0 0 0.2rem rgba(78, 115, 223, 0.25); */
 }
 
 .react-autosuggest__container--open .react-autosuggest__input {

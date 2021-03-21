@@ -3,6 +3,7 @@ import { Link } from 'react-router-dom';
 import formatDate from '../../utils/formatDate';
 
 const PostItem = ({deletePost, postOwner, post:{_id, title, body, date,user}}) => {
+    //console.log('Id in postItem', _id);
     return (
         <div className="card-body">
             <h5><Link to={`/post/${_id.$oid}`}>
@@ -24,7 +25,7 @@ const PostItem = ({deletePost, postOwner, post:{_id, title, body, date,user}}) =
                         comment
                     </Link>
                 </small>
-                {postOwner.name === user.status ? (<small>
+                {postOwner._id.$oid === user.userId.$oid ? (<small>
                     <i className="fas fa-pen"></i>
                     <Link to={{
                         pathname: '/addpost',
@@ -36,7 +37,7 @@ const PostItem = ({deletePost, postOwner, post:{_id, title, body, date,user}}) =
                         edit
                     </Link>
                 </small>):null }
-                { postOwner.name === user.status ?
+                { postOwner._id.$oid === user.userId.$oid ?
                 (<small>
                     <i className="fa fa-trash" aria-hidden="true"></i>
                     <Link to="/dashboard" onClick={()=>deletePost(_id.$oid)}>

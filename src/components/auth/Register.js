@@ -6,6 +6,7 @@ import { userRegister } from '../../actions/auth';
 import PropTypes from 'prop-types';
 //import { setAlert } from '../../actions/alert';
 import Alert from '../layout/Alert';
+import Compress from "browser-image-compression";
 
 import { useForm } from "react-hook-form";
 
@@ -101,17 +102,96 @@ const Register = ({userRegister, isAuthenticated}) => {
     
     // const onChange = (e) =>
     //       setFormData({ ...formData, [e.target.name]: e.target.value });
-    const imageHandler = (e) => {
+    function processfile(blob, options) {
+        // read the files
+        var reader = new FileReader();
+        reader.readAsArrayBuffer(blob);
+        var resized;
+        reader.onload = function (event) {
+          // blob stuff
+          var blob = new Blob([event.target.result]); // create blob...
+          window.URL = window.URL || window.webkitURL;
+          var blobURL = window.URL.createObjectURL(blob); // and get it's URL
+          
+          // helper Image object
+          var image = new Image();
+          image.src = blobURL;
+          image.onload = function() {
+            // have to wait till it's loaded
+            resized = resizeMe(image, options); // resized image url
+            setImage(resized);
+            console.log('Resize image = ', resized);
+          }
+        };
+        // console.log('Resize image = ', resized);
+        // return resized;
+    }
+    
+    // === RESIZE ====
+    
+    function resizeMe(img, options) {
+      
+      var canvas = document.createElement('canvas');
+    
+      var width = img.width;
+      var height = img.height;
+    
+      // calculate the width and height, constraining the proportions
+      if (width > height) {
+        if (width > options.maxWidth) {
+          //height *= max_width / width;
+          height = Math.round(height *= options.maxWidth / width);
+          width = options.maxWidth;
+        }
+      } else {
+        if (height > options.max_height) {
+          //width *= max_height / height;
+          width = Math.round(width *= options.max_height / height);
+          height = options.max_height;
+        }
+      }
+      
+      // resize the canvas and draw the image data into it
+      canvas.width = width;
+      canvas.height = height;
+      var ctx = canvas.getContext("2d");
+      ctx.drawImage(img, 0, 0, width, height);
+      
+      return canvas.toDataURL("image/jpeg",0.5); // get the data from canvas as 70% JPG (can be also PNG, etc.)
+      
+      // you can get BLOB too by using canvas.toBlob(blob => {});
+    
+    }
+    const imageHandler = async (e) => {
         setFile(e.target.files[0]);
         var fileUpload = e.target.files[0];
+        //var convertedBlobFile;
+        const options = {
+            //maxSizeMB: 1.5,
+            maxWidth: 300, // the max width of the output image, defaults to 1920px
+            maxHeight: 300, // the max height of the output image, defaults to 1920px
+            resize: true,
+            useWebWorker: true
+        }
+        
         const reader = new FileReader();
-        reader.onload = () =>{
+        reader.onload = async () =>{
             if(reader.readyState === 2){
-            setImage(reader.result)
+                try{
+                    const compressedFile = await Compress(fileUpload, options)
+                    console.log(compressedFile);
+                    processfile(compressedFile, options);
+                    // var compressURL = URL.createObjectURL(compressedFile);
+                    // console.log('image',compressURL)
+                }
+                catch(e){
+                    // Show the user a toast message or notification that something went wrong while compressing file
+                    alert('File size must be less than 20MB');
+                    console.log('Error in compress = ',e);
+                }
             }
         }
-        if(fileUpload) reader.readAsDataURL(e.target.files[0])
-    
+        if(fileUpload) reader.readAsDataURL(fileUpload)
     };
     
     const getFormData = object => Object.keys(object).reduce((formData, key) => {
@@ -131,8 +211,7 @@ const Register = ({userRegister, isAuthenticated}) => {
         form_data.append('job_type','');
         form_data.append('student_type','');
         form_data.append('specialization_type','');
-        let returnValue = userRegister({ form_data });  
-        console.log(returnValue);
+        userRegister({ form_data })
         //reset();
         //setValue('');   
     };

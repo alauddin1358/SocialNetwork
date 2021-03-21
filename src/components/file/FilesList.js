@@ -17,8 +17,8 @@ const FilesList = ({getFile, deleteFile, auth, file:{files}}) => {
   const [errorMsg, setErrorMsg] = useState('');
   
   useEffect(() => {
-    getFile();
-  }, [getFile]);
+    getFile(auth.user._id.$oid);
+  }, [getFile, auth.user._id.$oid]);
 
   // const getFilesList = async () => {
   //   try {

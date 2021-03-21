@@ -17,9 +17,9 @@ const config = {
     }
 };
 //Get FILE 
-export const getFile = () => async dispatch => {
+export const getFile = (id) => async dispatch => {
     try {
-        const {data} = await instance.get(`${API}/getAllFiles`, config);
+        const {data} = await instance.get(`${API}/getAllFiles/${id}`, config);
         if(data.result.isError === 'true') {
             dispatch(setAlert(data.result.message, 'danger'));
           }
@@ -53,7 +53,7 @@ export const addFile = (formData) => async dispatch => {
               type: ADD_FILE,
               payload: res.data
             });
-            dispatch(getFile());
+            //dispatch(getFile());
             dispatch(setAlert('File Added', 'success'));
           }
       } catch (error) {
