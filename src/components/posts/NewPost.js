@@ -8,9 +8,7 @@ import Alert from '../layout/Alert';
 import '../../css/style.css';
 const initialState = {
     title : '',
-    body : '',
-    category: '',
-    tags: ''
+    body : ''
 }
 const NewPost = ({propsFromLink, addPost, post:{posts, loading}}) => {
     const [postData, setPostData] = useState(initialState)
@@ -34,7 +32,7 @@ const NewPost = ({propsFromLink, addPost, post:{posts, loading}}) => {
           setPostData(postData);
         }
       },[loading,posts, propsFromLink]);
-    const { title, body, category, tags } = postData;
+    const { title, body } = postData;
     const onChange = (e) =>
         setPostData({ ...postData, [e.target.name]: e.target.value });
 
@@ -77,7 +75,7 @@ const NewPost = ({propsFromLink, addPost, post:{posts, loading}}) => {
                                         onChange={onChange} >
                                 </textarea>
                             </div>
-                            <div className="form-group">
+                            {/* <div className="form-group">
                                 <label htmlFor="category">Category</label>
                                     <select className="form-control" id="category" 
                                             name="category"  value={category}
@@ -95,7 +93,7 @@ const NewPost = ({propsFromLink, addPost, post:{posts, loading}}) => {
                                             placeholder="Enter Tags"
                                             name="tags" value={tags}
                                             onChange={onChange} />
-                            </div>
+                            </div> */}
                             <button type="submit" className="btn btn-primary">Add Post</button>
                             <Alert />
                         </form>

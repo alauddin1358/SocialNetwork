@@ -16,10 +16,14 @@ const FilesList = ({getFile, deleteFile, auth, file:{files}}) => {
   //const [filesList, setFilesList] = useState([]);
   const [errorMsg, setErrorMsg] = useState('');
   
-  useEffect(() => {
+  // useEffect(() => {
+  //   if(!auth.loading){
+  //     getFile(auth.user._id.$oid);
+  //   }
+  // }, [getFile]);
+  if(!auth.loading){
     getFile(auth.user._id.$oid);
-  }, [getFile, auth.user._id.$oid]);
-
+  }
   // const getFilesList = async () => {
   //   try {
   //     const {data} = await axios.get(`${API}/getAllFiles`);

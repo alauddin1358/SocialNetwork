@@ -3,7 +3,7 @@ import { Link } from 'react-router-dom';
 import formatDate from '../../utils/formatDate';
 
 const PostItem = ({deletePost, postOwner, post:{_id, title, body, date,user}}) => {
-    //console.log('Id in postItem', _id);
+    console.log('Id in postItem', _id);
     return (
         <div className="card-body">
             <h5><Link to={`/post/${_id.$oid}`}>
@@ -19,8 +19,7 @@ const PostItem = ({deletePost, postOwner, post:{_id, title, body, date,user}}) =
                 <small><i className="fa fa-user"></i>
                     Author: {user.status}
                 </small>
-                <small>
-                    <i className="fa fa-comments" aria-hidden="true"></i>
+                <small><i className="fa fa-comments"></i>
                     <Link to={`/post/${_id.$oid}`}>
                         comment
                     </Link>

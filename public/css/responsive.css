@@ -62,7 +62,7 @@
 @media screen and (max-width: 500px)  
 {
 	#brand-image span {
-		font-size: 10px;
+		font-size: 10px !important;
 	}
 	#dashboard-header-dropdown {
 		display: none;

@@ -2,7 +2,7 @@ import React, { Fragment, useEffect } from 'react';
 import { Link, Redirect } from 'react-router-dom';
 import { connect } from 'react-redux';
 import { logout } from '../../actions/auth';
-import { getAllUsers } from '../../actions/auth'
+import { getAllUsers, loadUser } from '../../actions/auth'
 import Topbar from './Topbar';
 import Pages from './Pages';
 import Sidebar from './Sidebar';
@@ -11,13 +11,14 @@ import PropTypes from 'prop-types';
 import Alert from '../layout/Alert';
 
 
-const Dashboard = ({props, logout,getAllUsers, auth:{isAuthenticated}}) => {
+const Dashboard = ({props, logout,getAllUsers, loadUser, auth:{isAuthenticated, token}}) => {
     useEffect(() => {
         console.log('calling useEffect in Dashboard');
+        loadUser();
         getAllUsers();
-      }, [getAllUsers]);
+      }, [loadUser, getAllUsers]);
     // console.log('IsAuthenticated', isAuthenticated);
-    if(!isAuthenticated) {
+    if(!isAuthenticated && token === null) {
         return <Redirect to="/login" />
     }
     //console.log(' Props dashboard = ',props);
@@ -75,4 +76,4 @@ Dashboard.propTypes = {
 const mapStateToProps = (state) => ({
     auth: state.auth
 });
-export default connect(mapStateToProps, { logout, getAllUsers})(Dashboard);
+export default connect(mapStateToProps, { logout, loadUser, getAllUsers})(Dashboard);

@@ -1,4 +1,5 @@
 import React, { Fragment } from 'react'
+import Slider from '../advertisement/ImageSlider';
 const Advertisement = () => {
     return (
         <Fragment>
@@ -9,10 +10,13 @@ const Advertisement = () => {
                     </div>
                     <div id="advertisements" className="card-body">
                         <div className="advertisement">
-                            <img src='../../img/mujibborsho.jpg' alt="Agriculture"/>
+                            <Slider />
                         </div>
                         <div className="advertisement">
-                            <img src='../../img/quarterfinal.jpg' alt="Agriculture"/>
+                            <Slider />
+                        </div>
+                        <div className="advertisement">
+                            <Slider />
                         </div>
                     </div>
                 </div>

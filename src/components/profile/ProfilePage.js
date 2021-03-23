@@ -220,7 +220,7 @@ const ProfilePage = ({auth: {user, loading, allUsers}, loadUser, updateProfile, 
                                         {!isSearch ? <Link to="/profile" className="pen" data-toggle="modal" data-target="#myModal">
                                             <i className="fas fa-pen"></i>
                                         </Link> : null}
-                                        <p><label>Student</label>{user.student_type}</p>
+                                        <p><label>User Category</label>{user.user_category}</p>
                                         <p><label>Job</label>{user.job_type}</p>
                                         <p><label>Specialization</label>{user.specialization_type}</p>
                                     </div>

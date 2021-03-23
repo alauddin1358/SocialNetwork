@@ -14,6 +14,7 @@ import Profile from './components/profile/Profile';
 import ForgotPassword from './components/auth/ForgotPassword';
 import ResetPassword from './components/auth/ResetPassword';
 import ProfileSearchView from './components/profile/ProfileSearchView';
+import ImageSlider from './components/advertisement/ImageSlider';
 import store from './store';
 import { BrowserRouter as Router, Route, Switch } from 'react-router-dom';
 import { Provider } from 'react-redux';
@@ -30,7 +31,6 @@ const App = () => {
   return (
     <Provider store={store}>
       <Router>
-       
         <Fragment>
           <Route exact path="/" component={ Login } />
             <Switch>
@@ -48,6 +48,7 @@ const App = () => {
               <Route exact path="/view/:filename" component={FileView}  />
               <Route exact path="/profile" render={(props) => <Profile {...props}/>}  />
               <Route exact path="/search" component={ProfileSearchView}  />
+              <Route exact path="/slider" component={ImageSlider}  />
               
             </Switch>
           

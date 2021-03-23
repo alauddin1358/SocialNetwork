@@ -37,7 +37,8 @@ const Topbar = ({auth:{user, allUsers}, logout}) => {
         const matches = AutosuggestHighlightMatch(suggestionText, query);
         const parts = AutosuggestHighlightParse(suggestionText, matches);
         return (
-          <span className={'suggestion-content ' + user.image}>
+          <span className="suggestion-content">
+            {/* <img src={user.image} alt="user" /> */}
             <span className="name">
                 <Link to={{
                                 pathname: '/profile',
@@ -104,7 +105,7 @@ const Topbar = ({auth:{user, allUsers}, logout}) => {
                     <i className="fa fa-bars"></i>
                 </button>
 
-                <div className="dropdown" id="dashboard-header-dropdown">
+                <div id="dashboard-header-dropdown" className="dropdown">
                     <a className="btn dropdown-toggle" href="#" role="button" 
                        id="dropdownMenuLink" data-toggle="dropdown" 
                        aria-haspopup="true" aria-expanded="false">

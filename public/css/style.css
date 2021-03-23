@@ -44,8 +44,8 @@ p {
 .sidebar-dark .nav-item .nav-link {
     color: #fff;
 }
-.bg-gradient-primary {
-    background-color: #34A853;
+.bgGradientPrimary {
+    background-color: #34A853 !important;
     background-image: none;
     background-size: cover;
 }
@@ -121,11 +121,15 @@ p {
 }
 .advertisement {
 	background-color: #ddd;
-	height: 300px;
+	height: 300px !important;
 	display: inline-block;
-	width: 100%;
+	max-width: 100%;
 }
-
+.advertisement span {
+	background-color: red;
+	width: 100px;
+	height: 100px;
+}
 /* --- Details Page --- */
 #post-details {
 	margin-top: 30px;

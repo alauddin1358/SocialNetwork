@@ -16,8 +16,9 @@ const Pages = ({ getPosts, deletePost, auth:{user}, post: {posts, loading}, prop
             posts = posts.filter((post) => user._id.$oid === post.user.userId.$oid)
         }
     }
-    // console.log('Posts in pages', posts);
-    // console.log('Loading in pages ', loading);
+    console.log('Posts in pages', posts);
+    console.log('Loading in pages ', loading);
+    console.log('Auth in post', user);
     return (
         <Fragment>
             <div className="container-fluid">
@@ -35,9 +36,9 @@ const Pages = ({ getPosts, deletePost, auth:{user}, post: {posts, loading}, prop
                             </div>
                             <div id="posts-list" className="card-body">
                                 <div className="post-card card">
-                                        {loading || posts === null ?(<Spinner />) : (posts.map((post) => (
-                                            <PostItem key={post._id.$oid} post={post} postOwner={user} deletePost={deletePost} />
-                                        ))) }
+                                        {user === null ? (<Spinner />) : (posts.length <= 0 ? (<Spinner />) : (posts.map((post) => (
+                                            <PostItem key={post._id.$oid} post={post} postOwner={user} deletePost={deletePost} /> 
+                                        )))) }
                                 </div>
                             </div>
                         </div>

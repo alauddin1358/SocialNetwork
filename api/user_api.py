@@ -321,7 +321,7 @@ def confirm_email(token, id):
         _id = id
         # print('ID = ', _id)
         _email = safeSerializer.loads(
-            token, salt='email-confirm', max_age=3600)
+            token, salt='email-confirm', max_age=None)
         _emailconfirm = True
         _date = datetime.datetime.now()
         _update = mongo.db.userReg.update_one(
@@ -626,8 +626,8 @@ def create_post(id):
     _id = id
     _title = _json['title']
     _body = _json['body']
-    _category = _json['category']
-    _tags = _json['tags']
+    # _category = _json['category']
+    # _tags = _json['tags']
     _post_date = datetime.datetime.now()
     print(session)
     print(_id)
@@ -636,9 +636,7 @@ def create_post(id):
             try:
                 postId = mongo.db.posts.update_one({'_id': ObjectId(_id['$oid']) if '$oid' in _id else ObjectId(_id)},
                                                    {'$set': {
-                                                       'title': _title, 'body': _body,
-                                                       'category': _category,
-                                                       'tags': _tags, 'date': _post_date
+                                                       'title': _title, 'body': _body, 'date': _post_date
                                                    }
                 })
                 print('PostId = ', postId)
@@ -662,8 +660,8 @@ def create_post(id):
             insertData = mongo.db.posts.insert({
                 'title': _title,
                 'body': _body,
-                'category': _category,
-                'tags': _tags,
+                # 'category': _category,
+                # 'tags': _tags,
                 'user': {
                     'userId': user['_id'],
                     'status': user['name'],

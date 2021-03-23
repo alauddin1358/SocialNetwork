@@ -34,7 +34,7 @@ export const getPosts = () => async dispatch => {
       payload: JSON.parse(res.data.data)
     });
   } catch (err) {
-    console.log("Error = ", err);
+    console.log("Error in GetPost ", err);
     dispatch({
       type: POST_ERROR,
       payload: err.response

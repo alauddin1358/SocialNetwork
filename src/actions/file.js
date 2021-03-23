@@ -78,7 +78,7 @@ export const addFile = (formData) => async dispatch => {
               type: DELETE_FILE,
               payload: id
             });
-            dispatch(getFile());
+            //dispatch(getFile());
             dispatch(setAlert('File Deleted', 'success'));
         } 
       } catch (error) {
