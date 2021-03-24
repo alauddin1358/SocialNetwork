@@ -32,7 +32,7 @@ const App = () => {
     <Provider store={store}>
       <Router>
         <Fragment>
-          <Route exact path="/" component={ Login } />
+          <Route exact path="/" component={ HomePage } />
             <Switch>
               <Route exact path="/register" component={ Register } />
               <Route exact path="/dashboard" component={ HomePage } />

@@ -1,5 +1,5 @@
-import $ from 'jquery';
-
+(function($) {
+  "use strict"; // Start of use strict
 
   // Toggle the side navigation
   $("#sidebarToggle, #sidebarToggleTop").on('click', function(e) {
@@ -53,4 +53,4 @@ import $ from 'jquery';
     e.preventDefault();
   });
 
-// End of use strict
+})(jQuery); // End of use strict

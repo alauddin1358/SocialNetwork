@@ -3,13 +3,12 @@ import { Link, Redirect } from 'react-router-dom';
 import { connect } from 'react-redux';
 import { logout } from '../../actions/auth';
 import { getAllUsers, loadUser } from '../../actions/auth'
-import Topbar from './Topbar';
-import Pages from './Pages';
-import Sidebar from './Sidebar';
-import Footer from './Footer';
+import TopSidebar from './TopSidebar';
+// import Pages from './Pages';
+// import Sidebar from './Sidebar';
+// import Footer from './Footer';
+// import Alert from '../layout/Alert';
 import PropTypes from 'prop-types';
-import Alert from '../layout/Alert';
-
 
 const Dashboard = ({props, logout,getAllUsers, loadUser, auth:{isAuthenticated, token}}) => {
     useEffect(() => {
@@ -25,15 +24,7 @@ const Dashboard = ({props, logout,getAllUsers, loadUser, auth:{isAuthenticated, 
     return (
             <Fragment>
                 <div id="wrapper">
-                    <Sidebar />
-                    <div id="content-wrapper" className="d-flex flex-column">
-                        <div id="content">
-                            <Topbar />
-                            <Alert />
-                            <Pages props={props}/>
-                        </div>
-                        <Footer />
-                    </div> 
+                    <TopSidebar props={props}/>
                 </div>
             
             

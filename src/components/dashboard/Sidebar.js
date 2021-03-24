@@ -1,4 +1,4 @@
-import React, { Fragment, useState } from 'react'
+import React, { Fragment} from 'react'
 import { Link } from 'react-router-dom';
 
 const Sidebar = () => {
@@ -31,7 +31,7 @@ const Sidebar = () => {
                         </Link>
                     </li>
                     <li className="nav-item">
-                        <a className="nav-link collapsed" href="#" data-toggle="collapse" data-target="#collapsePosts"
+                        <a className="nav-link collapsed" href="/#" data-toggle="collapse" data-target="#collapsePosts"
                             aria-expanded="true" aria-controls="collapsePosts">
                             <i className="fas fa-user-plus" aria-hidden="true"></i>
                             <span>Posts</span> 
@@ -56,7 +56,7 @@ const Sidebar = () => {
                     </li>
                     
                     <li className="nav-item">
-                        <a className="nav-link collapsed" href="#" data-toggle="collapse" data-target="#collapseFiles"
+                        <a className="nav-link collapsed" href="/#" data-toggle="collapse" data-target="#collapseFiles"
                             aria-expanded="true" aria-controls="collapseFiles">
                             <i className="fas fa-fw fa-folder"></i>
                             <span>Files</span> 

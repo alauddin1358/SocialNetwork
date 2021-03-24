@@ -59,7 +59,7 @@ class CommentItem extends Component {
         }
     }
     render() {
-        console.log("Comment List = ", this.props.comment);
+        //console.log("Comment List = ", this.props.comment);
         return (
             <Fragment>
                 <div className="card-body">

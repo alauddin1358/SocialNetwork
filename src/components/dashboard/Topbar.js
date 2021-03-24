@@ -6,7 +6,6 @@ import { logout } from '../../actions/auth';
 import Autosuggest from 'react-autosuggest';
 import AutosuggestHighlightMatch from 'autosuggest-highlight/match';
 import AutosuggestHighlightParse from 'autosuggest-highlight/parse';
-
 const Topbar = ({auth:{user, allUsers}, logout}) => {
     const [value, setValue] = useState('');
     const [suggestions, setSuggestions] = useState([]);
@@ -105,22 +104,32 @@ const Topbar = ({auth:{user, allUsers}, logout}) => {
     return (
         <Fragment>
             <nav className="navbar navbar-expand navbar-light 
-                        bg-white topbar mb-4 static-top shadow">
+                    bg-white topbar mb-4 static-top shadow">
                 <button id="sidebarToggleTop" onClick={toggleClass}
                         className="btn btn-link d-md-none rounded-circle mr-3">
                     <i className="fa fa-bars"></i>
                 </button>
 
                 <div id="dashboard-header-dropdown" className="dropdown">
-                    <a className="btn dropdown-toggle" href="#" role="button" 
-                       id="dropdownMenuLink" data-toggle="dropdown" 
-                       aria-haspopup="true" aria-expanded="false">
+                    <a className="btn dropdown-toggle" href="/#" role="button" 
+                    id="dropdownMenuLink" data-toggle="dropdown" 
+                    aria-haspopup="true" aria-expanded="false">
                             Applications
                     </a>
                     <div className="dropdown-menu dropdown-menu-left shadow animated--fade-in"
-                         aria-labelledby="dropdownMenuLink">
-                        <a className="dropdown-item" href="#">Pages</a>
-                        <a className="dropdown-item" href="#">Groups</a>
+                        aria-labelledby="dropdownMenuLink">
+                        <Link className="dropdown-item" to={{
+                            pathname: '/dashboard',
+                            state: {
+                                showMyPost: false
+                            }
+                        }}>Pages</Link>
+                        <Link className="dropdown-item" to={{
+                            pathname: '/dashboard',
+                            state: {
+                                showMyPost: false
+                            }
+                        }}>Groups</Link>
                     </div>
                 </div>
                 
@@ -142,10 +151,10 @@ const Topbar = ({auth:{user, allUsers}, logout}) => {
                         </div>
                     </div>  
                 </form>
-                    
+                
                 <ul className="navbar-nav ml-auto">  
                     <li className="nav-item dropdown no-arrow d-sm-none">
-                        <a className="nav-link dropdown-toggle" href="#" 
+                        <a className="nav-link dropdown-toggle" href="/#" 
                             id="searchDropdown" role="button"
                             data-toggle="dropdown" aria-haspopup="true" 
                             aria-expanded="false">
@@ -153,13 +162,13 @@ const Topbar = ({auth:{user, allUsers}, logout}) => {
                         </a>
                         <div className="dropdown-menu dropdown-menu-right p-3 
                                     shadow animated--grow-in"
-                              aria-labelledby="searchDropdown">
+                            aria-labelledby="searchDropdown">
                             <form className="form-inline mr-auto w-100 navbar-search">
                                 <div className="input-group">
                                     <input type="text" 
-                                           className="form-control bg-light border-0 small"
-                                           placeholder="Search for..." aria-label="Search"
-                                           aria-describedby="basic-addon2" />
+                                        className="form-control bg-light border-0 small"
+                                        placeholder="Search for..." aria-label="Search"
+                                        aria-describedby="basic-addon2" />
                                     <div className="input-group-append">
                                         <button className="btn btn-primary" type="button">
                                             <i className="fas fa-search fa-sm"></i>
@@ -171,17 +180,17 @@ const Topbar = ({auth:{user, allUsers}, logout}) => {
                     </li>
 
                     <li className="nav-item dropdown no-arrow mx-1">
-                        <a className="nav-link dropdown-toggle" href="" 
-                           id="alertsDropdown" role="button"
-                           data-toggle="dropdown" aria-haspopup="true" 
-                           aria-expanded="false">
+                        <a className="nav-link dropdown-toggle" href="/#" 
+                        id="alertsDropdown" role="button"
+                        data-toggle="dropdown" aria-haspopup="true" 
+                        aria-expanded="false">
                                 <i className="fas fa-bell fa-fw"></i>
                                 <span className="badge badge-danger badge-counter"></span>
                         </a>
                     </li>
 
                     <li className="nav-item dropdown no-arrow mx-1">
-                        <a  className="nav-link dropdown-toggle" href="" 
+                        <a  className="nav-link dropdown-toggle" href="/#" 
                             id="messagesDropdown" role="button"
                             data-toggle="dropdown" aria-haspopup="true" 
                             aria-expanded="false">
@@ -196,7 +205,7 @@ const Topbar = ({auth:{user, allUsers}, logout}) => {
                     </div>
 
                     <li className="nav-item dropdown no-arrow">
-                        <a href="#" className="nav-link dropdown-toggle" 
+                        <a href="/#" className="nav-link dropdown-toggle" 
                             id="userDropdown" role="button"
                             data-toggle="dropdown" aria-haspopup="true" 
                             aria-expanded="false">
@@ -209,7 +218,7 @@ const Topbar = ({auth:{user, allUsers}, logout}) => {
                         </a>
                         <div className="dropdown-menu dropdown-menu-right 
                                     shadow animated--grow-in"
-                             aria-labelledby="userDropdown">
+                            aria-labelledby="userDropdown">
                             <Link  className="dropdown-item" to="/profile">
                                 <i className="fas fa-user fa-sm fa-fw mr-2 text-gray-400"></i>
                                     Profile
@@ -217,7 +226,7 @@ const Topbar = ({auth:{user, allUsers}, logout}) => {
                             <div className="dropdown-divider">
 
                             </div>
-                            <a href="" className="dropdown-item" 
+                            <a href="/#" className="dropdown-item" 
                                 data-toggle="modal" data-target="#logoutModal">
                                     <i className="fas fa-sign-out-alt fa-sm fa-fw mr-2 text-gray-400"></i>
                                     Logout
@@ -225,8 +234,9 @@ const Topbar = ({auth:{user, allUsers}, logout}) => {
                         </div>
                     </li>
                 </ul>
-                
             </nav>
+                    
+            
             {/* {searchUser.length > 0 ? 
                         <ListGroup className="list-group">
                             {searchUser.map(user=>(<ListGroupItem key={user.key}><Link to="/profile">{user.name}</Link></ListGroupItem>))}
