@@ -4,7 +4,7 @@ import Sidebar from '../dashboard/Sidebar';
 import Footer from '../dashboard/Footer';
 import ProfilePage from './ProfilePage';
 const Profile = (props) => {
-    console.log('Props in profile', props);
+    //console.log('Props in profile', props);
     return (
         <Fragment>
             <div id="wrapper">

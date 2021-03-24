@@ -28,7 +28,7 @@ export const getPosts = () => async dispatch => {
   };
   try {
     const res = await instance.get(`${API}/getAllPost`,config);
-    console.log('All posts = ',JSON.parse(res.data.data));
+    //console.log('All posts = ',JSON.parse(res.data.data));
     dispatch({
       type: GET_POSTS,
       payload: JSON.parse(res.data.data)
@@ -52,9 +52,9 @@ export const addPost = (postData, id, edit=false) => async dispatch => {
         }
     };
     try {
-      console.log('Id in addpost = ', id);
+      //console.log('Id in addpost = ', id);
       const res = await instance.post(`${API}/posts/${id}`, postData,config);
-      console.log('Post Response', res.data);
+      //console.log('Post Response', res.data);
       if(res.data.result.isError === 'true') {
         dispatch(setAlert(res.data.result.message, 'danger'));
       }
@@ -80,7 +80,7 @@ export const addPost = (postData, id, edit=false) => async dispatch => {
 
   // Get post
 export const getPost = id => async dispatch => {
-  console.log("Calling GetPost = ", id);
+  //console.log("Calling GetPost = ", id);
   const config = {
     headers : {
         'Authorization': `Bearer ${localStorage.token}`,
@@ -91,7 +91,7 @@ export const getPost = id => async dispatch => {
   };
   try {
     const res = await instance.get(`${API}/get_post/${id}`,config);
-    console.log("Getting Post = ", res.data.data);
+    //console.log("Getting Post = ", res.data.data);
     if(res.data.result.isError === 'true') {
       dispatch(setAlert(res.data.result.message, 'danger'));
     }
@@ -111,7 +111,7 @@ export const getPost = id => async dispatch => {
 };
 //Delete Post
 export const deletePost = id => async dispatch => {
-  console.log("Calling Deletpost = ", id);
+  //console.log("Calling Deletpost = ", id);
   const config = {
     headers : {
         'Authorization': `Bearer ${localStorage.token}`,
@@ -122,7 +122,7 @@ export const deletePost = id => async dispatch => {
   };
   try {
     const res = await instance.delete(`${API}/delete_post/${id}`,config);
-    console.log("Getting Delete Data = ", res.data);
+    //console.log("Getting Delete Data = ", res.data);
     if(res.data.result.isError === 'true') {
       dispatch(setAlert(res.data.result.message, 'danger'));
     }
@@ -153,7 +153,7 @@ export const addComment = (postId, formData) => async dispatch => {
   };
   try {
     const res = await instance.post(`${API}/comments/${postId}`, formData,config);
-    console.log(res.data);
+    //console.log(res.data);
     if(res.data.result.isError === 'true') {
       dispatch(setAlert(res.data.result.message, 'danger'));
     }
@@ -214,10 +214,10 @@ export const updateComment = (postId, commentId, cmntBody) => async dispatch => 
         'Access-Control-Allow-Credentials': true
     }
   };
-  console.log('Comment Id in update Comment = ',typeof {cmntBody});
+  //console.log('Comment Id in update Comment = ',typeof {cmntBody});
   try {
     const res = await instance.put(`${API}/update_comment/${postId}/${commentId}`,{cmntBody},config);
-    console.log('Update comment', res.data);
+    //console.log('Update comment', res.data);
     if(res.data.result.isError === 'true') {
       dispatch(setAlert(res.data.result.message, 'danger'));
     }

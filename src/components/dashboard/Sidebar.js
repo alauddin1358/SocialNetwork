@@ -1,10 +1,13 @@
-import React, { Fragment } from 'react'
+import React, { Fragment, useState } from 'react'
 import { Link } from 'react-router-dom';
+
 const Sidebar = () => {
+    
     return (
         <Fragment>
             <ul className="navbar-nav bgGradientPrimary sidebar sidebar-dark accordion" 
                     id="accordionSidebar">
+                    
                     <Link to={{
                         pathname: '/dashboard',
                         state: {
@@ -78,4 +81,5 @@ const Sidebar = () => {
         </Fragment>
     )
 }
+
 export default Sidebar;

@@ -16,9 +16,9 @@ const Pages = ({ getPosts, deletePost, auth:{user}, post: {posts, loading}, prop
             posts = posts.filter((post) => user._id.$oid === post.user.userId.$oid)
         }
     }
-    console.log('Posts in pages', posts);
-    console.log('Loading in pages ', loading);
-    console.log('Auth in post', user);
+    // console.log('Posts in pages', posts);
+    // console.log('Loading in pages ', loading);
+    // console.log('Auth in post', user);
     return (
         <Fragment>
             <div className="container-fluid">

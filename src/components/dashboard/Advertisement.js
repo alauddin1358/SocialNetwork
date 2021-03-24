@@ -1,5 +1,6 @@
 import React, { Fragment } from 'react'
-import Slider from '../advertisement/ImageSlider';
+import RectangleSlider from '../advertisement/ImageSlider';
+import SquareSlider from '../advertisement/SquareSlider';
 const Advertisement = () => {
     return (
         <Fragment>
@@ -9,14 +10,14 @@ const Advertisement = () => {
                         
                     </div>
                     <div id="advertisements" className="card-body">
-                        <div className="advertisement">
-                            <Slider />
+                        <div className="video-advert">
+                            <i className="fas fa-video" style={{ fontSize:"180px"}}></i>
                         </div>
                         <div className="advertisement">
-                            <Slider />
+                            <RectangleSlider />
                         </div>
-                        <div className="advertisement">
-                            <Slider />
+                        <div className="small-advert">
+                            <SquareSlider />
                         </div>
                     </div>
                 </div>

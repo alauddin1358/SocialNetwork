@@ -10,12 +10,18 @@ import AutosuggestHighlightParse from 'autosuggest-highlight/parse';
 const Topbar = ({auth:{user, allUsers}, logout}) => {
     const [value, setValue] = useState('');
     const [suggestions, setSuggestions] = useState([]);
-    
-    
+    const [addClass, setAddClass] = useState(false);
+    let sidebarClass = ["sidebar"];
+    if(addClass) {
+        sidebarClass.push('toggled');
+    }
+    const toggleClass = () => {
+        console.log('Class = ',addClass)
+        setAddClass(!addClass);
+    }
     function escapeRegexCharacters(str) {
         return str.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
     }
-      
     function getSuggestions(value) {
         const escapedValue = escapeRegexCharacters(value.trim());
         
@@ -100,7 +106,7 @@ const Topbar = ({auth:{user, allUsers}, logout}) => {
         <Fragment>
             <nav className="navbar navbar-expand navbar-light 
                         bg-white topbar mb-4 static-top shadow">
-                <button id="sidebarToggleTop" 
+                <button id="sidebarToggleTop" onClick={toggleClass}
                         className="btn btn-link d-md-none rounded-circle mr-3">
                     <i className="fa fa-bars"></i>
                 </button>

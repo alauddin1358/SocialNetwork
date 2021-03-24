@@ -31,7 +31,7 @@ export const loadUser = () => async dispatch => {
   try {
    
     const res = await instance.get(`${API}/user`, config);
-    console.log('Auth response = ',JSON.parse(res.data.data));
+    //console.log('Auth response = ',JSON.parse(res.data.data));
     if(res.data.result.isError === 'false') {
       dispatch({
         type: USER_LOADED,
@@ -94,7 +94,7 @@ export const userRegister = ({form_data}) => async dispatch => {
   try {
     console.log(API);
     const res = await axios.post(`${API}/add`, form_data);
-    console.log('Users data', res.data);
+    //console.log('Users data', res.data);
     if(res.data.result.isError === 'true') {
       dispatch(setAlert(res.data.result.message, 'danger'));
     }
@@ -131,7 +131,7 @@ export const login = (email, password) => async dispatch => {
   
   try {
     const res = await axios.post(`${API}/login`, body, config);
-    console.log('Login response', res.data.data);
+    //console.log('Login response', res.data.data);
     if(res.data.result.isError === 'true') {
       dispatch(setAlert(res.data.result.message, 'danger'));
     }
@@ -165,11 +165,11 @@ export const updateProfile = (id, {form_data}) => async dispatch => {
           'Access-Control-Allow-Credentials': true
       }
     };
-    console.log("id = ", id);
-    console.log("Updated Formdata", {form_data});
+    // console.log("id = ", id);
+    // console.log("Updated Formdata", {form_data});
     try {
     const res = await instance.put(`${API}/update/${id}`, form_data,config);
-    console.log('Profile Updated', res.data);
+    //console.log('Profile Updated', res.data);
     if(res.data.result.isError === 'true') {
       dispatch(setAlert(res.data.result.message, 'danger'));
     }

@@ -120,16 +120,29 @@ p {
 	row-gap: 20px;
 }
 .advertisement {
-	background-color: #ddd;
+	background-color:#fff !important;
 	height: 300px !important;
+	display: inline-block;
+	width: 200px;
+}
+.small-advert {
+	background-color:#fff !important;
+	height: 200px !important;
+	display: inline-block;
+	width: 200px;
+}
+.video-advert {
+	background-color:#fff !important;
+	height: 200px !important;
 	display: inline-block;
 	max-width: 100%;
 }
-.advertisement span {
-	background-color: red;
-	width: 100px;
-	height: 100px;
-}
+/* .video-advert i {
+	background-color: white !important; 
+	width: 100%;
+	height: 200px;
+	border: 1px solid black;
+} */
 /* --- Details Page --- */
 #post-details {
 	margin-top: 30px;

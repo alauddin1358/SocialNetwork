@@ -33,9 +33,9 @@ const ProfilePage = ({auth: {user, loading, allUsers}, loadUser, updateProfile, 
     const [showImageFlag, setShowImageFlag] = useState(false)
     const [formData, setFormData] = useState(initialState);
     useEffect(() => {
-        console.log('Calling profilePage useEffect');
+        //console.log('Calling profilePage useEffect');
         if (!user) loadUser();
-        console.log('Loading = ', loading);
+        //console.log('Loading = ', loading);
         if (!loading && user) {
           const profileData = { ...initialState };
           for (const key in user) {
@@ -176,7 +176,7 @@ const ProfilePage = ({auth: {user, loading, allUsers}, loadUser, updateProfile, 
         form_data.append('student_type',student_type);
         form_data.append('job_type',job_type);
         form_data.append('specialization_type', specialization_type)
-        console.log('Form Data = ', form_data);
+        //console.log('Form Data = ', form_data);
         const returnValue = updateProfile(user._id.$oid, {form_data});
         console.log('Return Value = ', returnValue);
     

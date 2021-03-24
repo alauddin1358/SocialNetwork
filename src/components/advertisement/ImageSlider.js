@@ -16,10 +16,10 @@ const Slide = (props) => {
     // };
     const imageStyle = {
         height: "300px",
-        maxWidth: "100%",
-        padding: "0",
-        margin: "0",
-        fontSize: "20px"
+        width: "200px",
+        padding: "0px",
+        margin: "0px",
+        fontSize: "100px"
     }
     return (
       <React.Fragment>
