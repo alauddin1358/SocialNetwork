@@ -21,7 +21,7 @@
 }
 
 /* Tablet PC */
-@media screen and (max-width: 999px)  {
+@media screen and (max-width: 1024px)  {
 	.auth #login-text-container, 
 	.auth #login-form-container {
 		height: auto;
@@ -57,6 +57,10 @@
 	.auth #profile-view label {
 		width: 100%;
 	}
+	.react-autosuggest__input {
+		display: block;
+		width: 160px !important;
+	}
 }
 
 @media screen and (max-width: 500px)  
@@ -66,6 +70,10 @@
 	}
 	#dashboard-header-dropdown {
 		display: none;
+	}
+	.react-autosuggest__input {
+		display: block;
+		width: 150px !important;
 	}
 	/* #profile-image,
 	#profile-main-info {

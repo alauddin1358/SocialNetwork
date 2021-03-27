@@ -26,7 +26,7 @@ const UploadImage = () => {
           }
         }
         const urlFile = reader.readAsDataURL(e.target.files[0])
-        console.log('URL = ',reader);
+        console.log('URL = ',urlFile);
        
       };
       const getFormData = object => Object.keys(object).reduce((formData, key) => {
@@ -99,7 +99,7 @@ const UploadImage = () => {
                                    />
                                </div>
                                <div className="full-row">
-                                   <a href="">Remove Image</a>
+                                   <a href="/#">Remove Image</a>
                                </div>
                                <div className="full-row">
                                    <img src={fileimg} alt="profile" />

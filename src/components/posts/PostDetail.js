@@ -13,7 +13,7 @@ const PostDetail = ({getPost, post:{post, loading}, match, auth:{user}}) => {
         console.log("Calling Getpost in useeffect");
         getPost(match.params.id);
     }, [getPost, match.params.id]);
-    console.log("postDetail = ", post);
+    //console.log("postDetail = ", post);
     //console.log("postDetail postId = ",post._id.$oid);
     return loading || post === null ? (
         <Spinner />

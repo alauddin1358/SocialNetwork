@@ -14,7 +14,7 @@ const FileView = ({match}) => {
         viewFile(match.params.filename);
     }, [match.params.filename])
     
-    console.log("Match Params = ", match.params);
+    //console.log("Match Params = ", match.params);
     const [numPages, setNumPages] = useState(null);
     const [pageNumber, setPageNumber] = useState(1);
     const [errorMsg, setErrorMsg] = useState('');
@@ -25,7 +25,7 @@ const FileView = ({match}) => {
           const result = await axios.get(`${API}/file/${filename}`, {
             responseType: 'blob'
           });
-          console.log("File Return Data = ", result.data);
+          //console.log("File Return Data = ", result.data);
           const fileURL = URL.createObjectURL(result.data)
           setFileURL(fileURL);
           setErrorMsg('');

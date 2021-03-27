@@ -38,8 +38,8 @@ app = Flask(__name__)
 # random secrect key initialization
 app.secret_key = "thisisthesecretkey"
 # db config
-# app.config['MONGO_URI'] = "mongodb://localhost:27017/userReg"
-app.config['MONGO_URI'] = "mongodb://root:iritadb2021@127.0.0.1:27020/userReg?authSource=admin"
+app.config['MONGO_URI'] = "mongodb://localhost:27017/userReg"
+# app.config['MONGO_URI'] = "mongodb://root:iritadb2021@127.0.0.1:27020/userReg?authSource=admin"
 # app.config['MONGO_URI'] = "mongodb://admin:iritadb2021@localhost:27020/userReg?authSource=admin"
 # configuration for flask-mail
 app.config["MAIL_SERVER"] = 'mail.iritatech.com'
@@ -56,7 +56,7 @@ app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
 # Session(app)
 CORS(app, supports_credentials=True)
 mail = Mail(app)
-#verifier = EmailVerifier(app)
+# verifier = EmailVerifier(app)
 # EMAIL_VERIFIER_KEY = 'at_4WGDL75Kbnd4H7dLhDHOKZU6E0xY5'
 
 # connects to the mongoDB server
@@ -425,7 +425,6 @@ def resetPassword():
 
 @app.route('/getAllUser')
 @cross_origin(supports_credentials=True)
-@token_required
 def getAllUser():
 
     # mongo query for finding all value
@@ -508,17 +507,21 @@ def user(id):
 
 # delete specific user
 
-
 @app.route('/delete_ac/<id>', methods=['DELETE'])
+@cross_origin(supports_credentials=True)
 @token_required
 def delete_user(id):
     existing_user = mongo.db.userReg.find_one({'_id': ObjectId(id)})
     if existing_user and request.method == 'DELETE':
-        # mongo query for pull specific friend from other userRegs
-        mongo.db.userReg.update_many(
-            {}, {'$pull': {'friends': DBRef(collection="userReg", id=ObjectId(id))}})
+        # mongo query for pull specific comment from posts
+        mongo.db.posts.update_many(
+            {}, {'$pull': {'comments': {'user.userId': ObjectId(id)}}})
+        # Delete all posts for this user
+        mongo.db.posts.delete_many({'user.userId': ObjectId(id)})
+        # Delete all files for this user
+        mongo.db.upload.delete_many({'user.userId': ObjectId(id)})
         # mongo query for deleting specific id
-        users = mongo.db.userReg.delete_one({'_id': ObjectId(id)})
+        mongo.db.userReg.delete_one({'_id': ObjectId(id)})
         # for json response
         message = {
             'data': "null",
@@ -531,7 +534,9 @@ def delete_user(id):
 # update user info
 
 
-@app.route('/update/<id>', methods=['PUT'])
+@ app.route('/update/<id>', methods=['PUT'])
+@ cross_origin(supports_credentials=True)
+@ token_required
 def update_user(id):
     try:
         _id = id
@@ -569,6 +574,12 @@ def update_user(id):
                                                   'referrer_email': _referrer_email,
                                                   'roles': [], 'groups': [], 'ts': [], 'friends': []}}
                                         )
+            mongo.db.posts.update_many({'user.userId': ObjectId(_id['$oid']) if '$oid' in _id else ObjectId(_id)},
+                                       {'$set': {'user.image': _image}})
+            mongo.db.posts.update_many(
+                {'comments.user.userId': ObjectId(_id)},
+                {'$set': {'comments.$.user.image': _image}}
+            )
             message = {
                 'data': "null",
                 'result': {'isError': 'false', 'message': 'User updated successfully', 'status': 200, }
@@ -584,7 +595,7 @@ def update_user(id):
         return internal_error()
 
 
-@app.errorhandler(404)
+@ app.errorhandler(404)
 def not_found(error=None):
     message = {
         'data': "null",
@@ -593,7 +604,7 @@ def not_found(error=None):
     return jsonify(message)
 
 
-@app.errorhandler(400)
+@ app.errorhandler(400)
 def bad_request(error=None):
     message = {
         'data': "null",
@@ -602,7 +613,7 @@ def bad_request(error=None):
     return jsonify(message)
 
 
-@app.errorhandler(500)
+@ app.errorhandler(500)
 def internal_error(error=None):
     message = {
         'data': "null",
@@ -617,9 +628,9 @@ def internal_error(error=None):
 # user post
 
 
-@app.route('/posts/<id>', methods=['POST'])
-@cross_origin(supports_credentials=True)
-@token_required
+@ app.route('/posts/<id>', methods=['POST'])
+@ cross_origin(supports_credentials=True)
+@ token_required
 def create_post(id):
     # receiving from post
     _json = request.json
@@ -684,9 +695,9 @@ def create_post(id):
             return jsonify(message)
 
 
-@app.route('/getAllPost', methods=['GET'])
-@cross_origin(supports_credentials=True)
-@token_required
+@ app.route('/getAllPost', methods=['GET'])
+@ cross_origin(supports_credentials=True)
+@ token_required
 def getAllpost():
     if request.method == 'GET':
         posts = mongo.db.posts.find().sort("date", -1)
@@ -699,9 +710,9 @@ def getAllpost():
         return not_found()
 
 
-@app.route('/get_post/<id>', methods=['GET'])
-@cross_origin(supports_credentials=True)
-@token_required
+@ app.route('/get_post/<id>', methods=['GET'])
+@ cross_origin(supports_credentials=True)
+@ token_required
 def get_post(id):
     # print(ObjectId(id))
     post = mongo.db.posts.find_one({'_id': ObjectId(id)})
@@ -718,9 +729,9 @@ def get_post(id):
         return not_found()
 
 
-@app.route('/delete_post/<id>', methods=['DELETE'])
-@cross_origin(supports_credentials=True)
-@token_required
+@ app.route('/delete_post/<id>', methods=['DELETE'])
+@ cross_origin(supports_credentials=True)
+@ token_required
 def delete_post(id):
     existing_post = mongo.db.posts.find_one({'_id': ObjectId(id)})
     if existing_post and request.method == 'DELETE':
@@ -739,9 +750,9 @@ def delete_post(id):
         return not_found()
 
 
-@app.route('/delete_post', methods=['DELETE'])
-@cross_origin(supports_credentials=True)
-@token_required
+@ app.route('/delete_post', methods=['DELETE'])
+@ cross_origin(supports_credentials=True)
+@ token_required
 def delete_posts():
     post = mongo.db.posts.delete_many({})
     # for json response
@@ -753,9 +764,9 @@ def delete_posts():
 # user comment
 
 
-@app.route('/comments/<id>', methods=['POST'])
-@cross_origin(supports_credentials=True)
-@token_required
+@ app.route('/comments/<id>', methods=['POST'])
+@ cross_origin(supports_credentials=True)
+@ token_required
 def new_comment(id):
     try:
         # receving post id fro comment
@@ -800,9 +811,9 @@ def new_comment(id):
 # Comment Updated
 
 
-@app.route('/update_comment/<pid>/<cid>', methods=['PUT'])
-@cross_origin(supports_credentials=True)
-@token_required
+@ app.route('/update_comment/<pid>/<cid>', methods=['PUT'])
+@ cross_origin(supports_credentials=True)
+@ token_required
 def update_comment(pid, cid):
     try:
         _json = request.json
@@ -866,9 +877,9 @@ def update_comment(pid, cid):
 # delete comment
 
 
-@app.route('/delete_comment/<pid>/<cid>', methods=['DELETE'])
-@cross_origin(supports_credentials=True)
-@token_required
+@ app.route('/delete_comment/<pid>/<cid>', methods=['DELETE'])
+@ cross_origin(supports_credentials=True)
+@ token_required
 def delete_comment(pid, cid):
     try:
         # # mongo query for deleting specific id
@@ -887,7 +898,7 @@ def delete_comment(pid, cid):
 # comment reply
 
 
-@app.route('/comments/<pid>/<cid>', methods=['POST'])
+@ app.route('/comments/<pid>/<cid>', methods=['POST'])
 def comment_reply(pid, cid):
     try:
         # receivng post & comment id for reply
@@ -920,45 +931,10 @@ def comment_reply(pid, cid):
 # -----------User Upload ------------------
 
 # file upload with user name
-@app.route('/file_upload', methods=['POST'])
-@cross_origin(supports_credentials=True)
-@token_required
+@ app.route('/file_upload', methods=['POST'])
+@ cross_origin(supports_credentials=True)
+@ token_required
 def file_upload():
-    # if 'file' not in request.files:
-    #     message = {
-    #         'data': "null",
-    #         'result': {'isError': 'true', 'message': 'No File added in request', 'status': 200, }
-    #     }
-    #     return jsonify(message)
-    # file = request.files['file']
-    # if file.filename == '':
-    #     message = {
-    #         'data': "null",
-    #         'result': {'isError': 'true', 'message': 'No image selected for uploading', 'status': 200, }
-    #     }
-    #     return jsonify(message)
-    # if file and allowed_file(file.filename):
-    #     filename = secure_filename(file.filename)
-    #     print('FileName = ', os.getcwd())
-    #     target = os.path.join(UPLOAD_FOLDER, 'test')
-    #     print('target = ', target)
-    #     if not os.path.isdir(target):
-    #         os.mkdir(target)
-    #     destination = "/".join([target, filename])
-    #     print('Path = ', destination)
-    #     file.save(destination)
-    #     #file.save(os.path.join(app.config['UPLOAD_FOLDER'], filename))
-    #     message = {
-    #         'data': "null",
-    #         'result': {'isError': 'false', 'message': 'Image successfully uploaded and displayed', 'status': 200, }
-    #     }
-    #     return jsonify(message)
-    # else:
-    #     message = {
-    #         'data': "null",
-    #         'result': {'isError': 'false', 'message': 'Allowed image types are -> png, jpg, jpeg, gif', 'status': 200, }
-    #     }
-    #     return jsonify(message)
     try:
         _file = request.files['file']
         _json = request.form
@@ -991,8 +967,8 @@ def file_upload():
 # sending file
 
 
-@app.route('/file/<filename>')
-@cross_origin(supports_credentials=True)
+@ app.route('/file/<filename>')
+@ cross_origin(supports_credentials=True)
 def file(filename):
     # response = make_response(send_file(filename, mimetype='image/png'))
     # response.headers['Content-Transfer-Encoding'] = 'base64'
@@ -1000,8 +976,8 @@ def file(filename):
     return mongo.send_file(filename)
 
 
-@app.route('/fileDelete/<id>', methods=['DELETE'])
-@cross_origin(supports_credentials=True)
+@ app.route('/fileDelete/<id>', methods=['DELETE'])
+@ cross_origin(supports_credentials=True)
 def fileDelete(id):
     try:
         print(id)
@@ -1024,27 +1000,137 @@ def fileDelete(id):
         return internal_error()
 
 
-@app.route('/getAllFiles/<id>')
+@ app.route('/getAllFiles/<id>')
 def getfile(id):
     try:
         _id = id
-        files = mongo.db.upload.find(
-            {'user.userId': ObjectId(_id)}).sort("date", -1)
+        if(_id == 'null'):
+            files = mongo.db.upload.find().sort("date", -1)
+        else:
+            files = mongo.db.upload.find(
+                {'user.userId': ObjectId(_id)}).sort("date", -1)
         message = {
             # 'data': dumps(_file.filename),
             'data': dumps(files),
             'result': {'isError': 'false', 'message': 'File data return', 'status': 200, }
         }
         return jsonify(message)
+    except Exception as e:
+        print(e)
+        return internal_error()
+
+# Add Advertisement
+
+
+@ app.route('/upload_advertise', methods=['POST'])
+@ cross_origin(supports_credentials=True)
+@ token_required
+def upload_advertise():
+    try:
+        # if 'file' not in request.files:
+        #     message = {
+        #         'data': "null",
+        #         'result': {'isError': 'true', 'message': 'No File added in request', 'status': 200, }
+        #     }
+        #     return jsonify(message)
+        # _advertiseFile = request.files['file']
+        # if _advertiseFile.filename == '':
+        #     message = {
+        #         'data': "null",
+        #         'result': {'isError': 'true', 'message': 'No image selected for uploading', 'status': 200, }
+        #     }
+        #     return jsonify(message)
+        # if _advertiseFile and allowed_file(_advertiseFile.filename):
+        #     _advfile_name = secure_filename(_advertiseFile.filename)
+        #     _json = request.form
+        #     _advertisement_type = _json['advertisement_type']
+        #     _advfile_mimetype = _advertiseFile.content_type
+        #     print('File location = ', os.getcwd())
+        #     print('Location', os.path.dirname(os.path.abspath(__file__)))
+        #     print('Loc = ', os.path.abspath(os.curdir))
+        #     print('L = ', os.path.abspath("package.json"))
+        #     target = os.path.join(UPLOAD_FOLDER, 'image/advertise')
+        #     print('target = ', target)
+        #     if not os.path.isdir(target):
+        #         os.mkdir(target)
+        #     destination = "/".join([target, _advfile_name])
+        #     print('Path = ', destination)
+        #     _advertiseFile.save(destination)
+        #     # user = mongo.db.userReg.find_one({'email': session['user']})
+        #     # mongo.db.advertiseUpload.insert(
+        #     #     {'advertisement_type': _advertisement_type, 'filename': _advfile_name,
+        #     #     'file_mimetype': _advfile_mimetype, 'user': session['user'], 'date': datetime.datetime.now()})
+        #     message = {
+        #         'data': "null",
+        #         'result': {'isError': 'false', 'message': 'Avbertise successfully uploaded', 'status': 200, }
+        #     }
+        #     return jsonify(message)
+        # else:
+        #     message = {
+        #         'data': "null",
+        #         'result': {'isError': 'false', 'message': 'Allowed Image types are -> png, jpg, jpeg, gif', 'status': 200, }
+        #     }
+        #     return jsonify(message)
+        _json = request.form
+        _advertiseFile = request.files['file']
+        _advertisement_type = _json['advertisement_type']
+        _advfile_mimetype = _advertiseFile.content_type
+        _advfile_data = _json['image']
+        _advfile_name = _advertiseFile.filename
+        # user = mongo.db.userReg.find_one({'email': session['user']})
+        mongo.db.advertiseUpload.insert(
+            {'advertisement_type': _advertisement_type, 'filedata': _advfile_data, 'filename': _advfile_name,
+             'file_mimetype': _advfile_mimetype, 'user': session['user'], 'date': datetime.datetime.now()})
+        # print(_advfile_name)
+        message = {
+            'data': "null",
+            'result': {'isError': 'false', 'message': 'Advertise successfully uploaded', 'status': 200, }
+        }
+        return jsonify(message)
+    except Exception as e:
+        print(e)
+        return internal_error()
+
+
+@ app.route('/get_Advertise')
+def get_Advertise():
+    try:
+        _advertise = mongo.db.advertiseUpload.find().sort("date", -1)
+        # print(_advertise)
+        message = {
+            # 'data': dumps(_file.filename),
+            'data': dumps(_advertise),
+            'result': {'isError': 'false', 'message': 'Advertise data return', 'status': 200, }
+        }
+        return jsonify(message)
+    except Exception as e:
+        print(e)
+        return internal_error()
+
+
+@ app.route('/delete_advertise/<id>', methods=['DELETE'])
+@ cross_origin(supports_credentials=True)
+def delete_advertise(id):
+    try:
+        print(id)
+        existing_adv = mongo.db.advertiseUpload.find_one({'_id': ObjectId(id)})
+        if existing_adv and request.method == 'DELETE':
+            # # mongo query for deleting specific id
+            _adv = mongo.db.advertiseUpload.delete_one({'_id': ObjectId(id)})
+            # for json response
+            message = {
+                'data': "null",
+                'result': {'isError': 'false', 'message': 'Advertise deleted successfully', 'status': 200, }
+            }
+            return jsonify(message)
+        else:
+            return not_found()
     except:
         return internal_error()
-# @app.route('/image_upload', methods=['POST'])
-# def image_upload():
-
 # for browser view(optional)
 
 
-@app.route('/user_upload/<username>')
+@ app.route('/user_upload/<username>')
 def user_upload(username):
     user = mongo.db.upload.find_one_or_404({'username': username})
     return f'''
@@ -1057,8 +1143,8 @@ def user_upload(username):
 # Adding new services
 
 
-@app.route('/add_service', methods=['POST', 'GET'])
-@cross_origin(supports_credentials=True)
+@ app.route('/add_service', methods=['POST', 'GET'])
+@ cross_origin(supports_credentials=True)
 def add_service():
     _json = request.json
     _service_name = _json['service_name']
@@ -1081,7 +1167,7 @@ def add_service():
 # delete specific service
 
 
-@app.route('/delete_service/<id>', methods=['DELETE'])
+@ app.route('/delete_service/<id>', methods=['DELETE'])
 def delete_service(id):
     existing_service = mongo.db.services.find_one({'_id': ObjectId(id)})
     if existing_service and request.method == 'DELETE':
@@ -1105,8 +1191,8 @@ def delete_service(id):
 # adding existing services to (new/existing)Role
 
 
-@app.route('/serviceto_role', methods=['POST', 'GET'])
-@cross_origin(supports_credentials=True)
+@ app.route('/serviceto_role', methods=['POST', 'GET'])
+@ cross_origin(supports_credentials=True)
 def serviceto_role():
     _json = request.json
     _role_name = _json['role_name']
@@ -1140,8 +1226,8 @@ def serviceto_role():
 # remove targeted service from Role
 
 
-@app.route('/rm_service_fromrole', methods=['POST', 'GET'])
-@cross_origin(supports_credentials=True)
+@ app.route('/rm_service_fromrole', methods=['POST', 'GET'])
+@ cross_origin(supports_credentials=True)
 def rm_service_fromrole():
     _json = request.json
     _role_name = _json['role_name']
@@ -1167,7 +1253,7 @@ def rm_service_fromrole():
 # delete specific role
 
 
-@app.route('/delete_role/<id>', methods=['DELETE'])
+@ app.route('/delete_role/<id>', methods=['DELETE'])
 def delete_role(id):
     existing_role = mongo.db.roles.find_one({'_id': ObjectId(id)})
     if existing_role and request.method == 'DELETE':
@@ -1191,8 +1277,8 @@ def delete_role(id):
 # adding services to group
 
 
-@app.route('/serviceto_group', methods=['POST', 'GET'])
-@cross_origin(supports_credentials=True)
+@ app.route('/serviceto_group', methods=['POST', 'GET'])
+@ cross_origin(supports_credentials=True)
 def serviceto_group():
     _json = request.json
     _service_name = _json['service_name']
@@ -1226,8 +1312,8 @@ def serviceto_group():
 # adding role to group
 
 
-@app.route('/roleto_group', methods=['POST', 'GET'])
-@cross_origin(supports_credentials=True)
+@ app.route('/roleto_group', methods=['POST', 'GET'])
+@ cross_origin(supports_credentials=True)
 def roleto_group():
     _json = request.json
     _group_name = _json['group_name']
@@ -1258,8 +1344,8 @@ def roleto_group():
 # remove targeted service from group
 
 
-@app.route('/rm_service_fromgroup', methods=['POST', 'GET'])
-@cross_origin(supports_credentials=True)
+@ app.route('/rm_service_fromgroup', methods=['POST', 'GET'])
+@ cross_origin(supports_credentials=True)
 def rm_service_fromgroup():
     _json = request.json
     _group_name = _json['group_name']
@@ -1286,8 +1372,8 @@ def rm_service_fromgroup():
 # remove targeted role from group
 
 
-@app.route('/rm_role_fromgroup', methods=['POST', 'GET'])
-@cross_origin(supports_credentials=True)
+@ app.route('/rm_role_fromgroup', methods=['POST', 'GET'])
+@ cross_origin(supports_credentials=True)
 def rm_role_fromgroup():
     _json = request.json
     _group_name = _json['group_name']
@@ -1314,7 +1400,7 @@ def rm_role_fromgroup():
 # delete specific group
 
 
-@app.route('/delete_group/<id>', methods=['DELETE'])
+@ app.route('/delete_group/<id>', methods=['DELETE'])
 def delete_group(id):
     existing_group = mongo.db.groups.find_one({'_id': ObjectId(id)})
     if existing_group and request.method == 'DELETE':
@@ -1336,8 +1422,8 @@ def delete_group(id):
 # adding role to user
 
 
-@app.route('/roleto_user', methods=['POST', 'GET'])
-@cross_origin(supports_credentials=True)
+@ app.route('/roleto_user', methods=['POST', 'GET'])
+@ cross_origin(supports_credentials=True)
 def roleto_user():
     _json = request.json
     _user_email = _json['user_email']
@@ -1365,8 +1451,8 @@ def roleto_user():
 # adding existing group to userReg
 
 
-@app.route('/groupto_user', methods=['POST', 'GET'])
-@cross_origin(supports_credentials=True)
+@ app.route('/groupto_user', methods=['POST', 'GET'])
+@ cross_origin(supports_credentials=True)
 def groupto_user():
     _json = request.json
     _user_email = _json['user_email']
@@ -1394,8 +1480,8 @@ def groupto_user():
 # remove targeted role from user
 
 
-@app.route('/rm_role_fromuser', methods=['POST', 'GET'])
-@cross_origin(supports_credentials=True)
+@ app.route('/rm_role_fromuser', methods=['POST', 'GET'])
+@ cross_origin(supports_credentials=True)
 def rm_role_fromuser():
     _json = request.json
     _user_email = _json['user_email']
@@ -1422,8 +1508,8 @@ def rm_role_fromuser():
 # remove targeted group from userReg
 
 
-@app.route('/rm_group_fromuser', methods=['POST', 'GET'])
-@cross_origin(supports_credentials=True)
+@ app.route('/rm_group_fromuser', methods=['POST', 'GET'])
+@ cross_origin(supports_credentials=True)
 def rm_group_fromuser():
     _json = request.json
     _user_email = _json['user_email']
@@ -1450,7 +1536,7 @@ def rm_group_fromuser():
 # Update user total service list(ts)
 
 
-@app.route('/update', methods=['POST', 'GET'])
+@ app.route('/update', methods=['POST', 'GET'])
 def update():
     # _user_email=session['email']
     user = mongo.db.userReg.find_one({'email': session['email']})
@@ -1479,7 +1565,7 @@ def update():
 # adding existing friend to (existing)userReg
 
 
-@app.route('/friendReq/<id>', methods=['POST', 'GET'])
+@ app.route('/friendReq/<id>', methods=['POST', 'GET'])
 def friendReq(id):
     current_user = mongo.db.userReg.find_one({'email': session['email']})
     existing_user = mongo.db.userReg.find_one({'_id': ObjectId(id)})
@@ -1511,7 +1597,7 @@ def friendReq(id):
 # acceptFriend Request
 
 
-@app.route('/friendReqAccept/<id>', methods=['POST', 'GET'])
+@ app.route('/friendReqAccept/<id>', methods=['POST', 'GET'])
 def acceptFriendReq(id):
     current_user = mongo.db.userReg.find_one({'email': session['email']})
     pending_friend = mongo.db.userReg.find_one(
@@ -1536,7 +1622,7 @@ def acceptFriendReq(id):
 # deleteFriend Request
 
 
-@app.route('/friendReqDel/<id>', methods=['POST', 'GET'])
+@ app.route('/friendReqDel/<id>', methods=['POST', 'GET'])
 def friendReqDel(id):
     current_user = mongo.db.userReg.find_one({'email': session['email']})
     pending_friend = mongo.db.userReg.find_one(
@@ -1555,7 +1641,7 @@ def friendReqDel(id):
 
 
 # remove targeted friend from userReg
-@app.route('/rmFriend/<id>', methods=['POST', 'GET'])
+@ app.route('/rmFriend/<id>', methods=['POST', 'GET'])
 def rmFriend(id):
     current_user = mongo.db.userReg.find_one({'email': session['email']})
     existing_user = mongo.db.userReg.find_one({'_id': ObjectId(id)})

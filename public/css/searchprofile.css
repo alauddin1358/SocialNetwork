@@ -13,10 +13,10 @@
   padding: 0;
 }
 .suggestion-container li {
-  padding: 5px 10px;
+  padding: 5px;
 }
 .suggestion-container li:hover {
-  background-color: rgba(128, 128, 128, 0.2);
+  background-color: rgba(128, 128, 128, 0.2) ;
 }
 body {
   font-family: Helvetica, sans-serif;
@@ -62,7 +62,7 @@ body {
   display: block;
   position: absolute;
   top: 51px;
-  width: 280px;
+  width: 350px;
   border: 1px solid #aaa;
   background-color: #fff;
   font-family: Helvetica, sans-serif;
@@ -80,16 +80,18 @@ body {
 }
 
 .react-autosuggest__suggestion {
-  cursor: pointer;
-  padding: 10px 20px;
+  padding: 5px 10px;
 }
-
+.react-autosuggest__suggestion:hover {
+  background-color: #cfd7da;
+  cursor: pointer;
+}
 .react-autosuggest__suggestion:not(:first-child) {
-  border-top: 1px solid #ddd;
+  border-top: 1px solid rgb(163, 155, 155);
 }
 
 .react-autosuggest__suggestion--focused {
-  background-color: #0C7EAF;
+  background-color: #0C7EAF !important;
   color: #fff;
 }
 
@@ -100,12 +102,8 @@ body {
 }
 
 
-.steveodom {
-  background-image: url(https://s3.amazonaws.com/uifaces/faces/twitter/steveodom/48.jpg);
-}
-
 .name {
-  margin-left: 68px;
+  margin-left: 30px;
   line-height: 45px;
 }
 

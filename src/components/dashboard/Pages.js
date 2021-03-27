@@ -6,6 +6,7 @@ import PropTypes from 'prop-types';
 import { getPosts, deletePost } from '../../actions/post';
 import Spinner from '../layout/Spinner';
 import Advertisement from './Advertisement';
+
 const Pages = ({ getPosts, deletePost, auth:{user}, post: {posts, loading}, props}) => {
     useEffect(() => {
         getPosts();
@@ -16,9 +17,10 @@ const Pages = ({ getPosts, deletePost, auth:{user}, post: {posts, loading}, prop
             posts = posts.filter((post) => user._id.$oid === post.user.userId.$oid)
         }
     }
+    
     // console.log('Posts in pages', posts);
     // console.log('Loading in pages ', loading);
-    // console.log('Auth in post', user);
+    //console.log('Auth in post', user);
     return (
         <Fragment>
             <div className="container-fluid">
@@ -36,7 +38,7 @@ const Pages = ({ getPosts, deletePost, auth:{user}, post: {posts, loading}, prop
                             </div>
                             <div id="posts-list" className="card-body">
                                 <div className="post-card card">
-                                        {user === null ? (<Spinner />) : (posts.length <= 0 ? (<Spinner />) : (posts.map((post) => (
+                                        {user === null ? (<Spinner />) : (posts.length <= 0 ? null : (posts.map((post) => (
                                             <PostItem key={post._id.$oid} post={post} postOwner={user} deletePost={deletePost} /> 
                                         )))) }
                                 </div>

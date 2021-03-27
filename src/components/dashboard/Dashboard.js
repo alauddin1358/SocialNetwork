@@ -16,7 +16,7 @@ const Dashboard = ({props, logout,getAllUsers, loadUser, auth:{isAuthenticated, 
         loadUser();
         getAllUsers();
       }, [loadUser, getAllUsers]);
-    // console.log('IsAuthenticated', isAuthenticated);
+    //console.log('IsAuthenticated', isAuthenticated);
     if(!isAuthenticated && token === null) {
         return <Redirect to="/login" />
     }

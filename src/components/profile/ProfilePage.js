@@ -50,10 +50,12 @@ const ProfilePage = ({auth: {user, loading, allUsers}, loadUser, updateProfile, 
     // console.log('Search in profile ', props.location.state);
     let isSearch=false;
     if(props.location.state) {
-        if(user._id.$oid !== props.location.state.id) {
-            user = allUsers.filter((user) => user._id.$oid === props.location.state.id)
-            user = Object.assign({}, user[0]);
-            isSearch = true;
+        if(user !== null){
+            if(user._id.$oid !== props.location.state.id) {
+                user = allUsers.filter((user) => user._id.$oid === props.location.state.id)
+                user = Object.assign({}, user[0]);
+                isSearch = true;
+            }
         }
     }
     

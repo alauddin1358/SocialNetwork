@@ -1,7 +1,7 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
 import formatDate from '../../utils/formatDate';
-
+const ADMIN = process.env.REACT_APP_ADMIN;
 const PostItem = ({deletePost, postOwner, post:{_id, title, body, date,user}}) => {
     //console.log('Id in postItem', _id);
     return (
@@ -24,7 +24,7 @@ const PostItem = ({deletePost, postOwner, post:{_id, title, body, date,user}}) =
                         comment
                     </Link>
                 </small>
-                {postOwner._id.$oid === user.userId.$oid ? (<small>
+                {postOwner._id.$oid === user.userId.$oid || postOwner.email === ADMIN ? (<small>
                     <i className="fas fa-pen"></i>
                     <Link to={{
                         pathname: '/addpost',
@@ -36,7 +36,7 @@ const PostItem = ({deletePost, postOwner, post:{_id, title, body, date,user}}) =
                         edit
                     </Link>
                 </small>):null }
-                { postOwner._id.$oid === user.userId.$oid ?
+                { postOwner._id.$oid === user.userId.$oid || postOwner.email === ADMIN ?
                 (<small>
                     <i className="fa fa-trash" aria-hidden="true"></i>
                     <Link to="/dashboard" onClick={()=>deletePost(_id.$oid)}>

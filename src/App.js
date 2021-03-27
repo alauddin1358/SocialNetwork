@@ -14,14 +14,12 @@ import Profile from './components/profile/Profile';
 import ForgotPassword from './components/auth/ForgotPassword';
 import ResetPassword from './components/auth/ResetPassword';
 import ProfileSearchView from './components/profile/ProfileSearchView';
-import ImageSlider from './components/advertisement/ImageSlider';
+import ShowAdvertise from './components/dashboard/ShowAdvertise';
+import UserList from './components/auth/UserList';
 import store from './store';
 import { BrowserRouter as Router, Route, Switch } from 'react-router-dom';
 import { Provider } from 'react-redux';
-
 import { loadUser } from './actions/auth';
-
-
 
 const App = () => {
   useEffect(() => {
@@ -48,8 +46,8 @@ const App = () => {
               <Route exact path="/view/:filename" component={FileView}  />
               <Route exact path="/profile" render={(props) => <Profile {...props}/>}  />
               <Route exact path="/search" component={ProfileSearchView}  />
-              <Route exact path="/slider" component={ImageSlider}  />
-              
+              <Route exact path="/showadvertise" component={ShowAdvertise}  />
+              <Route exact path="/userlist" component={UserList}  />
             </Switch>
           
         </Fragment>

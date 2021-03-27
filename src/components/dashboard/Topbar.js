@@ -1,7 +1,7 @@
 import React, { Fragment, useState } from 'react'
 import { connect } from 'react-redux';
 //import { Modal, ModalHeader, ModalBody } from 'reactstrap';
-import {Link} from 'react-router-dom';
+import {Link, Redirect} from 'react-router-dom';
 import { logout } from '../../actions/auth';
 import Autosuggest from 'react-autosuggest';
 import AutosuggestHighlightMatch from 'autosuggest-highlight/match';
@@ -38,12 +38,13 @@ const Topbar = ({auth:{user, allUsers}, logout}) => {
       }
       
       function renderSuggestion(suggestion, { query }) {
+        //console.log('Sugestion ', suggestion);
         const suggestionText = `${suggestion.firstname} ${suggestion.middlename} ${suggestion.lastname}`;
         const matches = AutosuggestHighlightMatch(suggestionText, query);
         const parts = AutosuggestHighlightParse(suggestionText, matches);
         return (
           <span className="suggestion-content">
-            {/* <img src={user.image} alt="user" /> */}
+            <img src={suggestion.image} alt="user" className="user-img-profile rounded-circle"/>
             <span className="name">
                 <Link to={{
                                 pathname: '/profile',
@@ -78,19 +79,18 @@ const Topbar = ({auth:{user, allUsers}, logout}) => {
 
     const submitSearchData = async(e) => {
         e.preventDefault();
-        let userData = allUsers.filter(user => user.name.toLowerCase() === value.toLowerCase());
-        userData = Object.assign({}, userData[0]);
-        console.log('User in search = ', userData)
+        let userArrayData = allUsers.filter(user => user.name.toLowerCase() === value.toLowerCase());
+        //console.log('User in search = ', userArrayData)
+        let userData = Object.assign({}, userArrayData[0]);
+        //console.log('User in search = ', userData)
         if(value === '') alert('User input search data is not given')
-        if (userData.length > 0) {
-            return(
-                <Link to={{
+        if (userArrayData.length > 0) {
+            return <Redirect to={{
                     pathname: '/profile',
                     state: {
                             id: userData._id.$oid
                     }}} 
-                > {value} </Link> 
-            )
+                />  
         }
         else if(value !== '') {
             alert('Searching user is not found')
@@ -163,17 +163,25 @@ const Topbar = ({auth:{user, allUsers}, logout}) => {
                         <div className="dropdown-menu dropdown-menu-right p-3 
                                     shadow animated--grow-in"
                             aria-labelledby="searchDropdown">
-                            <form className="form-inline mr-auto w-100 navbar-search">
+                            <form className="form-inline mr-auto w-100 navbar-search"
+                                  onSubmit={submitSearchData} >
                                 <div className="input-group">
-                                    <input type="text" 
-                                        className="form-control bg-light border-0 small"
-                                        placeholder="Search for..." aria-label="Search"
-                                        aria-describedby="basic-addon2" />
+                                    <Autosuggest 
+                                        suggestions={suggestions}
+                                        onSuggestionsFetchRequested={onSuggestionsFetchRequested}
+                                        onSuggestionsClearRequested={onSuggestionsClearRequested}
+                                        getSuggestionValue={getSuggestionValue}
+                                        renderSuggestion={renderSuggestion}
+                                        inputProps={inputProps} />
                                     <div className="input-group-append">
-                                        <button className="btn btn-primary" type="button">
-                                            <i className="fas fa-search fa-sm"></i>
+                                        <button className="btn btn-primary" type="submit">
+                                                <i className="fas fa-search fa-sm"></i>
                                         </button>
                                     </div>
+                                    {/* <input type="text" 
+                                        className="form-control bg-light border-0 small"
+                                        placeholder="Search for..." aria-label="Search"
+                                        aria-describedby="basic-addon2" /> */}
                                 </div>
                             </form>
                         </div>

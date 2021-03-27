@@ -6,7 +6,8 @@ import {
     USER_LOADED,
     AUTH_ERROR,
     ALLUSER_LOADED,
-    LOGOUT
+    LOGOUT,
+    DELETE_USER
   } from './types';
 //import setAuthToken from '../utils/setAuthToken';
 import axios from 'axios';
@@ -19,7 +20,6 @@ const API = process.env.REACT_APP_API;
 
 // Load User
 export const loadUser = () => async dispatch => {
-  console.log(API);
   const config = {
     headers : {
         'Authorization': `Bearer ${localStorage.token}`,
@@ -29,7 +29,6 @@ export const loadUser = () => async dispatch => {
     }
   };
   try {
-   
     const res = await instance.get(`${API}/user`, config);
     //console.log('Auth response = ',JSON.parse(res.data.data));
     if(res.data.result.isError === 'false') {
@@ -83,14 +82,6 @@ export const getAllUsers = () => async dispatch => {
 }
 // Register User
 export const userRegister = ({form_data}) => async dispatch => {
-    // const config = {
-    //     headers : {
-    //         'Content-Type':'application/json',
-    //         'Access-Control-Allow-Origin': '*'
-    //     }
-    // };
-    //const body = JSON.stringify({name, email, password});
-    
   try {
     console.log(API);
     const res = await axios.post(`${API}/add`, form_data);
@@ -126,6 +117,7 @@ export const login = (email, password) => async dispatch => {
       }
   };
   const body = {email, password};
+  //console.log(body);
   // const res = await axios.post(`${API}/email_test`, body, config);
   // console.log('Login response', res.data);
   
@@ -157,16 +149,15 @@ export const login = (email, password) => async dispatch => {
   }
 };
 export const updateProfile = (id, {form_data}) => async dispatch => {
-    const config = {
-      headers : {
-          'Authorization': `Bearer ${localStorage.token}`,
-          'Content-Type':'application/json',
-          'Access-Control-Allow-Origin': '*',
-          'Access-Control-Allow-Credentials': true
-      }
-    };
-    // console.log("id = ", id);
-    // console.log("Updated Formdata", {form_data});
+    
+  const config = {
+    headers : {
+        'Authorization': `Bearer ${localStorage.token}`,
+        'Content-Type':'application/json',
+        'Access-Control-Allow-Origin': '*',
+        'Access-Control-Allow-Credentials': true
+    }
+  };
     try {
     const res = await instance.put(`${API}/update/${id}`, form_data,config);
     //console.log('Profile Updated', res.data);
@@ -192,3 +183,33 @@ export const logout = () => dispatch => {
   //window.location.replace("http://localhost:3000");
   //dispatch(loadUser());
 };
+
+//delete specific user
+export const deleteUser =(id) => async dispatch => {
+  const config = {
+    headers : {
+        'Authorization': `Bearer ${localStorage.token}`,
+        'Content-Type':'application/json',
+        'Access-Control-Allow-Origin': '*',
+        'Access-Control-Allow-Credentials': true
+    }
+  };
+  try {
+    const res = await instance.delete(`${API}/delete_ac/${id}`, config);
+    //console.log('Profile Updated', res.data);
+    if(res.data.result.isError === 'true') {
+      dispatch(setAlert(res.data.result.message, 'danger'));
+    }
+    else {
+      dispatch({
+        type: DELETE_USER,
+        payload: id
+      });
+      dispatch(loadUser());
+      dispatch(setAlert('User Deleted', 'success'));
+    }
+    } catch (err) {
+      console.log(err.response);
+      dispatch(setAlert('Server Error User Not Deleted', 'danger'));
+    }
+}

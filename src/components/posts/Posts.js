@@ -11,7 +11,7 @@ const Posts = ({ match }) => {
     
     //getPost(match.params.id);
     //console.log(post);
-    console.log('params',match.params.id);
+    //console.log('params',match.params.id);
     return (
         <Fragment>
             <div id="wrapper">

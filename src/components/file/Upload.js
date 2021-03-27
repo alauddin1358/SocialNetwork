@@ -4,6 +4,7 @@ import Sidebar from '../dashboard/Sidebar';
 import Topbar from '../dashboard/Topbar';
 import Footer from '../dashboard/Footer';
 import FileHeader from './FileHeader';
+import Advertisement from '../dashboard/Advertisement';
 import {Redirect} from 'react-router-dom';
 import { connect } from 'react-redux';
 import { Container, Form, Row, Col, Button } from 'react-bootstrap';
@@ -86,75 +87,81 @@ const Upload = ({props, addFile, file: {isSuccess}}) => {
                   <Topbar />
                   <Alert />
                   <Container>
-                      <FileHeader />
-                      <Form className="search-form" onSubmit={handleOnSubmit}>
-                      {errorMsg && <p className="errorMsg">{errorMsg}</p>}
-                      <Row>
-                        <Col>
-                          <Form.Group controlId="title">
-                            <Form.Control
-                              type="text"
-                              name="title"
-                              value={state.title || ''}
-                              placeholder="Enter title"
-                              onChange={handleInputChange}
-                            />
-                          </Form.Group>
-                        </Col>
-                      </Row>
-                      <Row>
-                        <Col>
-                          <Form.Group controlId="description">
-                            <Form.Control
-                              type="text"
-                              name="description"
-                              value={state.description || ''}
-                              placeholder="Enter description"
-                              onChange={handleInputChange}
-                            />
-                          </Form.Group>
-                        </Col>
-                      </Row>
-                      <div className="upload-section">
-                        <Dropzone
-                          onDrop={onDrop}
-                          onDragEnter={() => updateBorder('over')}
-                          onDragLeave={() => updateBorder('leave')}
-                          accept="application/pdf"
-                          maxFiles={1}
-                        >
-                          {({ getRootProps, getInputProps }) => (
-                            <div {...getRootProps({ className: 'drop-zone' })} ref={dropRef}>
-                              <input {...getInputProps()} />
-                              <p>Drag and drop a pdf file OR click here to select a pdf file</p>
-                              {file && (
-                                <div>
-                                  <strong>Selected file:</strong> {file.name}
+                    <div className="row">
+                      <div className="col-sm-12 col-md-6 col-lg-9">
+                        <FileHeader />
+                        <Form className="search-form" onSubmit={handleOnSubmit}>
+                            {errorMsg && <p className="errorMsg">{errorMsg}</p>}
+                            <Row>
+                              <Col>
+                                <Form.Group controlId="title">
+                                  <Form.Control
+                                    type="text"
+                                    name="title"
+                                    value={state.title || ''}
+                                    placeholder="Enter title"
+                                    onChange={handleInputChange}
+                                  />
+                                </Form.Group>
+                              </Col>
+                          </Row>
+                          <Row>
+                            <Col>
+                              <Form.Group controlId="description">
+                                <Form.Control
+                                  type="text"
+                                  name="description"
+                                  value={state.description || ''}
+                                  placeholder="Enter description"
+                                  onChange={handleInputChange}
+                                />
+                              </Form.Group>
+                            </Col>
+                          </Row>
+                          <div className="upload-section">
+                            <Dropzone
+                              onDrop={onDrop}
+                              onDragEnter={() => updateBorder('over')}
+                              onDragLeave={() => updateBorder('leave')}
+                              accept="application/pdf"
+                              maxFiles={1}
+                            >
+                              {({ getRootProps, getInputProps }) => (
+                                <div {...getRootProps({ className: 'drop-zone' })} ref={dropRef}>
+                                  <input {...getInputProps()} />
+                                  <p>Drag and drop a pdf file OR click here to select a pdf file</p>
+                                  {file && (
+                                    <div>
+                                      <strong>Selected file:</strong> {file.name}
+                                    </div>
+                                  )}
                                 </div>
                               )}
-                            </div>
-                          )}
-                        </Dropzone>
-                        {/* {previewSrc ? (
-                          isPreviewAvailable ? (
-                            <div className="image-preview">
-                              <img className="preview-image" src={previewSrc} alt="Preview" />
-                            </div>
-                          ) : (
-                            <div className="preview-message">
-                              <p>No preview available for this file</p>
-                            </div>
-                          )
-                        ) : (
-                          <div className="preview-message">
-                            <p>Image preview will be shown here after selection</p>
+                            </Dropzone>
+                            {/* {previewSrc ? (
+                              isPreviewAvailable ? (
+                                <div className="image-preview">
+                                  <img className="preview-image" src={previewSrc} alt="Preview" />
+                                </div>
+                              ) : (
+                                <div className="preview-message">
+                                  <p>No preview available for this file</p>
+                                </div>
+                              )
+                            ) : (
+                              <div className="preview-message">
+                                <p>Image preview will be shown here after selection</p>
+                              </div>
+                            )} */}
                           </div>
-                        )} */}
+                          <Button variant="primary" type="submit">
+                            Submit
+                          </Button>
+                        </Form>
                       </div>
-                      <Button variant="primary" type="submit">
-                        Submit
-                      </Button>
-                    </Form>
+                      <Advertisement />
+                    </div>
+                    
                   </Container>
               </div>
               <Footer />

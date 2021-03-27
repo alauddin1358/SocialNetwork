@@ -97,11 +97,11 @@
     }
   
     .files-table .file-title {
-      width: 20%;
+      width: 15%;
     }
   
     .files-table .file-description {
-      width: 70%;
+      width: 50%;
     }
   
   @media screen and (max-width: 1000px) {

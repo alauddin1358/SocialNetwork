@@ -9,6 +9,7 @@ import AutosuggestHighlightParse from 'autosuggest-highlight/parse';
 import Pages from './Pages';
 import Footer from './Footer';
 import Alert from '../layout/Alert';
+const ADMIN = process.env.REACT_APP_ADMIN;
 
 const TopSidebar = ({props,auth:{user, allUsers}, logout}) => {
     const [value, setValue] = useState('');
@@ -44,7 +45,7 @@ const TopSidebar = ({props,auth:{user, allUsers}, logout}) => {
         const parts = AutosuggestHighlightParse(suggestionText, matches);
         return (
           <span className="suggestion-content">
-            {/* <img src={user.image} alt="user" /> */}
+            <img src={suggestion.image} alt="user" className="user-img-profile rounded-circle"/>
             <span className="name">
                 <Link to={{
                                 pathname: '/profile',
@@ -79,11 +80,11 @@ const TopSidebar = ({props,auth:{user, allUsers}, logout}) => {
 
     const submitSearchData = async(e) => {
         e.preventDefault();
-        let userData = allUsers.filter(user => user.name.toLowerCase() === value.toLowerCase());
-        userData = Object.assign({}, userData[0]);
-        console.log('User in search = ', userData)
+        let userArrayData = allUsers.filter(user => user.name.toLowerCase() === value.toLowerCase());
+        let userData = Object.assign({}, userArrayData[0]);
+        //console.log('User in search = ', userData)
         if(value === '') alert('User input search data is not given')
-        if (userData.length > 0) {
+        if (userArrayData.length > 0) {
             return(
                 <Link to={{
                     pathname: '/profile',
@@ -167,7 +168,17 @@ const TopSidebar = ({props,auth:{user, allUsers}, logout}) => {
                         </div>
                     </div>
                 </li>
-
+                {
+                    user !== null ? user.email === ADMIN ? (
+                        <li className="nav-item">
+                            <Link to="/userlist" className="nav-link collapsed">
+                                <i className="fa fa-user"></i>
+                                <span>UserList</span>
+                            </Link>
+                        </li>
+                    ): null : null
+                }
+                
                 <hr className="sidebar-divider" />
 
                 <hr className="sidebar-divider d-none d-md-block" />
@@ -239,17 +250,25 @@ const TopSidebar = ({props,auth:{user, allUsers}, logout}) => {
                                 <div className="dropdown-menu dropdown-menu-right p-3 
                                             shadow animated--grow-in"
                                     aria-labelledby="searchDropdown">
-                                    <form className="form-inline mr-auto w-100 navbar-search">
+                                    <form className="form-inline mr-auto w-100 navbar-search"
+                                          onSubmit={submitSearchData} >
                                         <div className="input-group">
-                                            <input type="text" 
-                                                className="form-control bg-light border-0 small"
-                                                placeholder="Search for..." aria-label="Search"
-                                                aria-describedby="basic-addon2" />
+                                            <Autosuggest 
+                                                suggestions={suggestions}
+                                                onSuggestionsFetchRequested={onSuggestionsFetchRequested}
+                                                onSuggestionsClearRequested={onSuggestionsClearRequested}
+                                                getSuggestionValue={getSuggestionValue}
+                                                renderSuggestion={renderSuggestion}
+                                                inputProps={inputProps} />
                                             <div className="input-group-append">
-                                                <button className="btn btn-primary" type="button">
-                                                    <i className="fas fa-search fa-sm"></i>
+                                                <button className="btn btn-primary" type="submit">
+                                                        <i className="fas fa-search fa-sm"></i>
                                                 </button>
                                             </div>
+                                            {/* <input type="text" 
+                                                className="form-control bg-light border-0 small"
+                                                placeholder="Search for..." aria-label="Search"
+                                                aria-describedby="basic-addon2" /> */}
                                         </div>
                                     </form>
                                 </div>

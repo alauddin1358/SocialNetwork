@@ -1,11 +1,16 @@
-import React, { Fragment} from 'react'
+import React, { Fragment, useState} from 'react'
 import { Link } from 'react-router-dom';
-
-const Sidebar = () => {
-    
+import { connect } from 'react-redux';
+const ADMIN = process.env.REACT_APP_ADMIN;
+const Sidebar = ({auth:{user}}) => {
+    const [addClass, setAddClass] = useState(false);
+    //console.log('Toggg', addClass);
+    const toggleClass = () => {
+        setAddClass(!addClass);
+    }
     return (
         <Fragment>
-            <ul className="navbar-nav bgGradientPrimary sidebar sidebar-dark accordion" 
+            <ul className={`navbar-nav bgGradientPrimary sidebar sidebar-dark accordion ${addClass ? "toggled":""}`} 
                     id="accordionSidebar">
                     
                     <Link to={{
@@ -17,7 +22,7 @@ const Sidebar = () => {
                         <img src={process.env.PUBLIC_URL + '/img/Social_Fish2.png'} alt="Agriculturist Logo"/>
                         {/* <img src="../../../public/img/Social_Fish2.png" alt="Agriculturist Logo"/> */}
                         <span>Agriculturist</span>
-                    </Link>
+                    </Link> 
                     <hr className="sidebar-divider my-0" />
                     <li className="nav-item active">
                         <Link className="nav-link" to={{
@@ -68,13 +73,23 @@ const Sidebar = () => {
                             </div>
                         </div>
                     </li>
+                    {
+                    user !== null ? user.email === ADMIN ? (
+                        <li className="nav-item">
+                            <Link to="/userlist" className="nav-link collapsed">
+                                <i className="fa fa-user"></i>
+                                <span>UserList</span>
+                            </Link>
+                        </li>
+                    ): null : null
+                    }
 
                     <hr className="sidebar-divider" />
 
                     <hr className="sidebar-divider d-none d-md-block" />
 
                     <div className="text-center d-none d-md-inline">
-                        <button className="rounded-circle border-0" id="sidebarToggle"></button>
+                        <button className="rounded-circle border-0" id="sidebarToggle" onClick={toggleClass}></button>
                     </div>
 
                 </ul>
@@ -82,4 +97,7 @@ const Sidebar = () => {
     )
 }
 
-export default Sidebar;
+const mapStateToProps = (state) => ({
+    auth: state.auth
+});
+export default connect(mapStateToProps, null)(Sidebar);

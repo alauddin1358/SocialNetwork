@@ -3,6 +3,7 @@ import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 import { Link } from 'react-router-dom';
 import { deleteComment, updateComment } from '../../actions/post';
+const ADMIN = process.env.REACT_APP_ADMIN;
 //import Alert from '../layout/Alert';
 
 class CommentItem extends Component {
@@ -64,10 +65,12 @@ class CommentItem extends Component {
             <Fragment>
                 <div className="card-body">
                     <div className="comment">
-                        <img src={this.props.comment.user.image} alt="user" />
+                        {
+                            this.props.comment !== null ? <img src={this.props.comment.user.image} alt="user" /> : null
+                        }
                         {this.state.editMode ? this.renderCommentEdit() : this.renderCommentRead()}
                     </div>
-                    {this.props.user._id.$oid === this.props.comment.user.userId.$oid ? 
+                    {(this.props.user !== null )?(this.props.user._id.$oid === this.props.comment.user.userId.$oid) || (this.props.user.email === ADMIN) ? 
                         <div className="text-right edit-delete">
                         <small>
                                 <i className="fas fa-pen"></i>
@@ -83,7 +86,7 @@ class CommentItem extends Component {
                                     delete
                                 </Link>
                             </small>
-                        </div> : null
+                        </div> : null : null
                     }
                 </div>
             </Fragment>

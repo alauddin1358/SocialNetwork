@@ -6,7 +6,8 @@ import {
     LOGIN_FAIL,
     LOGOUT,
     USER_LOADED,
-    ALLUSER_LOADED
+    ALLUSER_LOADED,
+    DELETE_USER
   } from '../actions/types';
   
   const initialState = {
@@ -71,6 +72,12 @@ import {
           loading: false,
           user: null
         };
+      case DELETE_USER:
+          return {
+            ...state,
+            allUsers: state.allUsers.filter((user) => user._id.$oid !== payload),
+            loading: false
+          };
       default:
         return state;
     }

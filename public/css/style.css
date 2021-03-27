@@ -117,25 +117,29 @@ p {
 #advertisements {
 	display: flex;
 	flex-direction: column;
-	row-gap: 20px;
+	row-gap: 15px;
 }
 .advertisement {
 	background-color:#fff !important;
-	height: 300px !important;
+	height: 350px !important;
 	display: inline-block;
 	width: 200px;
 }
 .small-advert {
 	background-color:#fff !important;
-	height: 200px !important;
+	height: 250px !important;
 	display: inline-block;
 	width: 200px;
 }
 .video-advert {
 	background-color:#fff !important;
-	height: 200px !important;
+	height: 250px !important;
 	display: inline-block;
 	max-width: 100%;
+}
+.text-right {
+	text-align: right !important;
+	margin-left: 15px !important;
 }
 /* .video-advert i {
 	background-color: white !important; 
@@ -171,8 +175,10 @@ p {
 .comment img {
     float: left;
     border-radius: 50%;
+	margin-top: 10px;
     width: 18%;
     max-width: 60px;
+	height: 60px;
 }
 
 .comment-edit textarea {
@@ -180,7 +186,8 @@ p {
 	border-radius: 8px;
 	margin-left: auto;
 	margin-top: 10px;
-	padding: 15px 20px;
+	margin-bottom: 20px;
+	padding: 5px 10px;
 	position: relative;
 	outline: 0;
     width: 90%;
@@ -325,4 +332,8 @@ p {
 }
 #modal-profile-picture img {
 	max-width: 180px !important;
+}
+.user-img-profile {
+	height: 2rem;
+  	width: 2rem;
 }
