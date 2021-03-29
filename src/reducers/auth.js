@@ -7,7 +7,8 @@ import {
     LOGOUT,
     USER_LOADED,
     ALLUSER_LOADED,
-    DELETE_USER
+    DELETE_USER,
+    ADD_CSS_CLASS
   } from '../actions/types';
   
   const initialState = {
@@ -17,12 +18,19 @@ import {
     isSearch: false,
     user: null,
     allUsers: [],
-    searchUser: null
+    searchUser: null,
+    isAddClass: false
   };
   
   export default  function authReducer(state = initialState, action) {
     const { type, payload } = action;
     switch (type) {
+      case ADD_CSS_CLASS:
+          return {
+            ...state,
+            loading: false,
+            isAddClass: payload 
+          };
       case USER_LOADED:
           return {
             ...state,

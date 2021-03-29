@@ -1,16 +1,18 @@
 import React, { Fragment, useState} from 'react'
 import { Link } from 'react-router-dom';
 import { connect } from 'react-redux';
+import { toggleCssClass } from '../../actions/auth';
 const ADMIN = process.env.REACT_APP_ADMIN;
-const Sidebar = ({auth:{user}}) => {
-    const [addClass, setAddClass] = useState(false);
-    //console.log('Toggg', addClass);
+const Sidebar = ({auth:{user, isAddClass}, toggleCssClass}) => {
+    console.log('Toggle', isAddClass);
+    const [addClass, setAddClass] = useState(true);
     const toggleClass = () => {
         setAddClass(!addClass);
+        toggleCssClass(addClass);
     }
     return (
         <Fragment>
-            <ul className={`navbar-nav bgGradientPrimary sidebar sidebar-dark accordion ${addClass ? "toggled":""}`} 
+            <ul className={`navbar-nav bgGradientPrimary sidebar sidebar-dark accordion ${isAddClass ? "toggled":""}`} 
                     id="accordionSidebar">
                     
                     <Link to={{
@@ -100,4 +102,4 @@ const Sidebar = ({auth:{user}}) => {
 const mapStateToProps = (state) => ({
     auth: state.auth
 });
-export default connect(mapStateToProps, null)(Sidebar);
+export default connect(mapStateToProps, {toggleCssClass})(Sidebar);

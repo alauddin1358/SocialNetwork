@@ -24,4 +24,5 @@ export const ALLUSER_LOADED = 'ALLUSER_LOADED';
 export const ADD_ADV = 'ADD_ADV';
 export const GET_ADV = 'GET_ADV';
 export const ADV_ERROR = 'ADV_ERROR';
-export const DELETE_ADV = 'DELETE_ADV';
+export const DELETE_ADV = 'DELETE_ADV'; 
+export const ADD_CSS_CLASS = 'ADD_CSS_CLASS';

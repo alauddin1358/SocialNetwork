@@ -204,8 +204,17 @@ const ProfilePage = ({auth: {user, loading, allUsers}, loadUser, updateProfile, 
                                                 <img src={user.image} alt="profile" />
                                                 <h6>{user.name}</h6>
                                             </div>
-                                            <Link to="/profile" className="profile-add-link">Add Contact</Link>
-                                            <Link  to="/profile" className="profile-message-link">Message</Link>
+                                            {!isSearch ? <Link to="/profile" className="profile-add-link">Add Contact</Link> 
+                                                       : (<Link to="/profile" className="profile-add-link" style={{cursor: "default"}}
+                                                                onClick={ (event) => event.preventDefault() }>Add Contact</Link>)
+                                            }
+                                            {
+                                                !isSearch ? <Link  to="/profile" className="profile-message-link">Message</Link> 
+                                                          : (
+                                                            <Link  to="/profile" className="profile-message-link" style={{cursor: "default"}}
+                                                                    onClick={ (event) => event.preventDefault() }>Message</Link>)
+                                            }
+                                            
                                         </div>
                                     </div>
                                     <div className="common-card">

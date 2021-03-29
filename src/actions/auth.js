@@ -7,7 +7,8 @@ import {
     AUTH_ERROR,
     ALLUSER_LOADED,
     LOGOUT,
-    DELETE_USER
+    DELETE_USER,
+    ADD_CSS_CLASS
   } from './types';
 //import setAuthToken from '../utils/setAuthToken';
 import axios from 'axios';
@@ -16,7 +17,19 @@ import { setAlert } from './alert';
 //import {config} from './config';
 const API = process.env.REACT_APP_API;
 
-
+//Toggle class for adding css style
+export const toggleCssClass = (value) => async dispatch => {
+  try {
+    //console.log('Value = ', value);
+    dispatch({
+      type: ADD_CSS_CLASS,
+      payload: value
+    });
+    //dispatch(loadUser());
+  } catch(err){
+    console.log('Error in toggle class function',err);
+  }
+}
 
 // Load User
 export const loadUser = () => async dispatch => {
@@ -29,6 +42,7 @@ export const loadUser = () => async dispatch => {
     }
   };
   try {
+    //console.log('Calling LoadUser');
     const res = await instance.get(`${API}/user`, config);
     //console.log('Auth response = ',JSON.parse(res.data.data));
     if(res.data.result.isError === 'false') {

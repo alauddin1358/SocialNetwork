@@ -2,22 +2,22 @@ import React, { Fragment, useState } from 'react'
 import { connect } from 'react-redux';
 //import { Modal, ModalHeader, ModalBody } from 'reactstrap';
 import {Link, Redirect} from 'react-router-dom';
-import { logout } from '../../actions/auth';
+import { logout, toggleCssClass } from '../../actions/auth';
 import Autosuggest from 'react-autosuggest';
 import AutosuggestHighlightMatch from 'autosuggest-highlight/match';
 import AutosuggestHighlightParse from 'autosuggest-highlight/parse';
-const Topbar = ({auth:{user, allUsers}, logout}) => {
+const Topbar = ({auth:{user, allUsers}, logout, toggleCssClass}) => {
     const [value, setValue] = useState('');
     const [suggestions, setSuggestions] = useState([]);
-    const [addClass, setAddClass] = useState(false);
-    let sidebarClass = ["sidebar"];
-    if(addClass) {
-        sidebarClass.push('toggled');
-    }
+    const [addClass, setAddClass] = useState(true);
     const toggleClass = () => {
-        console.log('Class = ',addClass)
+        console.log('Tobbar addclass before set ', addClass);
+        
         setAddClass(!addClass);
+        toggleCssClass(addClass);
+        console.log('Tobbar addclass after set ', addClass);
     }
+   
     function escapeRegexCharacters(str) {
         return str.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
     }
@@ -286,4 +286,4 @@ const Topbar = ({auth:{user, allUsers}, logout}) => {
 const mapStateToProps = (state) => ({
     auth: state.auth
 });
-export default connect(mapStateToProps, {logout})(Topbar);
+export default connect(mapStateToProps, {logout, toggleCssClass})(Topbar);

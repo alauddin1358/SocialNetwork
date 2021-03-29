@@ -1,4 +1,4 @@
-import React, { Fragment, useState } from 'react'
+import React, { Fragment, useState, useEffect } from 'react'
 import { connect } from 'react-redux';
 //import { Modal, ModalHeader, ModalBody } from 'reactstrap';
 import {Link} from 'react-router-dom';
@@ -15,10 +15,29 @@ const TopSidebar = ({props,auth:{user, allUsers}, logout}) => {
     const [value, setValue] = useState('');
     const [suggestions, setSuggestions] = useState([]);
     const [addClass, setAddClass] = useState(false);
-    //console.log('Toggg', addClass);
+    const [stopCondition, setStopCondition] = useState(true);
+    // useEffect(() => {
+    //     if(window.innerWidth > 767) {
+    //         setSideToggle(true);
+    //     }
+    //     else {
+    //         setSideToggle(false);
+    //     }
+    // }, [])
+    // console.log('Toggg', sideToggle);
     const toggleClass = () => {
-        
+        //console.log('Tobbar addclass before set ', addClass);
         setAddClass(!addClass);
+        //setSideToggle(!sideToggle);
+        //toggleCssClass(addClass);
+        //console.log('Tobbar addclass after set ', addClass);
+    }
+    if(window.innerWidth < 767 ) {
+        if(stopCondition){
+            console.log('Calling window', addClass);
+            setAddClass(!addClass);
+            setStopCondition(false);
+        }
     }
     function escapeRegexCharacters(str) {
         return str.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
@@ -105,8 +124,9 @@ const TopSidebar = ({props,auth:{user, allUsers}, logout}) => {
       };
     return (
         <Fragment>
-            <ul className={`navbar-nav bgGradientPrimary sidebar sidebar-dark accordion ${addClass ? "toggled":""}`} 
-                    id="accordionSidebar">
+            <ul className={`navbar-nav bgGradientPrimary sidebar sidebar-dark accordion 
+                        ${addClass ? "toggled":""}`} 
+                id="accordionSidebar">
                     
                 <Link to={{
                     pathname: '/dashboard',
