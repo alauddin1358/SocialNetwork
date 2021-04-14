@@ -42,9 +42,9 @@ export const loadUser = () => async dispatch => {
     }
   };
   try {
-    //console.log('Calling LoadUser');
+    console.log('Calling LoadUser', localStorage.token);
     const res = await instance.get(`${API}/user`, config);
-    //console.log('Auth response = ',JSON.parse(res.data.data));
+    console.log('Auth response = ',JSON.parse(res.data.data));
     if(res.data.result.isError === 'false') {
       dispatch({
         type: USER_LOADED,

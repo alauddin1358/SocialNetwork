@@ -16,6 +16,8 @@ import ResetPassword from './components/auth/ResetPassword';
 import ProfileSearchView from './components/profile/ProfileSearchView';
 import ShowAdvertise from './components/dashboard/ShowAdvertise';
 import UserList from './components/auth/UserList';
+import AddFriend from './components/Friends/AddFriend';
+import FriendList from './components/Friends/FriendList';
 import store from './store';
 import { BrowserRouter as Router, Route, Switch } from 'react-router-dom';
 import { Provider } from 'react-redux';
@@ -30,7 +32,7 @@ const App = () => {
     <Provider store={store}>
       <Router>
         <Fragment>
-          <Route exact path="/" component={ HomePage } />
+          <Route exact path="/" component={ Login } />
             <Switch>
               <Route exact path="/register" component={ Register } />
               <Route exact path="/dashboard" component={ HomePage } />
@@ -48,6 +50,8 @@ const App = () => {
               <Route exact path="/search" component={ProfileSearchView}  />
               <Route exact path="/showadvertise" component={ShowAdvertise}  />
               <Route exact path="/userlist" component={UserList}  />
+              <Route exact path="/friends" component = {AddFriend} />
+              <Route exact path="/friendlist" component = {FriendList} />
             </Switch>
           
         </Fragment>

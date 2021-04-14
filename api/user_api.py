@@ -49,7 +49,7 @@ app.config['MAIL_PASSWORD'] = 'X5Y[qN!GM3Yu'
 
 app.config['MAIL_USE_TLS'] = False
 app.config['MAIL_USE_SSL'] = True
-app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
+app.config['UPLOAD_FOLDER'] = os.getcwd()
 
 # SESSION_TYPE = 'filesystem'
 # app.config.from_object(__name__)
@@ -1566,110 +1566,129 @@ def update():
 
 
 @ app.route('/friendReq/<id>', methods=['POST', 'GET'])
+@ cross_origin(supports_credentials=True)
+@ token_required
 def friendReq(id):
-    current_user = mongo.db.userReg.find_one({'email': session['email']})
-    existing_user = mongo.db.userReg.find_one({'_id': ObjectId(id)})
-    # check if userReg already has the friend
-    existing_friend = mongo.db.userReg.find_one(
-        {'email': session['email'], 'friends': DBRef(collection="userReg", id=ObjectId(id))})
-    if existing_friend:
-        # existing_friend = mongo.db.userReg.find_one({'email':session['email'], 'friends':DBRef(collection = "userReg", id = ObjectId(id) )  })
-        message = {
-            'data': "null",
-            'result': {'isError': 'false', 'message': 'Friend Already Exist', 'status': 200, }
-        }
-        return jsonify(message)
-    if existing_user and (existing_user != current_user) and (existing_friend is None) and request.method == 'POST':
-        # update userReg with new existing friend
-        # mongo.db.userReg.update_one({'email':session['email'] },{ '$push': {'friend_pending': DBRef(collection = "userReg", id = ObjectId(id) ) } })
-        mongo.db.userReg.update_one({'_id': ObjectId(id)}, {'$push': {
-                                    'friend_pending': DBRef(collection="userReg", id=current_user['_id'])}})
+    try:
+        current_user = mongo.db.userReg.find_one({'email': session['user']})
+        existing_user = mongo.db.userReg.find_one({'_id': ObjectId(id)})
+        # check if userReg already has the friend
+        existing_friend = mongo.db.userReg.find_one(
+            {'email': session['user'], 'friends': DBRef(collection="userReg", id=ObjectId(id))})
+        if existing_friend:
+            # existing_friend = mongo.db.userReg.find_one({'email':session['email'], 'friends':DBRef(collection = "userReg", id = ObjectId(id) )  })
+            message = {
+                'data': "null",
+                'result': {'isError': 'false', 'message': 'Friend Already Exist', 'status': 200, }
+            }
+            return jsonify(message)
+        if existing_user and (existing_user != current_user) and (existing_friend is None):
+            # update userReg with new existing friend
+            # mongo.db.userReg.update_one({'email':session['email'] },{ '$push': {'friend_pending': DBRef(collection = "userReg", id = ObjectId(id) ) } })
+            mongo.db.userReg.update_one({'_id': ObjectId(id)}, {'$push': {
+                                        'friend_pending': DBRef(collection="userReg", id=current_user['_id'])}})
 
-        message = {
-            'data': "null",
-            'result': {'isError': 'false', 'message': 'Friend Request Sent', 'status': 200, }
-        }
-        # for json response
-        return jsonify(message)
-    else:
-        return not_found()
+            message = {
+                'data': "null",
+                'result': {'isError': 'false', 'message': 'Friend Request Sent', 'status': 200, }
+            }
+            # for json response
+            return jsonify(message)
+        else:
+            return not_found()
+    except Exception as e:
+        print('Error ', e)
+        return internal_error()
 
 # acceptFriend Request
 
 
 @ app.route('/friendReqAccept/<id>', methods=['POST', 'GET'])
+@ cross_origin(supports_credentials=True)
+@ token_required
 def acceptFriendReq(id):
-    current_user = mongo.db.userReg.find_one({'email': session['email']})
-    pending_friend = mongo.db.userReg.find_one(
-        {'email': session['email'], 'friend_pending': DBRef(collection="userReg", id=ObjectId(id))})
+    try:
+        current_user = mongo.db.userReg.find_one({'email': session['user']})
+        pending_friend = mongo.db.userReg.find_one(
+            {'email': session['user'], 'friend_pending': DBRef(collection="userReg", id=ObjectId(id))})
 
-    if pending_friend:
-        # adding in both users friend list
-        mongo.db.userReg.update_one({'email': session['email']}, {
-                                    '$push': {'friends': DBRef(collection="userReg", id=ObjectId(id))}})
-        mongo.db.userReg.update_one({'_id': ObjectId(id)}, {
-                                    '$push': {'friends': DBRef(collection="userReg", id=current_user['_id'])}})
-        mongo.db.userReg.update_one({'email': session['email'], 'friend_pending': DBRef(
-            collection="userReg", id=ObjectId(id))}, {'$pop': {'friend_pending': -1}})
-        message = {
-            'data': "null",
-            'result': {'isError': 'false', 'message': 'Friend Request Accepted', 'status': 200, }
-        }
-        return jsonify(message)
-    else:
-        return not_found()
+        if pending_friend:
+            # adding in both users friend list
+            mongo.db.userReg.update_one({'email': session['user']}, {
+                                        '$push': {'friends': DBRef(collection="userReg", id=ObjectId(id))}})
+            mongo.db.userReg.update_one({'_id': ObjectId(id)}, {
+                                        '$push': {'friends': DBRef(collection="userReg", id=current_user['_id'])}})
+            mongo.db.userReg.update_one({'email': session['user'], 'friend_pending': DBRef(
+                collection="userReg", id=ObjectId(id))}, {'$pop': {'friend_pending': -1}})
+            message = {
+                'data': "null",
+                'result': {'isError': 'false', 'message': 'Friend Request Accepted', 'status': 200, }
+            }
+            return jsonify(message)
+        else:
+            return not_found()
+    except:
+        return internal_error()
 
 # deleteFriend Request
-
-
 @ app.route('/friendReqDel/<id>', methods=['POST', 'GET'])
+@ cross_origin(supports_credentials=True)
+@ token_required
 def friendReqDel(id):
-    current_user = mongo.db.userReg.find_one({'email': session['email']})
-    pending_friend = mongo.db.userReg.find_one(
-        {'email': session['email'], 'friend_pending': DBRef(collection="userReg", id=ObjectId(id))})
+    try:
+        current_user = mongo.db.userReg.find_one({'email': session['user']})
+        pending_friend = mongo.db.userReg.find_one(
+            {'email': session['user'], 'friend_pending': DBRef(collection="userReg", id=ObjectId(id))})
 
-    if pending_friend:
-        mongo.db.userReg.update_one({'email': session['email'], 'friend_pending': DBRef(
-            collection="userReg", id=ObjectId(id))}, {'$pop': {'friend_pending': -1}})
-        message = {
-            'data': "null",
-            'result': {'isError': 'false', 'message': 'Friend Request Declined', 'status': 200, }
-        }
-        return jsonify(message)
-    else:
-        return not_found()
+        if pending_friend:
+            mongo.db.userReg.update_one({'email': session['user'], 'friend_pending': DBRef(
+                collection="userReg", id=ObjectId(id))}, {'$pop': {'friend_pending': -1}})
+            message = {
+                'data': "null",
+                'result': {'isError': 'false', 'message': 'Friend Request Declined', 'status': 200, }
+            }
+            return jsonify(message)
+        else:
+            return not_found()
+    except:
+        return internal_error()
 
 
 # remove targeted friend from userReg
 @ app.route('/rmFriend/<id>', methods=['POST', 'GET'])
+@ cross_origin(supports_credentials=True)
+@ token_required
 def rmFriend(id):
-    current_user = mongo.db.userReg.find_one({'email': session['email']})
-    existing_user = mongo.db.userReg.find_one({'_id': ObjectId(id)})
-    # check if userReg already has the friend
-    if existing_user:
-        existing_friend = mongo.db.userReg.find_one(
-            {'email': session['email'], 'friends': DBRef(collection="userReg", id=ObjectId(id))})
-        if existing_friend is None:
+    try:
+        current_user = mongo.db.userReg.find_one({'email': session['user']})
+        existing_user = mongo.db.userReg.find_one({'_id': ObjectId(id)})
+        # check if userReg already has the friend
+        if existing_user:
+            existing_friend = mongo.db.userReg.find_one(
+                {'email': session['user'], 'friends': DBRef(collection="userReg", id=ObjectId(id))})
+            if existing_friend is None:
+                message = {
+                    'data': "null",
+                    'result': {'isError': 'false', 'message': 'User not found in your friend list', 'status': 200, }
+                }
+                # for json response
+                return jsonify(message)
+        if existing_user and (existing_friend) and request.method == 'POST':
+            # update userReg with pop the target existing friend
+            mongo.db.userReg.update_one({'email': session['user'], 'friends': DBRef(
+                collection="userReg", id=ObjectId(id))}, {'$pop': {'friends': -1}})
+            mongo.db.userReg.update_one({'_id': ObjectId(id), 'friends': DBRef(
+                collection="userReg", id=current_user['_id'])}, {'$pop': {'friends': -1}})
             message = {
                 'data': "null",
-                'result': {'isError': 'false', 'message': 'User not found in your friend list', 'status': 200, }
+                'result': {'isError': 'false', 'message': 'Removed from friend list', 'status': 200, }
             }
             # for json response
             return jsonify(message)
-    if existing_user and (existing_friend) and request.method == 'POST':
-        # update userReg with pop the target existing friend
-        mongo.db.userReg.update_one({'email': session['email'], 'friends': DBRef(
-            collection="userReg", id=ObjectId(id))}, {'$pop': {'friends': -1}})
-        mongo.db.userReg.update_one({'_id': ObjectId(id), 'friends': DBRef(
-            collection="userReg", id=current_user['_id'])}, {'$pop': {'friends': -1}})
-        message = {
-            'data': "null",
-            'result': {'isError': 'false', 'message': 'Removed from friend list', 'status': 200, }
-        }
-        # for json response
-        return jsonify(message)
-    else:
-        return not_found()
+        else:
+            return not_found()
+    except:
+        return internal_error()
 
 # ................friends end..........................
 

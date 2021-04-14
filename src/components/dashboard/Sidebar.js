@@ -75,6 +75,19 @@ const Sidebar = ({auth:{user, isAddClass}, toggleCssClass}) => {
                             </div>
                         </div>
                     </li>
+                    <li className="nav-item">
+                        <a className="nav-link collapsed" href="/#" data-toggle="collapse" data-target="#collapseFriends"
+                            aria-expanded="true" aria-controls="collapseFiles">
+                            <i className="fas fa-user-friends"></i>
+                            <span>Friends</span> 
+                        </a>
+                        <div id="collapseFriends" className="collapse" aria-labelledby="headingPages" data-parent="#accordionSidebar">
+                            <div className="bg-white py-2 collapse-inner rounded">
+                                <Link className="collapse-item" to="/friends">Add Friends</Link>
+                                <Link className="collapse-item" to="/friendlist">My Friends</Link>
+                            </div>
+                        </div>
+                    </li>
                     {
                     user !== null ? user.email === ADMIN ? (
                         <li className="nav-item">

@@ -11,11 +11,11 @@ const Topbar = ({auth:{user, allUsers}, logout, toggleCssClass}) => {
     const [suggestions, setSuggestions] = useState([]);
     const [addClass, setAddClass] = useState(true);
     const toggleClass = () => {
-        console.log('Tobbar addclass before set ', addClass);
+        //console.log('Tobbar addclass before set ', addClass);
         
         setAddClass(!addClass);
         toggleCssClass(addClass);
-        console.log('Tobbar addclass after set ', addClass);
+        //console.log('Tobbar addclass after set ', addClass);
     }
    
     function escapeRegexCharacters(str) {
