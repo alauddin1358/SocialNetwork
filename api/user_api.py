@@ -1585,9 +1585,13 @@ def friendReq(id):
         if existing_user and (existing_user != current_user) and (existing_friend is None):
             # update userReg with new existing friend
             # mongo.db.userReg.update_one({'email':session['email'] },{ '$push': {'friend_pending': DBRef(collection = "userReg", id = ObjectId(id) ) } })
+            _date = datetime.datetime.now()
+            mongo.db.userReg.update_one({'_id': ObjectId(id)}, {'$set': {
+                                        'isFrndReqAccepted': True
+                                        }})
             mongo.db.userReg.update_one({'_id': ObjectId(id)}, {'$push': {
-                                        'friend_pending': DBRef(collection="userReg", id=current_user['_id'])}})
-
+                                        'friend_pending': DBRef(collection="userReg", id=current_user['_id'])
+                                        }})
             message = {
                 'data': "null",
                 'result': {'isError': 'false', 'message': 'Friend Request Sent', 'status': 200, }
@@ -1600,6 +1604,36 @@ def friendReq(id):
         print('Error ', e)
         return internal_error()
 
+# Cancel Friend Request
+
+
+@ app.route('/cancelFrndReq/<id>', methods=['POST', 'GET'])
+@ cross_origin(supports_credentials=True)
+@ token_required
+def cancelFrndReq(id):
+    try:
+        # print('id = ', id)
+        # print('User ', session['user'])
+        current_user = mongo.db.userReg.find_one({'email': session['user']})
+        # existing_user = mongo.db.userReg.find_one({'_id': ObjectId(id)})
+        pending_friend = mongo.db.userReg.find_one(
+            {'_id': ObjectId(id), 'friend_pending': DBRef(collection="userReg", id=current_user['_id'])})
+        if pending_friend:
+            mongo.db.userReg.update_one({'_id': ObjectId(id)}, {'$set': {
+                                        'isFrndReqAccepted': False
+                                        }})
+            mongo.db.userReg.update_one({'_id': ObjectId(id), 'friend_pending': DBRef(
+                collection="userReg", id=current_user['_id'])}, {'$pop': {'friend_pending': -1}})
+
+            message = {
+                'data': "null",
+                'result': {'isError': 'false', 'message': 'Friend Request Canceled', 'status': 200, }
+            }
+            return jsonify(message)
+        else:
+            return not_found()
+    except:
+        return internal_error()
 # acceptFriend Request
 
 
@@ -1613,6 +1647,9 @@ def acceptFriendReq(id):
             {'email': session['user'], 'friend_pending': DBRef(collection="userReg", id=ObjectId(id))})
 
         if pending_friend:
+            mongo.db.userReg.update_one({'email': session['user']}, {'$set': {
+                                        'isFrndReqAccepted': False
+                                        }})
             # adding in both users friend list
             mongo.db.userReg.update_one({'email': session['user']}, {
                                         '$push': {'friends': DBRef(collection="userReg", id=ObjectId(id))}})
@@ -1631,6 +1668,8 @@ def acceptFriendReq(id):
         return internal_error()
 
 # deleteFriend Request
+
+
 @ app.route('/friendReqDel/<id>', methods=['POST', 'GET'])
 @ cross_origin(supports_credentials=True)
 @ token_required
@@ -1641,6 +1680,9 @@ def friendReqDel(id):
             {'email': session['user'], 'friend_pending': DBRef(collection="userReg", id=ObjectId(id))})
 
         if pending_friend:
+            mongo.db.userReg.update_one({'email': session['user']}, {'$set': {
+                                        'isFrndReqAccepted': False
+                                        }})
             mongo.db.userReg.update_one({'email': session['user'], 'friend_pending': DBRef(
                 collection="userReg", id=ObjectId(id))}, {'$pop': {'friend_pending': -1}})
             message = {
@@ -1673,7 +1715,7 @@ def rmFriend(id):
                 }
                 # for json response
                 return jsonify(message)
-        if existing_user and (existing_friend) and request.method == 'POST':
+        if existing_user and (existing_friend):
             # update userReg with pop the target existing friend
             mongo.db.userReg.update_one({'email': session['user'], 'friends': DBRef(
                 collection="userReg", id=ObjectId(id))}, {'$pop': {'friends': -1}})

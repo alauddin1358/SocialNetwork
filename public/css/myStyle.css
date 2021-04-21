@@ -29,7 +29,7 @@
 }
 .friendCard .btn-secondary {
     background-color: rgb(187, 181, 181) !important;
-    margin-left: 20px;
+    /* margin-left: 20px; */
     width: 120px;
     color: black;
     text-align: center;
@@ -38,4 +38,21 @@
 }
 .friendCard .btn-secondary:hover {
     background-color: white !important;
+}
+
+@media screen and (max-width: 1024px)  {
+    .friendCard {
+        width: 100%;
+    }
+    .friendCard h3 {
+        margin: 10px;
+    }
+    .friendCard .btn-primary, .friendCard .btn-secondary {
+        font-size: 12px;
+        margin: 10px;
+    }
+    /* .friendCard .btn-secondary {
+        margin: 10px; 
+        font-size: 12px;
+    } */
 }
