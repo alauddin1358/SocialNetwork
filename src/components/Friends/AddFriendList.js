@@ -31,26 +31,31 @@ const AddFriendList = ({
   // const [friendSuggestion, setFriendSuggestion] = useState([]);
   // const [isSetPenFr, setIsSetPenFr] = useState(true);
   // const [isSetFrsug, setIsSetFrsug] = useState(true);
+  var pendingFriend = [];
+  if(allUsers.length > 0) {
+      pendingFriend = allUsers.reduce(function (filtered, option) {
+      var matchFriend = [];
+      if (user !== null) {
+        if(user.hasOwnProperty('friend_pending')){
+          matchFriend = user.friend_pending.filter(
+            (friend) => friend.$id.$oid === option._id.$oid
+          );
+        }
+      }
+      if (matchFriend.length > 0) {
+        filtered.push(option);
+      }
+      return filtered;
+    }, []);
+  }
   
-  var pendingFriend = allUsers.reduce(function (filtered, option) {
-    var matchFriend = [];
-    if (user !== null) {
-      matchFriend = user.friend_pending.filter(
-        (friend) => friend.$id.$oid === option._id.$oid
-      );
-    }
-    if (matchFriend.length > 0) {
-      filtered.push(option);
-    }
-    return filtered;
-  }, []);
   // if(isSetPenFr) {
   //   setPendinFriend(pendFriend);
   //   setIsSetPenFr(false);
   // }
   var friendSuggestion = [];
   var suggestedFriend = [];
-  if (user !== null) {
+  if (user !== null ) {
     friendSuggestion = allUsers.filter(
       (allu) => allu._id.$oid !== user._id.$oid
     );
@@ -198,7 +203,7 @@ const AddFriendList = ({
                               />
                             </div>
                             <div className='col-sm-12 col-md-12 col-lg-8'>
-                              <h3>{frUser.name}</h3>
+                              <h4>{frUser.name}</h4>
                               {frUser.hasOwnProperty('isFrndReqAccepted') ? (
                                 frUser.isFrndReqAccepted ? (
                                 <>

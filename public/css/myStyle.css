@@ -15,10 +15,11 @@
 }
 .friendCard {
     width: 60%;
+    display: inline-block;
 }
-.friendCard h3 {
+.friendCard h4 {
     padding: 5px;
-    margin-bottom: 20px;
+    margin-bottom: 10px;
     color: black;
 }
 .friendCard .btn-primary {
@@ -26,6 +27,7 @@
     text-align: center;
     width: 120px;
     font-size: 15px;
+    margin-bottom: 10px;
 }
 .friendCard .btn-secondary {
     background-color: rgb(187, 181, 181) !important;
@@ -35,6 +37,7 @@
     text-align: center;
     padding: 5px;
     font-size: 15px;
+    margin-bottom: 10px;
 }
 .friendCard .btn-secondary:hover {
     background-color: white !important;

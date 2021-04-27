@@ -171,16 +171,23 @@ def login():
                         'result': {'isError': 'false', 'message': 'Login Successful', 'status': 200, }
                     }
                     return jsonify(message)
+                else:
+                    message = {
+                        'data': 'null',
+                        'result': {'isError': 'true', 'message': 'password is invalid', 'status': 401, }
+                    }
+                    return jsonify(message)
             else:
                 message = {
                     'data': 'null',
                     'result': {'isError': 'true', 'message': 'User Account is not activated', 'status': 401, }
                 }
                 return jsonify(message)
-        message = {
-            'data': 'null', 'result': {'isError': 'true', 'message': 'Username or password is invalid', 'status': 401, }
-        }
-        return jsonify(message)
+        else:
+            message = {
+                'data': 'null', 'result': {'isError': 'true', 'message': 'Username or password is invalid', 'status': 401, }
+            }
+            return jsonify(message)
     except Exception as e:
         print(e)
         return internal_error()

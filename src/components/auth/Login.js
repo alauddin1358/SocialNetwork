@@ -14,7 +14,7 @@ const Login = ({auth:{isAuthenticated, token}, login}) => {
     const { register, handleSubmit, errors, getValues } = useForm({
         mode: 'onTouched',
         });
-    const { email, password } = getValues();
+    const { email, password } = '';
     const registerOptions = {
         password: {
             required: "Password is required",
@@ -32,6 +32,9 @@ const Login = ({auth:{isAuthenticated, token}, login}) => {
         }
     };
     const onSubmit = async () => {
+        const { email, password } = getValues();
+        // console.log('Email ',email);
+        // console.log('pass', password );
         login(email, password);
         //reset();
         //console.log('IsAuthenticated = ', isAuthenticated);

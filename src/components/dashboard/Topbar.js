@@ -19,18 +19,23 @@ const Topbar = ({ auth: { user, allUsers }, logout, toggleCssClass }) => {
   };
   //Pending friend request for notification
   var pendinFriend = [];
-  pendinFriend = allUsers.reduce(function (filtered, option) {
-    var matchFriend = [];
-    if (user !== null) {
-      matchFriend = user.friend_pending.filter(
-        (friend) => friend.$id.$oid === option._id.$oid
-      );
-    }
-    if (matchFriend.length > 0) {
-      filtered.push(option);
-    }
-    return filtered;
-  }, []);
+  if(allUsers.length > 0) {
+    pendinFriend = allUsers.reduce(function (filtered, option) {
+      var matchFriend = [];
+      if (user !== null) {
+        if(user.hasOwnProperty('friend_pending')){
+          matchFriend = user.friend_pending.filter(
+            (friend) => friend.$id.$oid === option._id.$oid
+          );
+          }
+      }
+      if (matchFriend.length > 0) {
+        filtered.push(option);
+      }
+      return filtered;
+    }, []);
+  }
+  
 
   function escapeRegexCharacters(str) {
     return str.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');

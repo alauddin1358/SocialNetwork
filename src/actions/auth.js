@@ -44,24 +44,25 @@ export const loadUser = () => async dispatch => {
   try {
     //console.log('Calling LoadUser', localStorage.token);
     const res = await instance.get(`${API}/user`, config);
-    //console.log('Auth response = ',JSON.parse(res.data.data));
+    console.log('Auth response = ',JSON.parse(res.data.data));
     if(res.data.result.isError === 'false') {
       dispatch({
         type: USER_LOADED,
         payload: JSON.parse(res.data.data)
       });
     }
-    else {
-      // dispatch(setAlert(res.data.result.message, 'danger'));
-      dispatch({
-        type: AUTH_ERROR
-      });
-    }
+    // else {
+    //   // dispatch(setAlert(res.data.result.message, 'danger'));
+    //   dispatch({
+    //     type: AUTH_ERROR
+    //   });
+    // }
     
   } catch (err) {
     dispatch({
       type: AUTH_ERROR
     });
+    console.log('Error in loaduser ', err);
   }
 };
 //Load All user
@@ -76,6 +77,7 @@ export const getAllUsers = () => async dispatch => {
   };
   try {
     const res = await axios.get(`${API}/getAllUser`, config);
+    console.log('All User',JSON.parse(res.data.data));
     if(res.data.result.isError === 'true') {
       dispatch(setAlert(res.data.result.message, 'danger'));
     }
@@ -86,12 +88,12 @@ export const getAllUsers = () => async dispatch => {
       });
     }
   } catch (err) {
-    const errors = err.response;
-    dispatch(setAlert('Server Error', 'danger'));
-    console.log('Error in login = ',errors);
-    dispatch({
-      type: AUTH_ERROR
-    });
+    //const errors = err.response;
+    dispatch(setAlert('Something went wrong', 'danger'));
+    console.log('Error in getting all user = ',err);
+    // dispatch({
+    //   type: AUTH_ERROR
+    // });
   }
 }
 // Register User
@@ -115,8 +117,8 @@ export const userRegister = ({form_data}) => async dispatch => {
   } catch (err) {
     console.log("Error in registration = ", err);
     dispatch(setAlert('Server Error', 'danger'));
-    const errors = err.response;
-    console.log(errors);
+    // const errors = err.response;
+    // console.log(errors);
     dispatch({
       type: REGISTER_FAIL
     });
@@ -131,13 +133,13 @@ export const login = (email, password) => async dispatch => {
       }
   };
   const body = {email, password};
-  //console.log(body);
+  console.log('Login data',body);
   // const res = await axios.post(`${API}/email_test`, body, config);
   // console.log('Login response', res.data);
   
   try {
     const res = await axios.post(`${API}/login`, body, config);
-    //console.log('Login response', res.data.data);
+    console.log('Login response', res.data);
     if(res.data.result.isError === 'true') {
       dispatch(setAlert(res.data.result.message, 'danger'));
     }
@@ -149,9 +151,9 @@ export const login = (email, password) => async dispatch => {
       dispatch(loadUser());
     }
   } catch (err) {
-    const errors = err.response;
+    //const errors = err.response;
     dispatch(setAlert('Server Error', 'danger'));
-    console.log('Error in login = ',errors);
+    console.log('Error in login = ',err);
     // if (errors) {
     //   <Alert>{errors}</Alert>
     //   //errors.forEach(error => dispatch(setAlert(error.msg, 'danger')));
@@ -174,7 +176,7 @@ export const updateProfile = (id, {form_data}) => async dispatch => {
   };
     try {
     const res = await instance.put(`${API}/update/${id}`, form_data,config);
-    //console.log('Profile Updated', res.data);
+    console.log('Profile Updated', res.data);
     if(res.data.result.isError === 'true') {
       dispatch(setAlert(res.data.result.message, 'danger'));
     }
@@ -183,8 +185,8 @@ export const updateProfile = (id, {form_data}) => async dispatch => {
       dispatch(setAlert('Profile Updated', 'success'));
     }
     } catch (err) {
-      console.log(err.response);
-      dispatch(setAlert('Server Error Profile Not Updated', 'danger'));
+      console.log(err);
+      dispatch(setAlert('Something went wrong. Profile Not Updated', 'danger'));
     }
 };
 
@@ -194,7 +196,7 @@ export const logout = () => dispatch => {
   //dispatch( { type : CLEAR_PROFILE });
   dispatch( {type: LOGOUT} );
   window.location.replace("https://www.agriculturist.org");
-  //window.location.replace("http://localhost:3000");
+  //window.location.replace("http://localhost:3000"); 
   //dispatch(loadUser());
 };
 

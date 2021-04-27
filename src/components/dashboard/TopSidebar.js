@@ -43,9 +43,11 @@ const TopSidebar = ({ props, auth: { user, allUsers }, logout }) => {
   pendinFriend = allUsers.reduce(function (filtered, option) {
     var matchFriend = [];
     if (user !== null) {
-      matchFriend = user.friend_pending.filter(
-        (friend) => friend.$id.$oid === option._id.$oid
-      );
+      if(user.hasOwnProperty('friend_pending')){
+        matchFriend = user.friend_pending.filter(
+          (friend) => friend.$id.$oid === option._id.$oid
+        );
+        }
     }
     if (matchFriend.length > 0) {
       filtered.push(option);

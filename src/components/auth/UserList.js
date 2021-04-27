@@ -22,7 +22,7 @@ const UserList = ({getAllUsers,deleteUser, auth:{allUsers, loading}}) => {
 //   if(!auth.loading){
 //     getFile(auth.user._id.$oid);
 //   }
-  
+  //console.log('All users = ', allUsers);
 
   return (
     <Fragment>

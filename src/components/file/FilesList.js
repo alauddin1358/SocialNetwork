@@ -25,20 +25,20 @@ const FilesList = ({getFile, deleteFile, auth, file:{files, loading}}) => {
   //   }
   // }, [getFile]);
   console.log('Loading file',fileLoading);
-  if(!auth.loading){
-    if (fileLoading && auth.user.email !== ADMIN) {
-      console.log('Calling User getFile');
-      getFile(auth.user._id.$oid);
-      setFileLoading(false)
-    }
-    else if(fileLoading && auth.user.email === ADMIN){
-      console.log('Calling ADMIN getFile');
-      getFile(null);
-      setFileLoading(false)
+  if(auth.user !== null) {
+    if(!auth.loading){
+      if (fileLoading && auth.user.email !== ADMIN) {
+        console.log('Calling User getFile');
+        getFile(auth.user._id.$oid);
+        setFileLoading(false)
+      }
+      else if(fileLoading && auth.user.email === ADMIN){
+        console.log('Calling ADMIN getFile');
+        getFile(null);
+        setFileLoading(false)
+      }
     }
   }
-
-  
   const downloadFile = async (filename, mimetype) => {
     try {
       const result = await axios.get(`${API}/file/${filename}`, {
