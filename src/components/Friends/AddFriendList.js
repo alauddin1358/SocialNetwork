@@ -21,6 +21,7 @@ const AddFriendList = ({
 }) => {
   const [isSendRequest, setIsSendRequest] = useState(false);
   useEffect(() => {
+    console.log('calling useEffect of AddFriendList');
     loadUser();
     getAllUsers();
     setIsSendRequest(isSendRequest);
@@ -32,11 +33,11 @@ const AddFriendList = ({
   // const [isSetPenFr, setIsSetPenFr] = useState(true);
   // const [isSetFrsug, setIsSetFrsug] = useState(true);
   var pendingFriend = [];
-  if(allUsers.length > 0) {
-      pendingFriend = allUsers.reduce(function (filtered, option) {
+  if (allUsers.length > 0) {
+    pendingFriend = allUsers.reduce(function (filtered, option) {
       var matchFriend = [];
       if (user !== null) {
-        if(user.hasOwnProperty('friend_pending')){
+        if (user.hasOwnProperty('friend_pending')) {
           matchFriend = user.friend_pending.filter(
             (friend) => friend.$id.$oid === option._id.$oid
           );
@@ -48,14 +49,14 @@ const AddFriendList = ({
       return filtered;
     }, []);
   }
-  
+
   // if(isSetPenFr) {
   //   setPendinFriend(pendFriend);
   //   setIsSetPenFr(false);
   // }
   var friendSuggestion = [];
   var suggestedFriend = [];
-  if (user !== null ) {
+  if (user !== null) {
     friendSuggestion = allUsers.filter(
       (allu) => allu._id.$oid !== user._id.$oid
     );
@@ -124,46 +125,47 @@ const AddFriendList = ({
                       className='card-body friendCard'
                     >
                       <div className='post-card card'>
-                        <Link
-                          to={{
-                            pathname: '/profile',
-                            state: {
-                              id: pendingFr._id.$oid,
-                            },
-                          }}
-                        >
-                          <div className='row'>
-                            <div className='col-sm-12 col-md-12 col-lg-4'>
-                              <img
-                                src={pendingFr.image}
-                                alt={pendingFr.name}
-                                className='friendImageProfile'
-                              />
-                            </div>
-                            <div className='col-sm-12 col-md-12 col-lg-8'>
-                              <h3>{pendingFr.name}</h3>
-                              <Link
-                                to='/friends'
-                                onClick={() =>
-                                  acceptFrRequest(pendingFr._id.$oid)
-                                }
-                                className='btn btn-primary'
-                              >
-                                Accept Request
-                              </Link>
-                              <Link
-                                to='/friends'
-                                onClick={() =>
-                                  deleteFrRequest(pendingFr._id.$oid)
-                                }
-                                className='btn btn-secondary'
-                                style={{margin: 5}}
-                              >
-                                Delete Request
-                              </Link>
-                            </div>
+                        <div className='row'>
+                          <div className='col-sm-12 col-md-12 col-lg-4'>
+                            <img
+                              src={pendingFr.image}
+                              alt={pendingFr.name}
+                              className='friendImageProfile'
+                            />
                           </div>
-                        </Link>
+                          <div className='col-sm-12 col-md-12 col-lg-8'>
+                            <Link
+                              to={{
+                                pathname: '/profile',
+                                state: {
+                                  id: pendingFr._id.$oid,
+                                },
+                              }}
+                            >
+                              <h4>{pendingFr.name}</h4>
+                            </Link>
+
+                            <Link
+                              to='/friends'
+                              onClick={() =>
+                                acceptFrRequest(pendingFr._id.$oid)
+                              }
+                              className='btn btn-primary'
+                              style={{ marginRight: 5 }}
+                            >
+                              Accept Request
+                            </Link>
+                            <Link
+                              to='/friends'
+                              onClick={() =>
+                                deleteFrRequest(pendingFr._id.$oid)
+                              }
+                              className='btn btn-secondary'
+                            >
+                              Delete Request
+                            </Link>
+                          </div>
+                        </div>
                       </div>
                     </div>
                   ))
@@ -186,26 +188,29 @@ const AddFriendList = ({
                       className='card-body friendCard'
                     >
                       <div className='post-card card'>
-                        <Link
-                          to={{
-                            pathname: '/profile',
-                            state: {
-                              id: frUser._id.$oid,
-                            },
-                          }}
-                        >
-                          <div className='row'>
-                            <div className='col-sm-12 col-md-12 col-lg-4'>
-                              <img
-                                src={frUser.image}
-                                alt='User'
-                                className='friendImageProfile'
-                              />
-                            </div>
-                            <div className='col-sm-12 col-md-12 col-lg-8'>
+                        <div className='row'>
+                          <div className='col-sm-12 col-md-12 col-lg-4'>
+                            <img
+                              src={frUser.image}
+                              alt='User'
+                              className='friendImageProfile'
+                            />
+                          </div>
+                          <div className='col-sm-12 col-md-12 col-lg-8'>
+                            <Link
+                              to={{
+                                pathname: '/profile',
+                                state: {
+                                  id: frUser._id.$oid,
+                                },
+                              }}
+                            >
                               <h4>{frUser.name}</h4>
-                              {frUser.hasOwnProperty('isFrndReqAccepted') ? (
-                                frUser.isFrndReqAccepted ? (
+                            </Link>
+                            {frUser.hasOwnProperty('friend_pending') ? (
+                              frUser.friend_pending.filter(
+                                (fr) => fr.$id.$oid === user._id.$oid
+                              ).length > 0 ? (
                                 <>
                                   <Link
                                     to='/friends'
@@ -228,29 +233,23 @@ const AddFriendList = ({
                                   >
                                     Add Friend
                                   </Link>
-                                  {/* <Link
-                                    to='/friends'
-                                    className='btn btn-secondary'
-                                  >
-                                    Remove
-                                  </Link> */}
                                 </>
-                              )):(
-                                <>
-                                  <Link
-                                    to='/friends'
-                                    onClick={() =>
-                                      sendFriendRequest(frUser._id.$oid)
-                                    }
-                                    className='btn btn-primary'
-                                  >
-                                    Add Friend
-                                  </Link>
-                                </>
-                              )}
-                            </div>
+                              )
+                            ) : (
+                              <>
+                                <Link
+                                  to='/friends'
+                                  onClick={() =>
+                                    sendFriendRequest(frUser._id.$oid)
+                                  }
+                                  className='btn btn-primary'
+                                >
+                                  Add Friend
+                                </Link>
+                              </>
+                            )}
                           </div>
-                        </Link>
+                        </div>
                       </div>
                     </div>
                   ))

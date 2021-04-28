@@ -8,7 +8,7 @@ const Profile = (props) => {
     return (
         <Fragment>
             <div id="wrapper">
-            <Sidebar />
+                <Sidebar />
                 <div id="content-wrapper" className="d-flex flex-column">
                     <div id="content">
                         <Topbar />

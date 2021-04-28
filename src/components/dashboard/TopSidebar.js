@@ -463,6 +463,7 @@ const TopSidebar = ({ props, auth: { user, allUsers }, logout }) => {
                           <Link
                             className='dropdown-item d-flex align-items-center'
                             to="/friends"
+                            key={pendingUser._id.$oid}
                           >
                             <div className='mr-3'>
                               <div className='icon-circle bg-primary'>
@@ -479,7 +480,17 @@ const TopSidebar = ({ props, auth: { user, allUsers }, logout }) => {
                             </div>
                             <div>
                               <span className='font-weight-bold'>
-                                {pendingUser.name} wants to be your friend.
+                              <span
+                              style={{
+                                fontSize: 15,
+                                fontWeight: 'bold',
+                                fontFamily: 'cursive',
+                                color: 'green'
+                              }}
+                            >
+                              {pendingUser.name}
+                            </span>{' '}
+                            wants to be your friend.
                               </span>
                             </div>
                           </Link>

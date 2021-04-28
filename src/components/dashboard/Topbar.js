@@ -19,15 +19,15 @@ const Topbar = ({ auth: { user, allUsers }, logout, toggleCssClass }) => {
   };
   //Pending friend request for notification
   var pendinFriend = [];
-  if(allUsers.length > 0) {
+  if (allUsers.length > 0) {
     pendinFriend = allUsers.reduce(function (filtered, option) {
       var matchFriend = [];
       if (user !== null) {
-        if(user.hasOwnProperty('friend_pending')){
+        if (user.hasOwnProperty('friend_pending')) {
           matchFriend = user.friend_pending.filter(
             (friend) => friend.$id.$oid === option._id.$oid
           );
-          }
+        }
       }
       if (matchFriend.length > 0) {
         filtered.push(option);
@@ -35,7 +35,6 @@ const Topbar = ({ auth: { user, allUsers }, logout, toggleCssClass }) => {
       return filtered;
     }, []);
   }
-  
 
   function escapeRegexCharacters(str) {
     return str.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
@@ -278,7 +277,7 @@ const Topbar = ({ auth: { user, allUsers }, logout, toggleCssClass }) => {
                       <Link
                         key={pendingUser._id.$oid}
                         className='dropdown-item d-flex align-items-center'
-                        to="/friends"
+                        to='/friends'
                       >
                         <div className='mr-3'>
                           <div className='icon-circle bg-primary'>
@@ -293,7 +292,17 @@ const Topbar = ({ auth: { user, allUsers }, logout, toggleCssClass }) => {
                         </div>
                         <div>
                           <span className='font-weight-bold'>
-                            {pendingUser.name} wants to be your friend.
+                            <span
+                              style={{
+                                fontSize: 15,
+                                fontWeight: 'bold',
+                                fontFamily: 'cursive',
+                                color: 'green'
+                              }}
+                            >
+                              {pendingUser.name}
+                            </span>{' '}
+                            wants to be your friend.
                           </span>
                         </div>
                       </Link>

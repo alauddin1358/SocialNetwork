@@ -17,7 +17,7 @@ import ProfileSearchView from './components/profile/ProfileSearchView';
 import ShowAdvertise from './components/dashboard/ShowAdvertise';
 import UserList from './components/auth/UserList';
 import AddFriend from './components/Friends/AddFriend';
-import FriendList from './components/Friends/FriendList';
+import FriendListContainer from './components/Friends/FriendListContainer';
 import store from './store';
 import { BrowserRouter as Router, Route, Switch } from 'react-router-dom';
 import { Provider } from 'react-redux';
@@ -51,7 +51,7 @@ const App = () => {
               <Route exact path="/showadvertise" component={ShowAdvertise}  />
               <Route exact path="/userlist" component={UserList}  />
               <Route exact path="/friends" component = {AddFriend} />
-              <Route exact path="/friendlist" component = {FriendList} />
+              <Route exact path="/friendlist" component = {FriendListContainer} />
             </Switch>
           
         </Fragment>

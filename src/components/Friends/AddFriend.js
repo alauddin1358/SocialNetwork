@@ -3,7 +3,7 @@ import AddFriendList from './AddFriendList';
 import Sidebar from '../dashboard/Sidebar';
 import Footer from '../dashboard/Footer';
 import Topbar from '../dashboard/Topbar';
-
+import Alert from '../layout/Alert';
 const AddFriend = () => {
     return (
         <Fragment>
@@ -12,6 +12,7 @@ const AddFriend = () => {
                 <div id="content-wrapper" className="d-flex flex-column">
                     <div id="content">
                         <Topbar />
+                        <Alert />
                         <AddFriendList />
                     </div>
                     <Footer />

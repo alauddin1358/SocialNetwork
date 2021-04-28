@@ -29,20 +29,21 @@ export const sendFriendRequest = (id) => async dispatch => {
       const res = await instance.get(`${API}/friendReq/${id}`, config);
       console.log('Friend response = ',res.data);
       if(res.data.result.isError === 'false') {
-        console.log('calling getalluser from friend');
+        // console.log('calling getalluser from friend');
         getAllUsers();
+        dispatch(setAlert(res.data.result.message, 'success'));
         //window.location.reload(false);
         // dispatch({
         //   type: ADD_FRIEND,
         //   payload: JSON.parse(res.data.data)
         // });
       }
-      // else {
-      //   // dispatch(setAlert(res.data.result.message, 'danger'));
-      //   dispatch({
-      //     type: ERROR_FRIEND
-      //   });
-      // }
+      else {
+        dispatch(setAlert(res.data.result.message, 'danger'));
+        // dispatch({
+        //   type: ERROR_FRIEND
+        // });
+      }
       
     } catch (err) {
       console.log('Error in sending friend request',err);
@@ -72,17 +73,18 @@ export const acceptFriendRequest = (id) => async dispatch => {
       if(res.data.result.isError === 'false') {
         getAllUsers();
         loadUser();
+        dispatch(setAlert(res.data.result.message, 'success'));
       //   dispatch({
       //     type: ADD_FRIEND,
       //     payload: JSON.parse(res.data.data)
       //   });
       }
-      // else {
-      //   // dispatch(setAlert(res.data.result.message, 'danger'));
-      //   dispatch({
-      //     type: ERROR_FRIEND
-      //   });
-      // }
+      else {
+        dispatch(setAlert(res.data.result.message, 'danger'));
+        // dispatch({
+        //   type: ERROR_FRIEND
+        // });
+      }
       
     } catch (err) {
       console.log('Error in sending friend request',err);
@@ -112,17 +114,18 @@ export const deleteFriendRequest = (id) => async dispatch => {
       if(res.data.result.isError === 'false') {
         getAllUsers();
         loadUser();
+        dispatch(setAlert(res.data.result.message, 'success'));
       //   dispatch({
       //     type: ADD_FRIEND,
       //     payload: JSON.parse(res.data.data)
       //   });
       }
-      // else {
-      //   // dispatch(setAlert(res.data.result.message, 'danger'));
-      //   dispatch({
-      //     type: ERROR_FRIEND
-      //   });
-      // }
+      else {
+        dispatch(setAlert(res.data.result.message, 'danger'));
+        // dispatch({
+        //   type: ERROR_FRIEND
+        // });
+      }
       
     } catch (err) {
       console.log('Error in sending friend request',err);
@@ -144,23 +147,24 @@ export const removeFriendFromFrList = (id) => async dispatch => {
       }
     };
     try {
-      //console.log('Calling SendFriendRq', id);
+      console.log('Calling RemoveFriendRq', id);
       //console.log(config);
       const res = await instance.get(`${API}/rmFriend/${id}`, config);
       console.log('Remove Friend response = ',res.data);
       if(res.data.result.isError === 'false') {
         loadUser();
+        dispatch(setAlert(res.data.result.message, 'success'));
       //   dispatch({
       //     type: ADD_FRIEND,
       //     payload: JSON.parse(res.data.data)
       //   });
       }
-      // else {
-      //   // dispatch(setAlert(res.data.result.message, 'danger'));
-      //   dispatch({
-      //     type: ERROR_FRIEND
-      //   });
-      // }
+      else {
+        dispatch(setAlert(res.data.result.message, 'danger'));
+        // dispatch({
+        //   type: ERROR_FRIEND
+        // });
+      }
       
     } catch (err) {
       console.log('Error in sending friend request',err);
@@ -185,20 +189,21 @@ export const cancelFriendRequest = (id) => async dispatch => {
       //console.log('Calling SendFriendRq', id);
       //console.log(config);
       const res = await instance.get(`${API}/cancelFrndReq/${id}`, config);
-      console.log('Remove Friend response = ',res.data);
+      console.log('Cancel Friend response = ',res.data);
       if(res.data.result.isError === 'false') {
         loadUser();
+        dispatch(setAlert(res.data.result.message, 'success'));
       //   dispatch({
       //     type: ADD_FRIEND,
       //     payload: JSON.parse(res.data.data)
       //   });
       }
-      // else {
-      //   // dispatch(setAlert(res.data.result.message, 'danger'));
-      //   dispatch({
-      //     type: ERROR_FRIEND
-      //   });
-      // }
+      else {
+        dispatch(setAlert(res.data.result.message, 'danger'));
+        // dispatch({
+        //   type: ERROR_FRIEND
+        // });
+      }
       
     } catch (err) {
       console.log('Error in sending friend request',err);
