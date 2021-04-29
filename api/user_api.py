@@ -547,16 +547,38 @@ def delete_user(id):
 def update_user(id):
     try:
         _id = id
-        _json = request.form
         print(_id)
+        _json = request.form
+        _file = request.files['file']
+        print(_file)
+        if _file and allowed_file(_file.filename):
+            filename = secure_filename(_file.filename)
+            print('FileName = ', os.getcwd())
+            target = os.path.join(UPLOAD_FOLDER, 'image')
+            print('target = ', target)
+            if not os.path.isdir(target):
+                os.mkdir(target)
+            destination = "/".join([target, filename])
+            print('Path = ', destination)
+            _file.save(destination)
+            #file.save(os.path.join(app.config['UPLOAD_FOLDER'], filename))
+            message = {
+                'data': "null",
+                'result': {'isError': 'false', 'message': 'Image successfully uploaded and displayed', 'status': 200, }
+            }
+            return jsonify(message)
+        else:
+            message = {
+                'data': "null",
+                'result': {'isError': 'false', 'message': 'Allowed image types are -> png, jpg, jpeg, gif', 'status': 200, }
+            }
+        return jsonify(message)
         _firstname = _json['firstname']
-        print(_firstname)
         _middlename = _json['middlename']
         _lastname = _json['lastname']
         _name = _firstname.strip() + ' ' + _middlename.strip() + ' ' + _lastname.strip()
         _name = _name.strip()
         _user_category = _json['user_category']
-        print(_user_category)
         _student_type = _json['student_type']
         _job_type = _json['job_type']
         _specialization_type = _json['specialization_type']
@@ -569,35 +591,35 @@ def update_user(id):
         _referrer_email = _json['referrer_email']
         _password = _json['password']
         _passwordconfirm = _json['passwordconfirm']
-        if _name and _email and _id and request.method == 'PUT':
-            # update mongoDb (query,set)
-            mongo.db.userReg.update_one({'_id': ObjectId(_id['$oid']) if '$oid' in _id else ObjectId(_id)},
-                                        {'$set': {'firstname': _firstname, 'middlename': _middlename, 'lastname': _lastname,
-                                                  'name': _name, 'email': _email, 'password': _password,
-                                                  'passwordconfirm': _passwordconfirm, 'user_category': _user_category,
-                                                  'student_type': _student_type, 'job_type': _job_type,
-                                                  'specialization_type': _specialization_type, 'address': _address, 'phone': _phone,
-                                                  'country': _country, 'image': _image, 'referrer_name': _referrer_name,
-                                                  'referrer_email': _referrer_email,
-                                                  'roles': [], 'groups': [], 'ts': [], 'friends': []}}
-                                        )
-            mongo.db.posts.update_many({'user.userId': ObjectId(_id['$oid']) if '$oid' in _id else ObjectId(_id)},
-                                       {'$set': {'user.image': _image}})
-            mongo.db.posts.update_many(
-                {'comments.user.userId': ObjectId(_id)},
-                {'$set': {'comments.$.user.image': _image}}
-            )
-            message = {
-                'data': "null",
-                'result': {'isError': 'false', 'message': 'User updated successfully', 'status': 200, }
-            }
-            return jsonify(message)
-        else:
-            message = {
-                'data': "null",
-                'result': {'isError': 'true', 'message': 'User not updated', 'status': 200, }
-            }
-            return jsonify(message)
+        # if _name and _email and _id and request.method == 'PUT':
+        #     # update mongoDb (query,set)
+        #     mongo.db.userReg.update_one({'_id': ObjectId(_id['$oid']) if '$oid' in _id else ObjectId(_id)},
+        #                                 {'$set': {'firstname': _firstname, 'middlename': _middlename, 'lastname': _lastname,
+        #                                           'name': _name, 'email': _email, 'password': _password,
+        #                                           'passwordconfirm': _passwordconfirm, 'user_category': _user_category,
+        #                                           'student_type': _student_type, 'job_type': _job_type,
+        #                                           'specialization_type': _specialization_type, 'address': _address, 'phone': _phone,
+        #                                           'country': _country, 'image': _image, 'referrer_name': _referrer_name,
+        #                                           'referrer_email': _referrer_email,
+        #                                           'roles': [], 'groups': [], 'ts': [], 'friends': []}}
+        #                                 )
+        #     mongo.db.posts.update_many({'user.userId': ObjectId(_id['$oid']) if '$oid' in _id else ObjectId(_id)},
+        #                                {'$set': {'user.image': _image}})
+        #     mongo.db.posts.update_many(
+        #         {'comments.user.userId': ObjectId(_id)},
+        #         {'$set': {'comments.$.user.image': _image}}
+        #     )
+        #     message = {
+        #         'data': "null",
+        #         'result': {'isError': 'false', 'message': 'User updated successfully', 'status': 200, }
+        #     }
+        #     return jsonify(message)
+        # else:
+        #     message = {
+        #         'data': "null",
+        #         'result': {'isError': 'true', 'message': 'User not updated', 'status': 200, }
+        #     }
+        #     return jsonify(message)
     except:
         return internal_error()
 

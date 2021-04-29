@@ -57,7 +57,7 @@ const ProfilePage = ({
     }
   }, [loading, user, loadUser, getAllUsers]);
   // console.log('Loading in Profilepage', loading);
-  console.log('User in ProfilePage', user);
+  //console.log('User in ProfilePage', user);
   
   let isSearch = false,
     userEmail = null;
@@ -71,7 +71,7 @@ const ProfilePage = ({
         userSearch = allUsers.filter(
           (user) => user._id.$oid === props.location.state.id
         );
-        console.log('Search in profile ', userSearch);
+        //console.log('Search in profile ', userSearch);
         if(userSearch.length > 0){
             user = Object.assign({}, userSearch[0]);
             isSearch = true;
@@ -211,8 +211,8 @@ const ProfilePage = ({
     form_data.append('job_type', job_type);
     form_data.append('specialization_type', specialization_type);
     //console.log('Form Data = ', form_data);
-    const returnValue = updateProfile(user._id.$oid, { form_data });
-    console.log('Return Value = ', returnValue);
+    updateProfile(user._id.$oid, { form_data });
+    //console.log('Return Value = ', returnValue);
   };
   
   return (
@@ -242,8 +242,8 @@ const ProfilePage = ({
                     </Link>
                   ) : null}
                   <div id='profile-image'>
-                    <div id='profile-image-container'>
-                      <img src={user.image} alt='profile' />
+                    <div id='profile-image-container'> 
+                      <img src={'F:/Coursera/React_Flask/SocialNetwork/frontend/api/image/HM0010701-F.jpg'} alt='profile' />
                       <h6>{user.name}</h6>
                     </div>
                     {!isSearch ? (

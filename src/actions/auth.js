@@ -226,6 +226,6 @@ export const deleteUser =(id) => async dispatch => {
     }
     } catch (err) {
       console.log(err.response);
-      dispatch(setAlert('Server Error User Not Deleted', 'danger'));
+      dispatch(setAlert('Something went wrong. User Not Deleted', 'danger'));
     }
 }
