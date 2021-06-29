@@ -21,7 +21,7 @@ const Sidebar = ({auth:{user, isAddClass}, toggleCssClass}) => {
                             showMyPost: false
                         }
                     }} id="brand-image">
-                        <img src={process.env.PUBLIC_URL + '/img/Social_Fish2.png'} alt="Agriculturist Logo"/>
+                        <img src={process.env.PUBLIC_URL + '/img/logo.jpeg'} alt="Agriculturist Logo"/>
                         {/* <img src="../../../public/img/Social_Fish2.png" alt="Agriculturist Logo"/> */}
                         <span>Agriculturist</span>
                     </Link> 

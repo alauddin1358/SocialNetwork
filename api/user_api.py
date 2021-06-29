@@ -23,12 +23,13 @@ import datetime
 from random import randint
 import pandas as pd
 import os
+import shutil
 from werkzeug.utils import secure_filename
 from itsdangerous import URLSafeTimedSerializer, SignatureExpired
 
 # from flask_email_verifier import Client
 # from flask_email_verifier import exceptions
-UPLOAD_FOLDER = os.getcwd()
+UPLOAD_FOLDER = 'F:\Coursera\React_Flask\SocialNetwork\Frontend\Api'
 ALLOWED_EXTENSIONS = set(['png', 'jpg', 'jpeg', 'gif'])
 
 
@@ -49,7 +50,7 @@ app.config['MAIL_PASSWORD'] = 'X5Y[qN!GM3Yu'
 
 app.config['MAIL_USE_TLS'] = False
 app.config['MAIL_USE_SSL'] = True
-app.config['UPLOAD_FOLDER'] = os.getcwd()
+app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
 
 # SESSION_TYPE = 'filesystem'
 # app.config.from_object(__name__)
@@ -558,9 +559,11 @@ def update_user(id):
             print('target = ', target)
             if not os.path.isdir(target):
                 os.mkdir(target)
-            destination = "/".join([target, filename])
-            print('Path = ', destination)
-            _file.save(destination)
+            source = "/".join([target, filename])
+            print('Path = ', source)
+            _file.save(source)
+            shutil.move(
+                source, 'F:\Coursera\React_Flask\SocialNetwork\Frontend\public\img')
             #file.save(os.path.join(app.config['UPLOAD_FOLDER'], filename))
             message = {
                 'data': "null",
@@ -620,7 +623,8 @@ def update_user(id):
         #         'result': {'isError': 'true', 'message': 'User not updated', 'status': 200, }
         #     }
         #     return jsonify(message)
-    except:
+    except Exception as e:
+        print('Error', e)
         return internal_error()
 
 

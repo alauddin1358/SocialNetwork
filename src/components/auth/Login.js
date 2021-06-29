@@ -53,7 +53,7 @@ const Login = ({auth:{isAuthenticated, token}, login}) => {
             <div className="form-wrapper auth">
 		        <form onSubmit={handleSubmit(onSubmit)}>
                     <div id="brand-image">	
-                        <img src="../../img/Social_Fish2.png" style={{width: "100px"}} alt="logo" />
+                        <img src={process.env.PUBLIC_URL + '/img/logo.jpeg'} style={{width: "100px"}} alt="logo" />
                         <h2>
                             <span>Log in to Agriculturist</span>
                         </h2>

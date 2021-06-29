@@ -166,7 +166,7 @@ const TopSidebar = ({ props, auth: { user, allUsers }, logout }) => {
           id='brand-image'
         >
           <img
-            src={process.env.PUBLIC_URL + '/img/Social_Fish2.png'}
+            src={process.env.PUBLIC_URL + '/img/logo.jpeg'}
             alt='Agriculturist Logo'
           />
           {/* <img src="../../../public/img/Social_Fish2.png" alt="Agriculturist Logo"/> */}
