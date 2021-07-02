@@ -59,7 +59,8 @@ p {
 #brand-image img {
 	border-radius: 10px;
 	clear: both;
-	width: 150px;
+	width: 120px;
+	height: 120px;
 }
 #brand-image span {
 	color: #fff;

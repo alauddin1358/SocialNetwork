@@ -245,9 +245,10 @@ const ProfilePage = ({
                   ) : null}
                   <div id='profile-image'>
                     <div id='profile-image-container'> 
+                    <img src={user.image} alt='profile' />
                     {/* <img src={window.location.origin+'../api/image/HM0010701-F.jpg'} alt='profile' /> */}
-                      <img src={'F:/Coursera/React_Flask/SocialNetwork/frontend/api/image/garden-festival.jpg'} alt='profile' /> 
-                      <img src={' http://127.0.0.1:8080/image/garden-festival.jpg'} alt='profile' /> 
+                      {/* <img src={'F:/Coursera/React_Flask/SocialNetwork/frontend/api/image/garden-festival.jpg'} alt='profile' /> 
+                      <img src={' http://127.0.0.1:8080/image/garden-festival.jpg'} alt='profile' />  */}
                       <h6>{user.name}</h6>
                     </div>
                     {!isSearch ? (
