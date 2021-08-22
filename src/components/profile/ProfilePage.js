@@ -8,8 +8,9 @@ import { loadUser, updateProfile, getAllUsers } from '../../actions/auth';
 //import { setAlert } from '../../actions/alert';
 import Alert from '../layout/Alert';
 import Compress from 'browser-image-compression';
+import {Image} from 'cloudinary-react';
 const ADMIN = process.env.REACT_APP_ADMIN;
-
+const IMAGEURL = process.env.REACT_APP_CLOUDINARY;
 const initialState = {
   firstname: '',
   middlename: '',
@@ -42,7 +43,7 @@ const ProfilePage = ({
   useEffect(() => {
     console.log('Calling profilePage useEffect');
     if (user === null){
-        console.log('Loading = ', loading);
+        //console.log('Loading = ', loading);
         loadUser();
         getAllUsers();
     } 
@@ -98,68 +99,14 @@ const ProfilePage = ({
 
   const onChange = (e) =>
     setFormData({ ...formData, [e.target.name]: e.target.value });
-  function processfile(blob, options) {
-    // read the files
-    var reader = new FileReader();
-    reader.readAsArrayBuffer(blob);
-    var resized;
-    reader.onload = function (event) {
-      // blob stuff
-      var blob = new Blob([event.target.result]); // create blob...
-      window.URL = window.URL || window.webkitURL;
-      var blobURL = window.URL.createObjectURL(blob); // and get it's URL
 
-      // helper Image object
-      var image = new Image();
-      image.src = blobURL;
-      image.onload = function () {
-        // have to wait till it's loaded
-        resized = resizeMe(image, options); // resized image url
-        setViewImage(resized);
-        //console.log('Resize image = ', resized);
-      };
-    };
-    // console.log('Resize image = ', resized);
-    // return resized;
-  }
-
-  // === RESIZE ====
-
-  function resizeMe(img, options) {
-    var canvas = document.createElement('canvas');
-
-    var width = img.width;
-    var height = img.height;
-
-    // calculate the width and height, constraining the proportions
-    if (width > height) {
-      if (width > options.maxWidth) {
-        //height *= max_width / width;
-        height = Math.round((height *= options.maxWidth / width));
-        width = options.maxWidth;
-      }
-    } else {
-      if (height > options.max_height) {
-        //width *= max_height / height;
-        width = Math.round((width *= options.max_height / height));
-        height = options.max_height;
-      }
-    }
-
-    // resize the canvas and draw the image data into it
-    canvas.width = width;
-    canvas.height = height;
-    var ctx = canvas.getContext('2d');
-    ctx.drawImage(img, 0, 0, width, height);
-
-    return canvas.toDataURL('image/jpeg', 0.5); // get the data from canvas as 70% JPG (can be also PNG, etc.)
-
-    // you can get BLOB too by using canvas.toBlob(blob => {});
-  }
+  
   const imageHandler = async (e) => {
     setFile(e.target.files[0]);
     var fileUpload = e.target.files[0];
+    if(fileUpload) setViewImage(URL.createObjectURL(e.target.files[0]));
     //var convertedBlobFile;
+    //console.log('Calling image handlaer');
     const options = {
       //maxSizeMB: 5,
       maxWidth: 300, // the max width of the output image, defaults to 1920px
@@ -173,24 +120,17 @@ const ProfilePage = ({
       if (reader.readyState === 2) {
         try {
           const compressedFile = await Compress(fileUpload, options);
-          //console.log(compressedFile);
-          processfile(compressedFile, options);
-          //console.log('Process file = ', fileURL);
-          // Compress.getDataUrlFromFile(compressedFile)
-          //     .then(base64String => {
-          //         setViewImage(base64String);
-          //     })
-          //     .catch(e => {
-          //         console.log('Error in getting URL', e);
-          //     })
-          // var compressURL = URL.createObjectURL(compressedFile);
-          // console.log('image',compressURL)
+          //setFile(compressedFile);
+          //processfile(compressedFile, options);
+          
         } catch (e) {
           // Show the user a toast message or notification that something went wrong while compressing file
           alert('File size must be less than 20MB');
           console.log('Error in compress = ', e);
         }
         setShowImageFlag(true);
+        // console.log('Image flag ', showImageFlag);
+        // console.log('View Image ', viewImage);
       }
     };
     if (fileUpload) reader.readAsDataURL(fileUpload);
@@ -210,13 +150,11 @@ const ProfilePage = ({
     form_data.append('student_type', student_type);
     form_data.append('job_type', job_type);
     form_data.append('specialization_type', specialization_type);
-    //console.log('Form Data = ', form_data);
+    console.log('Form Data = ', form_data);
     updateProfile(user._id.$oid, { form_data });
     //console.log('Return Value = ', returnValue);
   };
-  console.log('====================================');
-  console.log(window.location.origin+'/api/image/HM0010701-F.jpg');
-  console.log('====================================');
+  
   return (
     <Fragment>
       {user !== null ? (
@@ -245,7 +183,7 @@ const ProfilePage = ({
                   ) : null}
                   <div id='profile-image'>
                     <div id='profile-image-container'> 
-                    <img src={user.image} alt='profile' />
+                    <Image cloudName="daf1cgy1c" publicId={IMAGEURL+image}/>
                     {/* <img src={window.location.origin+'../api/image/HM0010701-F.jpg'} alt='profile' /> */}
                       {/* <img src={'F:/Coursera/React_Flask/SocialNetwork/frontend/api/image/garden-festival.jpg'} alt='profile' /> 
                       <img src={' http://127.0.0.1:8080/image/garden-festival.jpg'} alt='profile' />  */}
@@ -430,7 +368,7 @@ const ProfilePage = ({
                                 <option value='job3'>Job 3</option>
                               </select>
                             </div>
-                            <div className='form-group'>
+                            {/* <div className='form-group'>
                               <select
                                 name='specialization_type'
                                 className='form-control'
@@ -442,7 +380,7 @@ const ProfilePage = ({
                                 <option value='2'>Option2</option>
                                 <option value='3'>Option3</option>
                               </select>
-                            </div>
+                            </div> */}
                           </fieldset>
                           <div className='form-group'>
                             <label htmlFor='email'>Email Address *</label>
@@ -480,7 +418,7 @@ const ProfilePage = ({
                               onChange={onChange}
                             />
                           </div>
-                          <div className='form-group'>
+                          {/* <div className='form-group'>
                             <label htmlFor='name'>Country:</label>
                             <select
                               id='country'
@@ -857,7 +795,7 @@ const ProfilePage = ({
                               <option value='Zambia'>Zambia</option>
                               <option value='Zimbabwe'>Zimbabwe</option>
                             </select>
-                          </div>
+                          </div> */}
                           <div className='form-group'>
                             <label htmlFor='name'>Profile Picture:</label>
                             <input
@@ -872,7 +810,7 @@ const ProfilePage = ({
                               className='text-center'
                             >
                               <img
-                                src={showImageFlag === true ? viewImage : image}
+                                src={showImageFlag === true ? viewImage :  IMAGEURL+image}
                                 alt='profile'
                               />
                             </div>

@@ -6,6 +6,8 @@ import Advertisement from '../dashboard/Advertisement';
 import { getAllUsers, loadUser } from '../../actions/auth';
 import { removeFriendFromFrList } from '../../actions/friends';
 import PropTypes from 'prop-types';
+const IMAGEURL = process.env.REACT_APP_CLOUDINARY;
+
 const FriendList = ({
   auth: { allUsers, user },
   getAllUsers,
@@ -18,6 +20,7 @@ const FriendList = ({
     loadUser();
     getAllUsers();
     setIsSendRequest(isSendRequest);
+    //console.log('isSendRequest ', isSendRequest);
   }, [getAllUsers, loadUser, isSendRequest]);
   //if(user !== null) console.log('User Friends', user.friends);
   //   var friendUser = [];
@@ -38,6 +41,7 @@ const FriendList = ({
   }, []);
   //console.log('FriendUser ', friendUser);
   const unFriend = (id) => {
+    //console.log('remove ID ', id);
     removeFriendFromFrList(id);
     setIsSendRequest(!isSendRequest);
     window.location.replace('/friendlist');
@@ -59,17 +63,18 @@ const FriendList = ({
               </div>
               {friendUser.length > 0 ? (
                 friendUser.map((userFr) => (
-                  <Fragment>
+                  <Fragment key={userFr._id.$oid}>
                     <div
                       id='posts-list'
                       className='card-body friendCard'
-                      key={userFr._id.$oid}
                     >
                       <div className='post-card card'>
-                        <div className='row'>
+                        <div className='row'
+                              
+                        >
                           <div className='col-sm-12 col-md-4 col-lg-4'>
                             <img
-                              src={userFr.image}
+                              src={IMAGEURL+userFr.image}
                               alt='User'
                               className='friendImageProfile'
                             />
@@ -89,8 +94,9 @@ const FriendList = ({
                             <Link
                               to='/friendlist'
                               className='btn btn-primary'
-                              data-toggle='modal'
-                              data-target='#unFriendModal'
+                              // data-toggle='modal'
+                              // data-target='#unFriendModal'
+                              onClick={() => unFriend(userFr._id.$oid)}
                             >
                               Unfriend
                             </Link>
@@ -123,7 +129,7 @@ const FriendList = ({
                           </div>
                           <div className='modal-body'>
                             Select "Remove" below if you want to remove{' '}
-                            {user !== null ? (
+                            {userFr !== null ? (
                               <span
                                 style={{
                                   fontSize: 20,
@@ -131,7 +137,7 @@ const FriendList = ({
                                   fontFamily: 'cursive',
                                 }}
                               >
-                                {user.name}
+                                {userFr.name}
                               </span>
                             ) : null}{' '}
                             from your friend list.

@@ -1,4 +1,6 @@
-import React from 'react'
+import React from 'react';
+const IMAGEURL = process.env.REACT_APP_CLOUDINARY;
+
 const Slide = ({image}) => {
   //console.log(image);
     const imageStyle = {
@@ -6,11 +8,11 @@ const Slide = ({image}) => {
         width: "200px",
         padding: "0px",
         margin: "0px",
-        fontSize: "100px"
+        fontSize: "50px"
     }
     return (
       <React.Fragment>
-      { image === undefined ? null : <img src={image.filedata} style={imageStyle} alt="Sliderr_image" />
+      { image === undefined ? null : <img src={IMAGEURL+image.filename} style={imageStyle} alt="Sliderr_image" />
       }
       </React.Fragment>
     );

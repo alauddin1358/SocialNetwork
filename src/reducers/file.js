@@ -37,7 +37,7 @@ import {
       case DELETE_FILE:
         return {
           ...state,
-          posts: state.files.filter((file) => file._id.$oid !== payload),
+          files: state.files.filter((file) => file._id.$oid !== payload),
           loading: false
         };
       case FILE_ERROR:
@@ -72,7 +72,7 @@ import {
       case DELETE_ADV:
         return {
           ...state,
-          posts: state.advertise.filter((adv) => adv._id.$oid !== payload),
+          advertise: state.advertise.filter((adv) => adv._id.$oid !== payload),
           loading: false
         };
       default:

@@ -4,7 +4,7 @@ import { connect } from 'react-redux';
 import { toggleCssClass } from '../../actions/auth';
 const ADMIN = process.env.REACT_APP_ADMIN;
 const Sidebar = ({auth:{user, isAddClass}, toggleCssClass}) => {
-    console.log('Toggle', isAddClass);
+    //console.log('Toggle', isAddClass);
     const [addClass, setAddClass] = useState(true);
     const toggleClass = () => {
         setAddClass(!addClass);

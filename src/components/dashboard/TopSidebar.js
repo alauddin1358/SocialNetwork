@@ -10,6 +10,7 @@ import Pages from './Pages';
 import Footer from './Footer';
 import Alert from '../layout/Alert';
 const ADMIN = process.env.REACT_APP_ADMIN;
+const IMAGEURL = process.env.REACT_APP_CLOUDINARY;
 
 const TopSidebar = ({ props, auth: { user, allUsers }, logout }) => {
   const [value, setValue] = useState('');
@@ -80,7 +81,7 @@ const TopSidebar = ({ props, auth: { user, allUsers }, logout }) => {
     return (
       <span className='suggestion-content'>
         <img
-          src={suggestion.image}
+          src={IMAGEURL+suggestion.image}
           alt='user'
           className='user-img-profile rounded-circle'
         />
@@ -471,7 +472,7 @@ const TopSidebar = ({ props, auth: { user, allUsers }, logout }) => {
                                   className='img-profile rounded-circle'
                                   src={
                                     pendingUser !== null
-                                      ? pendingUser.image
+                                      ? IMAGEURL+pendingUser.image
                                       : null
                                   }
                                   alt={pendingUser.name}
@@ -532,7 +533,7 @@ const TopSidebar = ({ props, auth: { user, allUsers }, logout }) => {
                   </span>
                   <img
                     className='img-profile rounded-circle'
-                    src={user !== null ? user.image : null}
+                    src={user !== null ? IMAGEURL+user.image : null}
                     alt='userName'
                   />
                 </a>

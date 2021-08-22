@@ -27,10 +27,11 @@ export const sendFriendRequest = (id) => async dispatch => {
       //console.log('Calling SendFriendRq', id);
       //console.log(config);
       const res = await instance.get(`${API}/friendReq/${id}`, config);
-      console.log('Friend response = ',res.data);
+      //console.log('Friend response = ',res.data);
       if(res.data.result.isError === 'false') {
         // console.log('calling getalluser from friend');
         getAllUsers();
+        loadUser();
         dispatch(setAlert(res.data.result.message, 'success'));
         //window.location.reload(false);
         // dispatch({
@@ -69,7 +70,7 @@ export const acceptFriendRequest = (id) => async dispatch => {
       //console.log('Calling SendFriendRq', id);
       //console.log(config);
       const res = await instance.get(`${API}/friendReqAccept/${id}`, config);
-      console.log('Accept Friend response = ',res.data);
+      //console.log('Accept Friend response = ',res.data);
       if(res.data.result.isError === 'false') {
         getAllUsers();
         loadUser();
@@ -110,7 +111,7 @@ export const deleteFriendRequest = (id) => async dispatch => {
       //console.log('Calling SendFriendRq', id);
       //console.log(config);
       const res = await instance.get(`${API}/friendReqDel/${id}`, config);
-      console.log('Delete Friend response = ',res.data);
+      //console.log('Delete Friend response = ',res.data);
       if(res.data.result.isError === 'false') {
         getAllUsers();
         loadUser();
@@ -147,11 +148,12 @@ export const removeFriendFromFrList = (id) => async dispatch => {
       }
     };
     try {
-      console.log('Calling RemoveFriendRq', id);
+      //console.log('Calling RemoveFriendRq', id);
       //console.log(config);
       const res = await instance.get(`${API}/rmFriend/${id}`, config);
-      console.log('Remove Friend response = ',res.data);
+      //console.log('Remove Friend response = ',res.data);
       if(res.data.result.isError === 'false') {
+        getAllUsers();
         loadUser();
         dispatch(setAlert(res.data.result.message, 'success'));
       //   dispatch({
@@ -167,7 +169,7 @@ export const removeFriendFromFrList = (id) => async dispatch => {
       }
       
     } catch (err) {
-      console.log('Error in sending friend request',err);
+      console.log('Error in removing friend request',err);
       dispatch(setAlert('Something went wrong', 'danger'));
       // dispatch({
       //   type: ERROR_FRIEND
@@ -189,8 +191,9 @@ export const cancelFriendRequest = (id) => async dispatch => {
       //console.log('Calling SendFriendRq', id);
       //console.log(config);
       const res = await instance.get(`${API}/cancelFrndReq/${id}`, config);
-      console.log('Cancel Friend response = ',res.data);
+      //console.log('Cancel Friend response = ',res.data);
       if(res.data.result.isError === 'false') {
+        getAllUsers();
         loadUser();
         dispatch(setAlert(res.data.result.message, 'success'));
       //   dispatch({

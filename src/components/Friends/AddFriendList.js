@@ -10,6 +10,8 @@ import {
   cancelFriendRequest,
 } from '../../actions/friends';
 import PropTypes from 'prop-types';
+const IMAGEURL = process.env.REACT_APP_CLOUDINARY;
+
 const AddFriendList = ({
   auth: { allUsers, user },
   getAllUsers,
@@ -33,49 +35,73 @@ const AddFriendList = ({
   // const [isSetPenFr, setIsSetPenFr] = useState(true);
   // const [isSetFrsug, setIsSetFrsug] = useState(true);
   var pendingFriend = [];
-  if (allUsers.length > 0) {
-    pendingFriend = allUsers.reduce(function (filtered, option) {
-      var matchFriend = [];
-      if (user !== null) {
-        if (user.hasOwnProperty('friend_pending')) {
-          matchFriend = user.friend_pending.filter(
-            (friend) => friend.$id.$oid === option._id.$oid
-          );
-        }
-      }
-      if (matchFriend.length > 0) {
-        filtered.push(option);
-      }
-      return filtered;
-    }, []);
-  }
-
-  // if(isSetPenFr) {
-  //   setPendinFriend(pendFriend);
-  //   setIsSetPenFr(false);
-  // }
   var friendSuggestion = [];
   var suggestedFriend = [];
-  if (user !== null) {
-    friendSuggestion = allUsers.filter(
-      (allu) => allu._id.$oid !== user._id.$oid
-    );
-    suggestedFriend = user.friends.reduce(function (filtered, option) {
-      filtered.push(option.$id.$oid);
-      return filtered;
-    }, []);
-  }
-
-  var end = 0;
-  for (var i = 0; i < friendSuggestion.length; i++) {
-    var obj = friendSuggestion[i];
-    //console.log('Friend Obj', obj._id.$oid);
-    if (suggestedFriend.indexOf(obj._id.$oid) === -1) {
-      //console.log('True');
-      friendSuggestion[end++] = obj;
+  var pendingMatchFriend = [];
+  if(user !== null) {
+    
+    if (allUsers.length > 0) {
+      pendingFriend = allUsers.reduce(function (filtered, option) {
+        var matchFriend = [];
+        if (user !== null) {
+          if (user.hasOwnProperty('friend_pending')) {
+            matchFriend = user.friend_pending.filter(
+              (friend) => friend.$id.$oid === option._id.$oid
+            );
+          }
+        }
+        if (matchFriend.length > 0) {
+          filtered.push(option);
+        }
+        return filtered;
+      }, []);
     }
+   //console.log('pending', pendingFriend);
+    // if(isSetPenFr) {
+    //   setPendinFriend(pendFriend);
+    //   setIsSetPenFr(false);
+    // }
+    
+    if (user !== null) {
+      friendSuggestion = allUsers.filter(
+        (allu) => allu._id.$oid !== user._id.$oid
+      );
+      suggestedFriend = user.friends.reduce(function (filtered, option) {
+        filtered.push(option.$id.$oid);
+        return filtered;
+      }, []);
+      if (user.hasOwnProperty('friend_pending')) {
+        pendingMatchFriend = user.friend_pending.reduce(function (filtered, option) {
+          filtered.push(option.$id.$oid);
+          return filtered;
+        }, []);
+      } 
+    }
+    //console.log('before Firen', friendSuggestion)
+    var end = 0;
+    for (var i = 0; i < friendSuggestion.length; i++) {
+      var obj = friendSuggestion[i];
+      //console.log('Friend Obj', obj._id.$oid);
+      if (suggestedFriend.indexOf(obj._id.$oid) === -1) {
+        //console.log('True');
+        friendSuggestion[end++] = obj;
+      }
+    }
+    friendSuggestion.length = end;
+    
+    
+    end = 0;
+    for (var i = 0; i < friendSuggestion.length; i++) {
+      var obj = friendSuggestion[i];
+      //console.log('Friend Obj', obj._id.$oid);
+      if (pendingMatchFriend.indexOf(obj._id.$oid) === -1) {
+        //console.log('True');
+        friendSuggestion[end++] = obj;
+      }
+    }
+    friendSuggestion.length = end;
   }
-  friendSuggestion.length = end;
+  
   // if(isSetFrsug) {
   //   setFriendSuggestion(frndSuggestion);
   //   setIsSetFrsug(false);
@@ -83,18 +109,22 @@ const AddFriendList = ({
   const addFriendRequest = (id) => {
     sendFriendRequest(id);
     setIsSendRequest(!isSendRequest);
+    window.location.replace('/friends');
   };
   const cancelFrRequest = (id) => {
     cancelFriendRequest(id);
     setIsSendRequest(!isSendRequest);
+    window.location.replace('/friends');
   };
   const deleteFrRequest = (id) => {
     deleteFriendRequest(id);
     setIsSendRequest(!isSendRequest);
+    window.location.replace('/friends');
   };
   const acceptFrRequest = (id) => {
     acceptFriendRequest(id);
     setIsSendRequest(!isSendRequest);
+    window.location.replace('/friends');
   };
   //console.log('user friends', user.friends);
   //console.log('Suggestion Friend', friendSuggestion);
@@ -128,7 +158,7 @@ const AddFriendList = ({
                         <div className='row'>
                           <div className='col-sm-12 col-md-12 col-lg-4'>
                             <img
-                              src={pendingFr.image}
+                              src={IMAGEURL+pendingFr.image}
                               alt={pendingFr.name}
                               className='friendImageProfile'
                             />
@@ -191,7 +221,7 @@ const AddFriendList = ({
                         <div className='row'>
                           <div className='col-sm-12 col-md-12 col-lg-4'>
                             <img
-                              src={frUser.image}
+                              src={IMAGEURL+frUser.image}
                               alt='User'
                               className='friendImageProfile'
                             />

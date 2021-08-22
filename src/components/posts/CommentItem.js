@@ -4,6 +4,7 @@ import { connect } from 'react-redux';
 import { Link } from 'react-router-dom';
 import { deleteComment, updateComment } from '../../actions/post';
 const ADMIN = process.env.REACT_APP_ADMIN;
+const IMAGEURL = process.env.REACT_APP_CLOUDINARY;
 //import Alert from '../layout/Alert';
 
 class CommentItem extends Component {
@@ -66,7 +67,7 @@ class CommentItem extends Component {
                 <div className="card-body">
                     <div className="comment">
                         {
-                            this.props.comment !== null ? <img src={this.props.comment.user.image} alt="user" /> : null
+                            this.props.comment !== null ? <img src={IMAGEURL+this.props.comment.user.image} alt="user" /> : null
                         }
                         {this.state.editMode ? this.renderCommentEdit() : this.renderCommentRead()}
                     </div>

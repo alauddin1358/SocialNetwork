@@ -26,10 +26,12 @@ import os
 import shutil
 from werkzeug.utils import secure_filename
 from itsdangerous import URLSafeTimedSerializer, SignatureExpired
-
+import cloudinary
+import cloudinary.uploader
 # from flask_email_verifier import Client
 # from flask_email_verifier import exceptions
 UPLOAD_FOLDER = 'F:\Coursera\React_Flask\SocialNetwork\Frontend\Api'
+# UPLOAD_FOLDER = 'https://api.agriculturist.org'
 ALLOWED_EXTENSIONS = set(['png', 'jpg', 'jpeg', 'gif'])
 
 
@@ -240,6 +242,7 @@ def add_user():
     # _json = request.get_json()
     try:
         _json = request.form
+
         _firstname = _json['firstname']
         _middlename = _json['middlename']
         _lastname = _json['lastname']
@@ -253,11 +256,11 @@ def add_user():
         _phone = _json['phone']
         _address = _json['address']
         _country = _json['country']
-        _image = _json['image']
+
         _referrer_name = _json['referrer_name']
         _referrer_email = _json['referrer_email']
         _emailconfirm = False
-        print(_referrer_email)
+        # print(_referrer_email)
         _password = bcrypt.generate_password_hash(
             _json['password']).decode('utf-8')
         _passwordconfirm = bcrypt.generate_password_hash(
@@ -277,6 +280,29 @@ def add_user():
                 'result': {'isError': 'true', 'message': 'Referrer Email is invalid or not exist in our system', 'status': 200, }
             }
             return jsonify(message)
+        cloudinary.config(cloud_name="daf1cgy1c", api_key="228197214629277",
+                          api_secret="DferVvyNAJovYz-cOug7zIx6cR4")
+        upload_result = None
+        if 'file' in request.files:
+            _file = request.files['file']
+            if _file and allowed_file(_file.filename):
+                print(_file)
+                _imagefilename = secure_filename(_file.filename)
+                # print(filename)
+                _filename = _imagefilename.split(".")[0]
+                # app.logger.info('%s file_to_upload', _file)
+                upload_result = cloudinary.uploader.upload(
+                    _file, public_id=_filename)
+                # app.logger.info(upload_result)
+            else:
+                message = {
+                    'data': "null",
+                    'result': {'isError': 'true', 'message': 'Allowed image types are -> png, jpg, jpeg, gif', 'status': 200, }
+                }
+                return jsonify(message)
+        else:
+            _imagefilename = 'user-profile.png'
+        _image = _imagefilename
         if _name and _email and _password and request.method == 'POST' and (existing_user is None):
             # insert details and generate id
             # mongo.save_file(_file.filename, _file)
@@ -291,7 +317,7 @@ def add_user():
 
             # mongo.db.upload.insert({'upload_file_name': _file.filename})
             # for json response
-            print(_insertId)
+            # print(_insertId)
             token = safeSerializer.dumps(
                 _referrer_email, salt='email-confirm')
             msg = Message(subject='Account Confirmation',
@@ -436,7 +462,7 @@ def resetPassword():
 def getAllUser():
 
     # mongo query for finding all value
-    users = mongo.db.userReg.find()
+    users = mongo.db.userReg.find({'emailconfirm': True})
     # print(user)
     if users:
         message = {
@@ -548,34 +574,31 @@ def delete_user(id):
 def update_user(id):
     try:
         _id = id
-        print(_id)
+        # print(_id)
         _json = request.form
-        _file = request.files['file']
-        print(_file)
-        if _file and allowed_file(_file.filename):
-            filename = secure_filename(_file.filename)
-            print('FileName = ', os.getcwd())
-            target = os.path.join(UPLOAD_FOLDER, 'image')
-            print('target = ', target)
-            if not os.path.isdir(target):
-                os.mkdir(target)
-            source = "/".join([target, filename])
-            print('Path = ', source)
-            _file.save(source)
-            shutil.move(
-                source, 'F:\Coursera\React_Flask\SocialNetwork\Frontend\public\img')
-            #file.save(os.path.join(app.config['UPLOAD_FOLDER'], filename))
-            message = {
-                'data': "null",
-                'result': {'isError': 'false', 'message': 'Image successfully uploaded and displayed', 'status': 200, }
-            }
-            return jsonify(message)
+
+        cloudinary.config(cloud_name="daf1cgy1c", api_key="228197214629277",
+                          api_secret="DferVvyNAJovYz-cOug7zIx6cR4")
+        upload_result = None
+        if 'file' in request.files:
+            _file = request.files['file']
+            if _file and allowed_file(_file.filename):
+                print(_file)
+                _imagefilename = secure_filename(_file.filename)
+                # print(filename)
+                _filename = _imagefilename.split(".")[0]
+                # app.logger.info('%s file_to_upload', _file)
+                upload_result = cloudinary.uploader.upload(
+                    _file, public_id=_filename)
+                # app.logger.info(upload_result)
+            else:
+                message = {
+                    'data': "null",
+                    'result': {'isError': 'true', 'message': 'Allowed image types are -> png, jpg, jpeg, gif', 'status': 200, }
+                }
+                return jsonify(message)
         else:
-            message = {
-                'data': "null",
-                'result': {'isError': 'false', 'message': 'Allowed image types are -> png, jpg, jpeg, gif', 'status': 200, }
-            }
-        return jsonify(message)
+            _imagefilename = 'user-profile.png'
         _firstname = _json['firstname']
         _middlename = _json['middlename']
         _lastname = _json['lastname']
@@ -589,42 +612,44 @@ def update_user(id):
         _phone = _json['phone']
         _address = _json['address']
         _country = _json['country']
-        _image = _json['viewImage']
+
+        _image = _imagefilename
+
         _referrer_name = _json['referrer_name']
         _referrer_email = _json['referrer_email']
         _password = _json['password']
         _passwordconfirm = _json['passwordconfirm']
-        # if _name and _email and _id and request.method == 'PUT':
-        #     # update mongoDb (query,set)
-        #     mongo.db.userReg.update_one({'_id': ObjectId(_id['$oid']) if '$oid' in _id else ObjectId(_id)},
-        #                                 {'$set': {'firstname': _firstname, 'middlename': _middlename, 'lastname': _lastname,
-        #                                           'name': _name, 'email': _email, 'password': _password,
-        #                                           'passwordconfirm': _passwordconfirm, 'user_category': _user_category,
-        #                                           'student_type': _student_type, 'job_type': _job_type,
-        #                                           'specialization_type': _specialization_type, 'address': _address, 'phone': _phone,
-        #                                           'country': _country, 'image': _image, 'referrer_name': _referrer_name,
-        #                                           'referrer_email': _referrer_email,
-        #                                           'roles': [], 'groups': [], 'ts': [], 'friends': []}}
-        #                                 )
-        #     mongo.db.posts.update_many({'user.userId': ObjectId(_id['$oid']) if '$oid' in _id else ObjectId(_id)},
-        #                                {'$set': {'user.image': _image}})
-        #     mongo.db.posts.update_many(
-        #         {'comments.user.userId': ObjectId(_id)},
-        #         {'$set': {'comments.$.user.image': _image}}
-        #     )
-        #     message = {
-        #         'data': "null",
-        #         'result': {'isError': 'false', 'message': 'User updated successfully', 'status': 200, }
-        #     }
-        #     return jsonify(message)
-        # else:
-        #     message = {
-        #         'data': "null",
-        #         'result': {'isError': 'true', 'message': 'User not updated', 'status': 200, }
-        #     }
-        #     return jsonify(message)
+        if _name and _email and _id and request.method == 'PUT':
+            # update mongoDb (query,set)
+            mongo.db.userReg.update_one({'_id': ObjectId(_id['$oid']) if '$oid' in _id else ObjectId(_id)},
+                                        {'$set': {'firstname': _firstname, 'middlename': _middlename, 'lastname': _lastname,
+                                                  'name': _name, 'email': _email, 'password': _password,
+                                                  'passwordconfirm': _passwordconfirm, 'user_category': _user_category,
+                                                  'student_type': _student_type, 'job_type': _job_type,
+                                                  'specialization_type': _specialization_type, 'address': _address, 'phone': _phone,
+                                                  'country': _country, 'image': _image, 'referrer_name': _referrer_name,
+                                                  'referrer_email': _referrer_email,
+                                                  'roles': [], 'groups': [], 'ts': [], 'friends': []}}
+                                        )
+            mongo.db.posts.update_many({'user.userId': ObjectId(_id['$oid']) if '$oid' in _id else ObjectId(_id)},
+                                       {'$set': {'user.image': _image}})
+            mongo.db.posts.update_many(
+                {'comments.user.userId': ObjectId(_id)},
+                {'$set': {'comments.$.user.image': _image}}
+            )
+            message = {
+                'data': "null",
+                'result': {'isError': 'false', 'message': 'User updated successfully', 'status': 200, }
+            }
+            return jsonify(message)
+        else:
+            message = {
+                'data': "null",
+                'result': {'isError': 'true', 'message': 'User not updated', 'status': 200, }
+            }
+            return jsonify(message)
     except Exception as e:
-        print('Error', e)
+        print('Error in upload', e)
         return internal_error()
 
 
@@ -969,24 +994,36 @@ def comment_reply(pid, cid):
 @ token_required
 def file_upload():
     try:
-        _file = request.files['file']
         _json = request.form
-        print(_file.filename)
+        _file = request.files['file']
+        # print(_file)
+        # print(_file.content_length)
         _title = _json['title']
         _desc = _json['description']
-        _filedata = _json['filedata']
-        _filename = _file.filename
-        _file_mimetype = _file.content_type
+        # _filedata = _json['filedata']
+
         # print(_image)
         # print(_json)
-
+        # cloudinary.config(cloud_name="daf1cgy1c", api_key="228197214629277",
+        #                   api_secret="DferVvyNAJovYz-cOug7zIx6cR4")
+        # upload_result = None
+        # if _file:
+        _filename = _file.filename
+        _file_mimetype = _file.content_type
+        # _filenameUpload = _filename.split(".")[0]
+        # app.logger.info('%s file_to_upload', _file)
+        # upload_result = cloudinary.uploader.upload(
+        #     request.files['file'], public_id=_filenameUpload)
+        # app.logger.info(upload_result)
         user = mongo.db.userReg.find_one({'email': session['user']})
-        mongo.save_file(_file.filename, _file)
-        # # mongo.db.upload.insert(
-        # #     {'upload_file_name': _file.filename})
+        # print(_file.filename)
+        mongo.save_file(_file.filename, request.files['file'])
+
+    # # mongo.db.upload.insert(
+    # #     {'upload_file_name': _file.filename})
         mongo.db.upload.insert(
-            {'title': _title, 'desc': _desc, 'filedata': _filedata, 'filename': _filename,
-             'file_mimetype': _file_mimetype, 'user': {'userId': user['_id']}, 'date': datetime.datetime.now()})
+            {'title': _title, 'desc': _desc, 'filename': _filename,
+                'file_mimetype': _file_mimetype, 'user': {'userId': user['_id']}, 'date': datetime.datetime.now()})
         # mongo.db.upload.insert({'upload_file_name': _file.filename})
         message = {
             # 'data': dumps(_file.filename),
@@ -994,7 +1031,14 @@ def file_upload():
             'result': {'isError': 'false', 'message': 'File added', 'status': 200, }
         }
         return jsonify(message)
-    except:
+        # else:
+        #     message = {
+        #         'data': "null",
+        #         'result': {'isError': 'true', 'message': 'File is not added', 'status': 200, }
+        #     }
+        #     return jsonify(message)
+    except Exception as e:
+        print('error = ', e)
         return internal_error()
 
 # sending file
@@ -1108,20 +1152,35 @@ def upload_advertise():
         _advertiseFile = request.files['file']
         _advertisement_type = _json['advertisement_type']
         _advfile_mimetype = _advertiseFile.content_type
-        _advfile_data = _json['image']
-        _advfile_name = _advertiseFile.filename
+        # _advfile_data = _json['image']
         # user = mongo.db.userReg.find_one({'email': session['user']})
-        mongo.db.advertiseUpload.insert(
-            {'advertisement_type': _advertisement_type, 'filedata': _advfile_data, 'filename': _advfile_name,
-             'file_mimetype': _advfile_mimetype, 'user': session['user'], 'date': datetime.datetime.now()})
-        # print(_advfile_name)
-        message = {
-            'data': "null",
-            'result': {'isError': 'false', 'message': 'Advertise successfully uploaded', 'status': 200, }
-        }
-        return jsonify(message)
+        cloudinary.config(cloud_name="daf1cgy1c", api_key="228197214629277",
+                          api_secret="DferVvyNAJovYz-cOug7zIx6cR4")
+        upload_result = None
+        if _advertiseFile and allowed_file(_advertiseFile.filename):
+            _adv_name = secure_filename(_advertiseFile.filename)
+            _advfile_name = _adv_name.split(".")[0]
+            app.logger.info('%s file_to_upload', _advertiseFile)
+            upload_result = cloudinary.uploader.upload(
+                _advertiseFile, public_id=_advfile_name)
+            app.logger.info(upload_result)
+            mongo.db.advertiseUpload.insert(
+                {'advertisement_type': _advertisement_type, 'filename': _adv_name,
+                 'file_mimetype': _advfile_mimetype, 'user': session['user'], 'date': datetime.datetime.now()})
+            # print(_advfile_name)
+            message = {
+                'data': "null",
+                'result': {'isError': 'false', 'message': 'Advertise successfully uploaded', 'status': 200, }
+            }
+            return jsonify(message)
+        else:
+            message = {
+                'data': "null",
+                'result': {'isError': 'true', 'message': 'Allowed Image types are -> png, jpg, jpeg, gif', 'status': 200, }
+            }
+            return jsonify(message)
     except Exception as e:
-        print(e)
+        print('Error = ', e)
         return internal_error()
 
 
@@ -1736,7 +1795,11 @@ def friendReqDel(id):
 def rmFriend(id):
     try:
         current_user = mongo.db.userReg.find_one({'email': session['user']})
+
         existing_user = mongo.db.userReg.find_one({'_id': ObjectId(id)})
+        # print('ID = ', id)
+        # print('Current user = ', current_user)
+        # print('Existing user ', existing_user)
         # check if userReg already has the friend
         if existing_user:
             existing_friend = mongo.db.userReg.find_one(

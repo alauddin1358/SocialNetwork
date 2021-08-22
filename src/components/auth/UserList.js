@@ -10,7 +10,7 @@ import { Link } from 'react-router-dom';
 import { connect } from 'react-redux';
 import { getAllUsers, deleteUser } from '../../actions/auth';
 import Alert from '../layout/Alert';
-
+const IMAGEURL = process.env.REACT_APP_CLOUDINARY;
 
 const UserList = ({getAllUsers,deleteUser, auth:{allUsers, loading}}) => {
   //const [filesList, setFilesList] = useState([]);
@@ -54,7 +54,7 @@ const UserList = ({getAllUsers,deleteUser, auth:{allUsers, loading}}) => {
                                                 ({ _id, name, email, image, user_category }, index) => (
                                                 <tr key={index}>
                                                     <td style={{width:"10%"}}>
-                                                        <img src={image} alt={name} style={{height:"50px",width:"50px"}}/>
+                                                        <img src={IMAGEURL+image} alt={name} style={{height:"50px",width:"50px"}}/>
                                                     </td>
                                                     <td style={{width:"15%"}}>{name}</td>
                                                     <td style={{width:"20%"}}>{email}</td>

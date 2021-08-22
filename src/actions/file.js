@@ -45,17 +45,17 @@ export const getFile = (id) => async dispatch => {
 }
 
 //Add File
-export const addFile = (formData) => async dispatch => {
+export const addFile = ({formData}) => async dispatch => {
   const config = {
     headers : {
       'Authorization': `Bearer ${localStorage.token}`,
-      'Content-Type':'multipart/form-data',
+      'Content-Type':'application/json',
       'Access-Control-Allow-Origin': '*',
       'Access-Control-Allow-Credentials': true
     }
   };
       try {
-        console.log(localStorage.token);
+        //console.log(localStorage.token);
         const res = await instance.post(`${API}/file_upload`, formData, config);
         if(res.data.result.isError === 'true') {
             dispatch(setAlert(res.data.result.message, 'danger'));

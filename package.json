@@ -12,6 +12,7 @@
     "axios": "^0.21.1",
     "bootstrap": "^4.5.3",
     "browser-image-compression": "^1.0.14",
+    "cloudinary-react": "^1.7.0",
     "downloadjs": "^1.4.7",
     "jquery": "^3.6.0",
     "react": "^17.0.1",

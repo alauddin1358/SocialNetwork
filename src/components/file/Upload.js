@@ -31,7 +31,6 @@ const Upload = ({props, addFile, file: {isSuccess}}) => {
   const onDrop = (files) => {
     const [uploadedFile] = files;
     setFile(uploadedFile);
-
     const fileReader = new FileReader();
     fileReader.onload = () => {
       setPreviewSrc(fileReader.result);
@@ -50,19 +49,23 @@ const Upload = ({props, addFile, file: {isSuccess}}) => {
   };
 
   const handleOnSubmit = async (event) => {
-    event.preventDefault();
+    event.preventDefault(); 
 
     try {
       const { title, description } = state;
       if (title.trim() !== '' && description.trim() !== '') {
         if (file) {
+          console.log('file uploadasd');
+          console.log('File ',file);
+          console.log(`originalFile size ${file.size / 1024/ 1024 } MB`);
           const formData = new FormData();
           formData.append('file', file);
           formData.append('title', title);
           formData.append('description', description);
-          formData.append('filedata', previewSrc);
+          //formData.append('filedata', previewSrc);
+          console.log('formdata', formData);
           setErrorMsg('');
-          addFile(formData);
+          addFile({formData});
           props.history.push('/list');
         } else {
           setErrorMsg('Please select a file to add.');

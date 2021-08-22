@@ -6,6 +6,8 @@ import { logout, toggleCssClass } from '../../actions/auth';
 import Autosuggest from 'react-autosuggest';
 import AutosuggestHighlightMatch from 'autosuggest-highlight/match';
 import AutosuggestHighlightParse from 'autosuggest-highlight/parse';
+const IMAGEURL = process.env.REACT_APP_CLOUDINARY;
+
 const Topbar = ({ auth: { user, allUsers }, logout, toggleCssClass }) => {
   const [value, setValue] = useState('');
   const [suggestions, setSuggestions] = useState([]);
@@ -63,7 +65,7 @@ const Topbar = ({ auth: { user, allUsers }, logout, toggleCssClass }) => {
     return (
       <span className='suggestion-content'>
         <img
-          src={suggestion.image}
+          src={IMAGEURL+suggestion.image}
           alt='user'
           className='user-img-profile rounded-circle'
         />
@@ -284,7 +286,7 @@ const Topbar = ({ auth: { user, allUsers }, logout, toggleCssClass }) => {
                             <img
                               className='img-profile rounded-circle'
                               src={
-                                pendingUser !== null ? pendingUser.image : null
+                                pendingUser !== null ? IMAGEURL+pendingUser.image : null
                               }
                               alt={pendingUser.name}
                             />
@@ -344,7 +346,7 @@ const Topbar = ({ auth: { user, allUsers }, logout, toggleCssClass }) => {
               </span>
               <img
                 className='img-profile rounded-circle'
-                src={user !== null ? user.image : null}
+                src={user !== null ? IMAGEURL+user.image : null}
                 alt='userName'
               />
             </a>

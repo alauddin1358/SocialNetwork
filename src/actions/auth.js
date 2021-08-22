@@ -44,7 +44,7 @@ export const loadUser = () => async dispatch => {
   try {
     //console.log('Calling LoadUser', localStorage.token);
     const res = await instance.get(`${API}/user`, config);
-    console.log('Auth response = ',JSON.parse(res.data.data));
+    //console.log('Auth response = ',JSON.parse(res.data.data));
     if(res.data.result.isError === 'false') {
       dispatch({
         type: USER_LOADED,
@@ -77,7 +77,7 @@ export const getAllUsers = () => async dispatch => {
   };
   try {
     const res = await axios.get(`${API}/getAllUser`, config);
-    console.log('All User',JSON.parse(res.data.data));
+    //console.log('All User',JSON.parse(res.data.data));
     if(res.data.result.isError === 'true') {
       dispatch(setAlert(res.data.result.message, 'danger'));
     }
@@ -99,7 +99,7 @@ export const getAllUsers = () => async dispatch => {
 // Register User
 export const userRegister = ({form_data}) => async dispatch => {
   try {
-    console.log(API);
+    //console.log(API);
     const res = await axios.post(`${API}/add`, form_data);
     //console.log('Users data', res.data);
     if(res.data.result.isError === 'true') {
@@ -133,13 +133,13 @@ export const login = (email, password) => async dispatch => {
       }
   };
   const body = {email, password};
-  console.log('Login data',body);
+  //console.log('Login data',body);
   // const res = await axios.post(`${API}/email_test`, body, config);
   // console.log('Login response', res.data);
   
   try {
     const res = await axios.post(`${API}/login`, body, config);
-    console.log('Login response', res.data);
+    //console.log('Login response', res.data);
     if(res.data.result.isError === 'true') {
       dispatch(setAlert(res.data.result.message, 'danger'));
     }

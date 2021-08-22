@@ -102,69 +102,70 @@ const Register = ({userRegister, isAuthenticated}) => {
     
     // const onChange = (e) =>
     //       setFormData({ ...formData, [e.target.name]: e.target.value });
-    function processfile(blob, options) {
-        // read the files
-        var reader = new FileReader();
-        reader.readAsArrayBuffer(blob);
-        var resized;
-        reader.onload = function (event) {
-          // blob stuff
-          var blob = new Blob([event.target.result]); // create blob...
-          window.URL = window.URL || window.webkitURL;
-          var blobURL = window.URL.createObjectURL(blob); // and get it's URL
+    // function processfile(blob, options) {
+    //     // read the files
+    //     var reader = new FileReader();
+    //     reader.readAsArrayBuffer(blob);
+    //     var resized;
+    //     reader.onload = function (event) {
+    //       // blob stuff
+    //       var blob = new Blob([event.target.result]); // create blob...
+    //       window.URL = window.URL || window.webkitURL;
+    //       var blobURL = window.URL.createObjectURL(blob); // and get it's URL
           
-          // helper Image object
-          var image = new Image();
-          image.src = blobURL;
-          image.onload = function() {
-            // have to wait till it's loaded
-            resized = resizeMe(image, options); // resized image url
-            setImage(resized);
-            console.log('Resize image = ', resized);
-          }
-        };
-        // console.log('Resize image = ', resized);
-        // return resized;
-    }
+    //       // helper Image object
+    //       var image = new Image();
+    //       image.src = blobURL;
+    //       image.onload = function() {
+    //         // have to wait till it's loaded
+    //         resized = resizeMe(image, options); // resized image url
+    //         setImage(resized);
+    //         console.log('Resize image = ', resized);
+    //       }
+    //     };
+    //     // console.log('Resize image = ', resized);
+    //     // return resized;
+    // }
     
     // === RESIZE ====
     
-    function resizeMe(img, options) {
+    // function resizeMe(img, options) {
       
-      var canvas = document.createElement('canvas');
+    //   var canvas = document.createElement('canvas');
     
-      var width = img.width;
-      var height = img.height;
+    //   var width = img.width;
+    //   var height = img.height;
     
-      // calculate the width and height, constraining the proportions
-      if (width > height) {
-        if (width > options.maxWidth) {
-          //height *= max_width / width;
-          height = Math.round(height *= options.maxWidth / width);
-          width = options.maxWidth;
-        }
-      } else {
-        if (height > options.max_height) {
-          //width *= max_height / height;
-          width = Math.round(width *= options.max_height / height);
-          height = options.max_height;
-        }
-      }
+    //   // calculate the width and height, constraining the proportions
+    //   if (width > height) {
+    //     if (width > options.maxWidth) {
+    //       //height *= max_width / width;
+    //       height = Math.round(height *= options.maxWidth / width);
+    //       width = options.maxWidth;
+    //     }
+    //   } else {
+    //     if (height > options.max_height) {
+    //       //width *= max_height / height;
+    //       width = Math.round(width *= options.max_height / height);
+    //       height = options.max_height;
+    //     }
+    //   }
       
-      // resize the canvas and draw the image data into it
-      canvas.width = width;
-      canvas.height = height;
-      var ctx = canvas.getContext("2d");
-      ctx.drawImage(img, 0, 0, width, height);
+    //   // resize the canvas and draw the image data into it
+    //   canvas.width = width;
+    //   canvas.height = height;
+    //   var ctx = canvas.getContext("2d");
+    //   ctx.drawImage(img, 0, 0, width, height);
       
-      return canvas.toDataURL("image/jpeg",0.5); // get the data from canvas as 70% JPG (can be also PNG, etc.)
+    //   return canvas.toDataURL("image/jpeg",0.5); // get the data from canvas as 70% JPG (can be also PNG, etc.)
       
-      // you can get BLOB too by using canvas.toBlob(blob => {});
+    //   // you can get BLOB too by using canvas.toBlob(blob => {});
     
-    }
+    // }
     const imageHandler = async (e) => {
         setFile(e.target.files[0]);
         var fileUpload = e.target.files[0];
+        if(fileUpload) setImage(URL.createObjectURL(e.target.files[0]));
         //var convertedBlobFile;
         const options = {
             //maxSizeMB: 1.5,
@@ -179,8 +180,8 @@ const Register = ({userRegister, isAuthenticated}) => {
             if(reader.readyState === 2){
                 try{
                     const compressedFile = await Compress(fileUpload, options)
-                    console.log(compressedFile);
-                    processfile(compressedFile, options);
+                    //console.log(compressedFile);
+                    //processfile(compressedFile, options);
                     // var compressURL = URL.createObjectURL(compressedFile);
                     // console.log('image',compressURL)
                 }
@@ -203,10 +204,10 @@ const Register = ({userRegister, isAuthenticated}) => {
         //e.preventDefault();
         //console.log(formData);
         const form_data = getFormData(data);
-        console.log(form_data);
+        //console.log(form_data);
         //alert(JSON.stringify(form_data))
         form_data.append('file', file);
-        form_data.append('image', image);
+        // form_data.append('image', image);
         form_data.append('emailconfirm', false);
         form_data.append('job_type','');
         form_data.append('student_type','');
@@ -586,6 +587,7 @@ const Register = ({userRegister, isAuthenticated}) => {
                                     <input type="file" 
                                         name="profile_picture" 
                                         className="custom-select-input"
+                                        accept='image/*'
                                         onChange={imageHandler} />
                                 </div>
                                 <div className="full-row">

@@ -1,5 +1,4 @@
 import React, { useEffect, Fragment } from 'react';
-
 import Sidebar from '../dashboard/Sidebar';
 import Topbar from '../dashboard/Topbar';
 import Footer from '../dashboard/Footer';
@@ -10,6 +9,7 @@ import { Link } from 'react-router-dom';
 import { connect } from 'react-redux';
 import { getAdvertise, deleteAdvertise } from '../../actions/file';
 import Alert from '../layout/Alert';
+const IMAGEURL = process.env.REACT_APP_CLOUDINARY;
 
 
 const ShowAdvertise = ({getAdvertise,deleteAdvertise, file:{advertise, loading}}) => {
@@ -50,10 +50,10 @@ const ShowAdvertise = ({getAdvertise,deleteAdvertise, file:{advertise, loading}}
                                         <tbody>
                                             {advertise.length > 0 ? (
                                                 advertise.map(
-                                                ({ _id,filename, filedata,advertisement_type }, index) => (
+                                                ({ _id,filename, advertisement_type }, index) => (
                                                 <tr key={index}>
                                                     <td className="file-title">
-                                                        <img src={filedata} alt={filename} style={{height:"50px",width:"70px", marginLeft:"20px"}}/>
+                                                        <img src={IMAGEURL+filename} alt={filename} style={{height:"50px",width:"70px", marginLeft:"20px"}}/>
                                                     </td>
                                                     <td className="file-description">{filename}</td>
                                                     <td>{advertisement_type}</td>

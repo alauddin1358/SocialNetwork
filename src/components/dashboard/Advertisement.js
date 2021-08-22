@@ -9,6 +9,7 @@ import { uploadAdvertise, getAdvertise } from '../../actions/file';
 import Compress from "browser-image-compression";
 const ADMIN = process.env.REACT_APP_ADMIN;
 
+
 const Advertisement = ({uploadAdvertise,getAdvertise,auth:{user}, file:{advertise}}) => {
     useEffect(() => {
         getAdvertise();
@@ -33,8 +34,9 @@ const Advertisement = ({uploadAdvertise,getAdvertise,auth:{user}, file:{advertis
         if(file){
             const form_data = new FormData();
             form_data.append('file',file);
-            form_data.append('image',image);
+            //form_data.append('image',image);
             form_data.append('advertisement_type', advertisement_type);
+            console.log(advertisement_type);
             uploadAdvertise(form_data);
         } else {
             alert('Please select a advertisement to add.');
@@ -118,9 +120,9 @@ const Advertisement = ({uploadAdvertise,getAdvertise,auth:{user}, file:{advertis
             if(reader.readyState === 2){
                 try{
                     const compressedFile = await Compress(fileUpload, options)
-                    //console.log(`originalFile size ${fileUpload.size / 1024 / 1024} MB`);
-                    //console.log(compressedFile);
-                    //console.log(`compressFile size ${compressedFile.size / 1024 / 1024} MB`);
+                    // console.log(`originalFile size ${fileUpload.size / 1024/ 1024 } MB`);
+                    // console.log(compressedFile);
+                    // console.log(`compressFile size ${compressedFile.size / 1024 / 1024 } MB`);
                     const convertedBlobFile = new File([compressedFile], fileUpload.name, { type: fileUpload.type, lastModified: Date.now()})
                     //console.log(convertedBlobFile);
                     setFile(convertedBlobFile)
