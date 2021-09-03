@@ -1,7 +1,7 @@
 import React, { Fragment, useState, useEffect } from 'react';
 //import { Alert } from 'reactstrap';
 import { connect } from 'react-redux';
-import { Redirect } from 'react-router-dom';
+import { Redirect, Link } from 'react-router-dom';
 import { addPost, getPost } from '../../actions/post';
 import Advertisement from '../dashboard/Advertisement';
 import PropTypes from 'prop-types';
@@ -14,8 +14,9 @@ const initialState = {
 const NewPost = ({propsFromLink, addPost, post:{posts, loading}}) => {
     const [postData, setPostData] = useState(initialState)
     const [isSubmit, setIsSubmit] = useState(false);
+    let {id, edit} = propsFromLink;
     useEffect(() => {
-        let {id, edit} = propsFromLink;
+        
         let post;
         if (edit) {
             //getPost(id);
@@ -95,7 +96,22 @@ const NewPost = ({propsFromLink, addPost, post:{posts, loading}}) => {
                                                 name="tags" value={tags}
                                                 onChange={onChange} />
                                 </div> */}
-                                <button type="submit" className="btn btn-primary">Add Post</button>
+                                {
+                                    edit ? (
+                                        <div className='update-file-btn'>
+                                            <button type="submit" className="btn btn-primary">Update Post</button>
+                                            <Link to='/dashboard'
+                                                className='btn btn-danger'
+                                            >
+                                                Cancel
+                                            </Link>
+                                        </div>
+                                    ):(
+                                        <button type="submit" className="btn btn-primary">Add Post</button>
+                                    )
+                                    
+                                }
+                                
                                 <Alert />
                             </form>      
                         </div>

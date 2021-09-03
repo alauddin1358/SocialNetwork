@@ -167,7 +167,7 @@ const TopSidebar = ({ props, auth: { user, allUsers }, logout }) => {
           id='brand-image'
         >
           <img
-            src={process.env.PUBLIC_URL + '/img/AG-LogoFinal.png'}
+            src={process.env.PUBLIC_URL + '/img/AGLogoFinal.png'}
             alt='Agriculturist Logo'
           />
           {/* <img src="../../../public/img/Social_Fish2.png" alt="Agriculturist Logo"/> */}
@@ -253,7 +253,14 @@ const TopSidebar = ({ props, auth: { user, allUsers }, logout }) => {
             data-parent='#accordionSidebar'
           >
             <div className='bg-white py-2 collapse-inner rounded'>
-              <Link className='collapse-item' to='/upload'>
+              <Link className='collapse-item' to={{
+                                            pathname: '/addfile',
+                                            state: {
+                                                id: null,
+                                                edit: false
+                                            }
+                                        }}
+              >
                 Add File
               </Link>
               <Link className='collapse-item' to='/list'>

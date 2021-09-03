@@ -30,7 +30,7 @@ import cloudinary
 import cloudinary.uploader
 # from flask_email_verifier import Client
 # from flask_email_verifier import exceptions
-UPLOAD_FOLDER = 'F:\Coursera\React_Flask\SocialNetwork\Frontend\Api'
+UPLOAD_FOLDER = os.getcwd()
 # UPLOAD_FOLDER = 'https://api.agriculturist.org'
 ALLOWED_EXTENSIONS = set(['png', 'jpg', 'jpeg', 'gif'])
 
@@ -41,8 +41,8 @@ app = Flask(__name__)
 # random secrect key initialization
 app.secret_key = "thisisthesecretkey"
 # db config
-app.config['MONGO_URI'] = "mongodb://localhost:27017/userReg"
-# app.config['MONGO_URI'] = "mongodb://root:iritadb2021@127.0.0.1:27020/userReg?authSource=admin"
+# app.config['MONGO_URI'] = "mongodb://localhost:27017/userReg"
+app.config['MONGO_URI'] = "mongodb://root:iritadb2021@127.0.0.1:27020/userReg?authSource=admin"
 # app.config['MONGO_URI'] = "mongodb://admin:iritadb2021@localhost:27020/userReg?authSource=admin"
 # configuration for flask-mail
 app.config["MAIL_SERVER"] = 'mail.iritatech.com'
@@ -52,7 +52,7 @@ app.config['MAIL_PASSWORD'] = 'X5Y[qN!GM3Yu'
 
 app.config['MAIL_USE_TLS'] = False
 app.config['MAIL_USE_SSL'] = True
-app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
+app.config['UPLOAD_FOLDER'] = os.getcwd()
 
 # SESSION_TYPE = 'filesystem'
 # app.config.from_object(__name__)
@@ -598,7 +598,10 @@ def update_user(id):
                 }
                 return jsonify(message)
         else:
-            _imagefilename = 'user-profile.png'
+            if _json['image'] == '':
+                _imagefilename = 'user-profile.png'
+            else:
+                _imagefilename = _json['image']
         _firstname = _json['firstname']
         _middlename = _json['middlename']
         _lastname = _json['lastname']
@@ -698,17 +701,17 @@ def create_post(id):
     # _category = _json['category']
     # _tags = _json['tags']
     _post_date = datetime.datetime.now()
-    print(session)
-    print(_id)
+    # print(session)
+    # print(_id)
     if _id != 'null':
         if _title and _body:
             try:
-                postId = mongo.db.posts.update_one({'_id': ObjectId(_id['$oid']) if '$oid' in _id else ObjectId(_id)},
-                                                   {'$set': {
-                                                       'title': _title, 'body': _body, 'date': _post_date
-                                                   }
+                mongo.db.posts.update_one({'_id': ObjectId(_id['$oid']) if '$oid' in _id else ObjectId(_id)},
+                                          {'$set': {
+                                              'title': _title, 'body': _body, 'date': _post_date
+                                          }
                 })
-                print('PostId = ', postId)
+                # print('PostId = ', postId)
                 message = {
                     'data': 'null',
                     'result': {'isError': 'false', 'message': 'post updated successfull', 'status': 201, }
@@ -995,11 +998,14 @@ def comment_reply(pid, cid):
 def file_upload():
     try:
         _json = request.form
-        _file = request.files['file']
-        # print(_file)
-        # print(_file.content_length)
         _title = _json['title']
-        _desc = _json['description']
+        _desc = _json['desc']
+        if 'file' in request.files:
+            _file = request.files['file']
+            _filename = _file.filename
+            _file_mimetype = _file.content_type
+            mongo.save_file(_file.filename, request.files['file'])
+
         # _filedata = _json['filedata']
 
         # print(_image)
@@ -1008,8 +1014,7 @@ def file_upload():
         #                   api_secret="DferVvyNAJovYz-cOug7zIx6cR4")
         # upload_result = None
         # if _file:
-        _filename = _file.filename
-        _file_mimetype = _file.content_type
+
         # _filenameUpload = _filename.split(".")[0]
         # app.logger.info('%s file_to_upload', _file)
         # upload_result = cloudinary.uploader.upload(
@@ -1017,7 +1022,6 @@ def file_upload():
         # app.logger.info(upload_result)
         user = mongo.db.userReg.find_one({'email': session['user']})
         # print(_file.filename)
-        mongo.save_file(_file.filename, request.files['file'])
 
     # # mongo.db.upload.insert(
     # #     {'upload_file_name': _file.filename})
@@ -1029,6 +1033,65 @@ def file_upload():
             # 'data': dumps(_file.filename),
             'data': "null",
             'result': {'isError': 'false', 'message': 'File added', 'status': 200, }
+        }
+        return jsonify(message)
+        # else:
+        #     message = {
+        #         'data': "null",
+        #         'result': {'isError': 'true', 'message': 'File is not added', 'status': 200, }
+        #     }
+        #     return jsonify(message)
+    except Exception as e:
+        print('error = ', e)
+        return internal_error()
+
+# file upload with user name
+
+
+@ app.route('/file_update/<id>', methods=['PUT'])
+@ cross_origin(supports_credentials=True)
+@ token_required
+def file_update(id):
+    try:
+        _json = request.form
+        _title = _json['title']
+        _desc = _json['desc']
+        _id = id
+        if 'file' in request.files:
+            _file = request.files['file']
+            _filename = _file.filename
+            _file_mimetype = _file.content_type
+            mongo.save_file(_file.filename, request.files['file'])
+        else:
+            existing_file = mongo.db.upload.find_one({'_id': ObjectId(id)})
+            _filename = existing_file['filename']
+            _file_mimetype = existing_file['file_mimetype']
+        # _filedata = _json['filedata']
+
+        # print(_image)
+        # print(_json)
+        # cloudinary.config(cloud_name="daf1cgy1c", api_key="228197214629277",
+        #                   api_secret="DferVvyNAJovYz-cOug7zIx6cR4")
+        # upload_result = None
+        # if _file:
+
+        # _filenameUpload = _filename.split(".")[0]
+        # app.logger.info('%s file_to_upload', _file)
+        # upload_result = cloudinary.uploader.upload(
+        #     request.files['file'], public_id=_filenameUpload)
+        # app.logger.info(upload_result)
+        # print(_file.filename)
+
+    # # mongo.db.upload.insert(
+    # #     {'upload_file_name': _file.filename})
+        mongo.db.upload.update_one({'_id': ObjectId(_id['$oid']) if '$oid' in _id else ObjectId(_id)},
+                                   {'$set': {'title': _title, 'desc': _desc,
+                                             'filename': _filename, 'file_mimetype': _file_mimetype, 'date': datetime.datetime.now()}})
+        # mongo.db.upload.insert({'upload_file_name': _file.filename})
+        message = {
+            # 'data': dumps(_file.filename),
+            'data': "null",
+            'result': {'isError': 'false', 'message': 'File Edited', 'status': 200, }
         }
         return jsonify(message)
         # else:
@@ -1075,6 +1138,24 @@ def fileDelete(id):
             return not_found()
     except:
         return internal_error()
+
+
+# @ app.route('/getSingleFile/<id>', methods=['GET'])
+# @ cross_origin(supports_credentials=True)
+# def getSingleFile(id):
+#     try:
+#         print(id)
+#         existing_file = mongo.db.upload.find_one({'_id': ObjectId(id)})
+#         if existing_file and request.method == 'GET':
+#             message = {
+#                 'data': dumps(existing_file),
+#                 'result': {'isError': 'false', 'message': 'File return successfully', 'status': 200, }
+#             }
+#             return jsonify(message)
+#         else:
+#             return not_found()
+#     except:
+#         return internal_error()
 
 
 @ app.route('/getAllFiles/<id>')

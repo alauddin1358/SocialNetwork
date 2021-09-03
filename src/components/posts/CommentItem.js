@@ -47,8 +47,9 @@ class CommentItem extends Component {
                     {this.props.comment.cmntBody} 
                     </textarea>
                 </div>
-                <div className="form-group text-right">
-                    <button className="btn btn-primary text-right">Submit</button>
+                <div className="form-group text-right update-file-btn">
+                    <button className="btn btn-primary text-right">Update</button>
+                    <button className="btn btn-danger text-right" onClick={()=>this.enterEditMode()}>Cancel</button>
                 </div>
             </form>
         );
@@ -58,6 +59,11 @@ class CommentItem extends Component {
             this.setState({
               editMode: true
             });
+        }
+        else {
+            this.setState({
+                editMode: false
+              });
         }
     }
     render() {

@@ -56,11 +56,11 @@ p {
 .sidebar #brand-image {
 	padding: 20px;
 }
-#brand-image img {
+#brand-image img { 
 	border-radius: 10px;
 	clear: both;
-	width: 120px;
-	height: 120px;
+	width: 150px;
+	height: 150px;
 }
 #brand-image span {
 	color: #fff;

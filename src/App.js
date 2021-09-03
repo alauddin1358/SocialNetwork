@@ -7,7 +7,7 @@ import Posts from './components/posts/Posts';
 import AddPost from './components/posts/AddPost';
 import PrivateRoute from './components/routing/PrivateRoute';
 import FileHome from './components/file/FileHome';
-import Upload from './components/file/Upload';
+import AddFile from './components/file/AddFile';
 import FilesList from './components/file/FilesList';
 import FileView from './components/file/FileView';
 import Profile from './components/profile/Profile';
@@ -43,7 +43,7 @@ const App = () => {
               <PrivateRoute exact path="/post/:id" component={ Posts } />
               <Route exact path="/addpost" component={ AddPost } />
               <Route exact path="/file" component={ FileHome } />
-              <Route exact path="/upload" component={Upload}  />
+              <Route exact path="/addfile" component={AddFile}  />
               <Route exact path="/list" component={FilesList}  />
               <Route exact path="/view/:filename" component={FileView}  />
               <Route exact path="/profile" render={(props) => <Profile {...props}/>}  />

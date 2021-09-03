@@ -75,6 +75,7 @@ export const acceptFriendRequest = (id) => async dispatch => {
         getAllUsers();
         loadUser();
         dispatch(setAlert(res.data.result.message, 'success'));
+        //window.location.reload(false);
       //   dispatch({
       //     type: ADD_FRIEND,
       //     payload: JSON.parse(res.data.data)
@@ -115,7 +116,7 @@ export const deleteFriendRequest = (id) => async dispatch => {
       if(res.data.result.isError === 'false') {
         getAllUsers();
         loadUser();
-        dispatch(setAlert(res.data.result.message, 'success'));
+        //dispatch(setAlert(res.data.result.message, 'success'));
       //   dispatch({
       //     type: ADD_FRIEND,
       //     payload: JSON.parse(res.data.data)
@@ -196,6 +197,7 @@ export const cancelFriendRequest = (id) => async dispatch => {
         getAllUsers();
         loadUser();
         dispatch(setAlert(res.data.result.message, 'success'));
+        //window.location.reload(false);
       //   dispatch({
       //     type: ADD_FRIEND,
       //     payload: JSON.parse(res.data.data)

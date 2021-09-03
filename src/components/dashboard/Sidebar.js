@@ -21,7 +21,7 @@ const Sidebar = ({auth:{user, isAddClass}, toggleCssClass}) => {
                             showMyPost: false
                         }
                     }} id="brand-image">
-                        <img src={process.env.PUBLIC_URL + '/img/AG-LogoFinal.png'} alt="Agriculturist Logo"/>
+                        <img src={process.env.PUBLIC_URL + '/img/AGLogoFinal.png'} alt="Agriculturist Logo"/>
                         {/* <img src="../../../public/img/Social_Fish2.png" alt="Agriculturist Logo"/> */}
                         <span>Agriculturist</span>
                     </Link> 
@@ -70,7 +70,15 @@ const Sidebar = ({auth:{user, isAddClass}, toggleCssClass}) => {
                         </a>
                         <div id="collapseFiles" className="collapse" aria-labelledby="headingPages" data-parent="#accordionSidebar">
                             <div className="bg-white py-2 collapse-inner rounded">
-                                <Link className="collapse-item" to="/upload">Add File</Link>
+                                <Link className="collapse-item"
+                                        to={{
+                                            pathname: '/addfile',
+                                            state: {
+                                                id: null,
+                                                edit: false
+                                            }
+                                        }}
+                                >Add File</Link>
                                 <Link className="collapse-item" to="/list">Show Files</Link>
                             </div>
                         </div>

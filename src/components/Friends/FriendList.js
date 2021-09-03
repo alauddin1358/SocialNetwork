@@ -44,7 +44,7 @@ const FriendList = ({
     //console.log('remove ID ', id);
     removeFriendFromFrList(id);
     setIsSendRequest(!isSendRequest);
-    window.location.replace('/friendlist');
+    //window.location.replace('/friendlist');
   };
   return (
     <Fragment>

@@ -42,7 +42,12 @@
 .friendCard .btn-secondary:hover {
     background-color: white !important;
 }
-
+.update-file-btn .btn-danger {
+    color: #fff;
+    background-color: #e74a3b;
+    border-color: #e74a3b;
+    margin-left: 10px;
+}
 @media screen and (max-width: 1024px)  {
     .friendCard {
         width: 100%;

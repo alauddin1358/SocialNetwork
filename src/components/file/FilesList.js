@@ -1,4 +1,4 @@
-import React, { useState, Fragment } from 'react';
+import React, { useState, Fragment, useEffect } from 'react';
 import download from 'downloadjs';
 import axios from 'axios';
 import Sidebar from '../dashboard/Sidebar';
@@ -19,26 +19,38 @@ const FilesList = ({getFile, deleteFile, auth, file:{files, loading}}) => {
   //const [filesList, setFilesList] = useState([]);
   const [errorMsg, setErrorMsg] = useState('');
   const [fileLoading, setFileLoading] = useState(true);
-  // useEffect(() => {
-  //   if(!auth.loading){
-  //     getFile(auth.user._id.$oid);
-  //   }
-  // }, [getFile]);
-  console.log('Loading file',fileLoading);
-  if(auth.user !== null) {
-    if(!auth.loading){
-      if (fileLoading && auth.user.email !== ADMIN) {
-        console.log('Calling User getFile');
-        getFile(auth.user._id.$oid);
-        setFileLoading(false)
-      }
-      else if(fileLoading && auth.user.email === ADMIN){
-        console.log('Calling ADMIN getFile');
-        getFile(null);
-        setFileLoading(false)
+  useEffect(() => {
+    console.log('calling filelist useEffect');
+    if(auth.user !== null) {
+      if(!auth.loading){
+        if (fileLoading && auth.user.email !== ADMIN) {
+          //console.log('Calling User getFile');
+          getFile(auth.user._id.$oid);
+          setFileLoading(false)
+        }
+        else if(fileLoading && auth.user.email === ADMIN){
+          //console.log('Calling ADMIN getFile');
+          getFile(null);
+          setFileLoading(false)
+        }
       }
     }
-  }
+  }, [getFile, auth]);
+  //console.log('Loading file',fileLoading);
+  // if(auth.user !== null) {
+  //   if(!auth.loading){
+  //     if (fileLoading && auth.user.email !== ADMIN) {
+  //       //console.log('Calling User getFile');
+  //       getFile(auth.user._id.$oid);
+  //       setFileLoading(false)
+  //     }
+  //     else if(fileLoading && auth.user.email === ADMIN){
+  //       //console.log('Calling ADMIN getFile');
+  //       getFile(null);
+  //       setFileLoading(false)
+  //     }
+  //   }
+  // }
   const downloadFile = async (filename, mimetype) => {
     try {
       const result = await axios.get(`${API}/file/${filename}`, {
@@ -78,6 +90,7 @@ const FilesList = ({getFile, deleteFile, auth, file:{files, loading}}) => {
                                     <tr>
                                       <th>Title</th>
                                       <th>Description</th>
+                                      <th>Edit File</th>
                                       <th>View File</th>
                                       <th>Download File</th>
                                       <th>Delete File</th>
@@ -90,6 +103,20 @@ const FilesList = ({getFile, deleteFile, auth, file:{files, loading}}) => {
                                           <tr key={index}>
                                             <td className="file-title">{title}</td>
                                             <td className="file-description">{desc}</td>
+                                            <td>
+                                              { auth.user._id.$oid === user.userId.$oid || auth.user.email === ADMIN ?
+                                                (<Link to={{
+                                                      pathname: '/addfile',
+                                                      state: {
+                                                                  id: _id.$oid,
+                                                                  edit:true
+                                                              },
+                                                    }}
+                                                >
+                                                  Edit
+                                                </Link>) : null
+                                              }
+                                            </td>
                                             <td>
                                               <Link to={`/view/${filename}`} >
                                                 View

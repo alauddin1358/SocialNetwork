@@ -10,7 +10,6 @@ import { withRouter } from 'react-router-dom';
 
 const AddPost = (props) => {
     const propsFromLink = props.location.state;
-    console.log('Props From Link = ', propsFromLink);
     return (
         <Fragment>
             <div id="wrapper">

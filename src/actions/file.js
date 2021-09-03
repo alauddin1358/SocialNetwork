@@ -79,6 +79,42 @@ export const addFile = ({formData}) => async dispatch => {
       }
       
   }
+  //Add File
+export const updateFile = ({formData},id) => async dispatch => {
+  const config = {
+    headers : {
+      'Authorization': `Bearer ${localStorage.token}`,
+      'Content-Type':'application/json',
+      'Access-Control-Allow-Origin': '*',
+      'Access-Control-Allow-Credentials': true
+    }
+  };
+      try {
+        //console.log(localStorage.token);
+        const res = await instance.put(`${API}/file_update/${id}`, formData, config);
+        if(res.data.result.isError === 'true') {
+            dispatch(setAlert(res.data.result.message, 'danger'));
+          }
+          else {
+            dispatch({
+              type: ADD_FILE,
+              payload: res.data
+            });
+            //dispatch(getFile());
+            dispatch(setAlert('File Edited', 'success'));
+          }
+      } catch (error) {
+        console.log(error);
+        console.log(error.response);
+        dispatch(setAlert('Server Error', 'danger'));
+        // dispatch({
+        //     type: POST_ERROR,
+        //     payload: { msg: err.response, status: err.response }
+        // });
+      }
+      
+  }
+
   export const deleteFile = (id) => async dispatch => {
     const config = {
       headers : {

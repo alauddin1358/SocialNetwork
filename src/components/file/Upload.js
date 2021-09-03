@@ -1,29 +1,74 @@
-import React, { useState, useRef, Fragment } from 'react';
+import React, { useState, useRef, Fragment, useEffect } from 'react';
 import Dropzone from 'react-dropzone';
 import Sidebar from '../dashboard/Sidebar';
 import Topbar from '../dashboard/Topbar';
 import Footer from '../dashboard/Footer';
 import FileHeader from './FileHeader';
 import Advertisement from '../dashboard/Advertisement';
-import {Redirect} from 'react-router-dom';
+import {Redirect, Link} from 'react-router-dom';
 import { connect } from 'react-redux';
 import { Container, Form, Row, Col, Button } from 'react-bootstrap';
-import { addFile } from '../../actions/file';
+import { addFile, getFile,updateFile } from '../../actions/file';
+import Spinner from '../layout/Spinner';
 import Alert from '../layout/Alert';
-const Upload = ({props, addFile, file: {isSuccess}}) => {
+import { updateProfile } from '../../actions/auth';
+const ADMIN = process.env.REACT_APP_ADMIN;
+
+const initialState = {
+  title : '',
+  desc : '',
+  filename: ''
+}
+const Upload = ({props, addFile,getFile,updateFile,auth, file: {files, isSuccess,loading}}) => {
   const [file, setFile] = useState(null); // state for storing actual image
   const [previewSrc, setPreviewSrc] = useState(''); // state for storing previewImage
-  const [state, setState] = useState({
-    title: '',
-    description: ''
-  });
+  const [fileData, setFileData] = useState(initialState);
   const [errorMsg, setErrorMsg] = useState('');
+  const [fileLoading, setFileLoading] = useState(true);
+  const [isEdit, setIsEdit] = useState(false);
   //const [isPreviewAvailable, setIsPreviewAvailable] = useState(false); // state to show preview only for images
   const dropRef = useRef(); // React ref for managing the hover state of droppable area
-  
+  const propsFromLink = props.location.state;
+  let {id, edit} = propsFromLink;
+  useEffect(() => {
+    let filteredFile;
+    if (edit) {
+        //getPost(id);
+        setIsEdit(true);
+        if(auth.user !== null) {
+          if(!auth.loading){
+            if (fileLoading && auth.user.email !== ADMIN) {
+              //console.log('Calling User getFile');
+              getFile(auth.user._id.$oid);
+              setFileLoading(false)
+            }
+            else if(fileLoading && auth.user.email === ADMIN){
+              //console.log('Calling ADMIN getFile');
+              getFile(null);
+              setFileLoading(false)
+            }
+          }
+        }
+        filteredFile = files.filter((fl) => fl._id.$oid === id)
+        filteredFile = Object.assign({}, filteredFile[0]);
+        //console.log('filtered file ',filteredFile);
+    } 
+    if (!loading && filteredFile) {
+      const fileData = { ...initialState };
+      for (const key in filteredFile) {
+        if (key in fileData) {
+          fileData[key] = filteredFile[key];
+        }
+      }
+      setFileData(fileData);
+      //console.log('file data ', fileData);
+    }
+  },[loading,files, props]);
+  let { title, desc, filename } = fileData;
+  //console.log('Loading in upload = ', loading);
   const handleInputChange = (event) => {
-    setState({
-      ...state,
+    setFileData({
+      ...fileData,
       [event.target.name]: event.target.value
     });
   };
@@ -31,6 +76,7 @@ const Upload = ({props, addFile, file: {isSuccess}}) => {
   const onDrop = (files) => {
     const [uploadedFile] = files;
     setFile(uploadedFile);
+    setIsEdit(false);
     const fileReader = new FileReader();
     fileReader.onload = () => {
       setPreviewSrc(fileReader.result);
@@ -52,24 +98,23 @@ const Upload = ({props, addFile, file: {isSuccess}}) => {
     event.preventDefault(); 
 
     try {
-      const { title, description } = state;
-      if (title.trim() !== '' && description.trim() !== '') {
+      const { title, desc } = fileData;
+      if (title.trim() !== '' && desc.trim() !== '') {
+        const formData = new FormData();
+        formData.append('title', title);
+        formData.append('desc', desc);
         if (file) {
-          console.log('file uploadasd');
-          console.log('File ',file);
-          console.log(`originalFile size ${file.size / 1024/ 1024 } MB`);
-          const formData = new FormData();
-          formData.append('file', file);
-          formData.append('title', title);
-          formData.append('description', description);
-          //formData.append('filedata', previewSrc);
-          console.log('formdata', formData);
-          setErrorMsg('');
-          addFile({formData});
-          props.history.push('/list');
-        } else {
-          setErrorMsg('Please select a file to add.');
+          formData.append('file', file); 
+        } 
+        setErrorMsg('');
+        if(edit) {
+          updateFile({formData},id)
         }
+        else {
+          addFile({formData});
+        }
+        
+        props.history.push('/list');
       } else {
         setErrorMsg('Please enter all the field values.');
       }
@@ -81,101 +126,122 @@ const Upload = ({props, addFile, file: {isSuccess}}) => {
   if(isSuccess) {
     return <Redirect to = "/list" />;
   } 
-  return (
-    <Fragment>
-      <div id="wrapper" className="file">
-          <Sidebar />
-          <div id="content-wrapper" className="d-flex flex-column">
-              <div id="content">
-                  <Topbar />
-                  <Alert />
-                  <Container>
-                    <div className="row">
-                      <div className="col-sm-12 col-md-6 col-lg-9">
-                        <FileHeader />
-                        <Form className="search-form" onSubmit={handleOnSubmit}>
-                            {errorMsg && <p className="errorMsg">{errorMsg}</p>}
-                            <Row>
-                              <Col>
-                                <Form.Group controlId="title">
-                                  <Form.Control
-                                    type="text"
-                                    name="title"
-                                    value={state.title || ''}
-                                    placeholder="Enter title"
-                                    onChange={handleInputChange}
-                                  />
-                                </Form.Group>
-                              </Col>
-                          </Row>
-                          <Row>
-                            <Col>
-                              <Form.Group controlId="description">
-                                <Form.Control
-                                  type="text"
-                                  name="description"
-                                  value={state.description || ''}
-                                  placeholder="Enter description"
-                                  onChange={handleInputChange}
-                                />
-                              </Form.Group>
-                            </Col>
-                          </Row>
-                          <div className="upload-section">
-                            <Dropzone
-                              onDrop={onDrop}
-                              onDragEnter={() => updateBorder('over')}
-                              onDragLeave={() => updateBorder('leave')}
-                              accept="application/pdf"
-                              maxFiles={1}
-                            >
-                              {({ getRootProps, getInputProps }) => (
-                                <div {...getRootProps({ className: 'drop-zone' })} ref={dropRef}>
-                                  <input {...getInputProps()} />
-                                  <p>Drag and drop a pdf file OR click here to select a pdf file</p>
-                                  {file && (
-                                    <div>
-                                      <strong>Selected file:</strong> {file.name}
-                                    </div>
-                                  )}
-                                </div>
-                              )}
-                            </Dropzone>
-                            {/* {previewSrc ? (
-                              isPreviewAvailable ? (
-                                <div className="image-preview">
-                                  <img className="preview-image" src={previewSrc} alt="Preview" />
-                                </div>
-                              ) : (
-                                <div className="preview-message">
-                                  <p>No preview available for this file</p>
-                                </div>
-                              )
-                            ) : (
-                              <div className="preview-message">
-                                <p>Image preview will be shown here after selection</p>
+  return loading ? (
+      <Spinner />
+  ) : (
+    <Fragment>   
+      <Container>
+        <div className="row">
+          <div className="col-sm-12 col-md-6 col-lg-9">
+            <FileHeader />
+            <Form className="search-form" onSubmit={handleOnSubmit}>
+                {errorMsg && <p className="errorMsg">{errorMsg}</p>}
+                <Row>
+                  <Col>
+                    <Form.Group controlId="title">
+                      <Form.Control
+                        type="text"
+                        name="title"
+                        value={title || ''}
+                        placeholder="Enter title"
+                        onChange={handleInputChange}
+                      />
+                    </Form.Group>
+                  </Col>
+              </Row>
+              <Row>
+                <Col>
+                  <Form.Group controlId="desc">
+                    <Form.Control
+                      type="text"
+                      name="desc"
+                      value={desc || ''}
+                      placeholder="Enter description"
+                      onChange={handleInputChange}
+                    />
+                  </Form.Group>
+                </Col>
+              </Row>
+              <div className="upload-section">
+                <Dropzone
+                  onDrop={onDrop}
+                  onDragEnter={() => updateBorder('over')}
+                  onDragLeave={() => updateBorder('leave')}
+                  accept="application/pdf"
+                  maxFiles={1}
+                >
+                  {({ getRootProps, getInputProps }) => (
+                    <div {...getRootProps({ className: 'drop-zone' })} ref={dropRef}>
+                      <input {...getInputProps()} />
+                      <p>Drag and drop a pdf file OR click here to select a pdf file</p>
+                      {file && (
+                              <div>
+                                <strong>Selected file:</strong> {file.name}
                               </div>
-                            )} */}
-                          </div>
-                          <Button variant="primary" type="submit">
-                            Submit
-                          </Button>
-                        </Form>
-                      </div>
-                      <Advertisement />
+                      )}
+                        {
+                          isEdit ? (
+                            <div>
+                              <strong>Selected file:</strong> {filename}
+                            </div>
+                          ): null
+                            
+      
+                        }
                     </div>
-                    
-                  </Container>
+                  )}
+                </Dropzone>
+                {/* {previewSrc ? (
+                  isPreviewAvailable ? (
+                    <div className="image-preview">
+                      <img className="preview-image" src={previewSrc} alt="Preview" />
+                    </div>
+                  ) : (
+                    <div className="preview-message">
+                      <p>No preview available for this file</p>
+                    </div>
+                  )
+                ) : (
+                  <div className="preview-message">
+                    <p>Image preview will be shown here after selection</p>
+                  </div>
+                )} */}
               </div>
-              <Footer />
+              {
+                edit ? (
+                  <div className='update-file-btn'>
+                      <Button variant="primary" type="submit">
+                          Update
+                      </Button>
+                      <Link to='/list'
+                            className='btn btn-danger'
+                      >
+                          Cancel
+                      </Link>
+                  </div>
+                  ):(
+                        <Button variant="primary" type="submit">
+                            Submit
+                        </Button>
+                      )
+              }
+              
+            </Form>
           </div>
+          <Advertisement />
+        </div>
+        
+      </Container>
+              
+              
           
-      </div>
+     
   </Fragment>
     
   )
 }
 const mapStateToProps = (state) => ({
-  file: state.file
+  file: state.file,
+  auth: state.auth
 });
-export default connect(mapStateToProps, {addFile})(Upload);
+export default connect(mapStateToProps, {addFile, getFile, updateFile})(Upload);

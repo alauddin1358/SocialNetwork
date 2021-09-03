@@ -26,20 +26,27 @@ const AddFriendList = ({
     console.log('calling useEffect of AddFriendList');
     loadUser();
     getAllUsers();
+    // if(user === null){
+    //   loadUser();
+    // }
+    // if(allUsers.length < 1){
+    //   getAllUsers();
+    // }
+    
     setIsSendRequest(isSendRequest);
     //console.log('calling addfriend  useeffect');
     //console.log('IsRequest',isSendRequest);
   }, [getAllUsers, loadUser, isSendRequest]);
-  // const [pendinFriend, setPendinFriend] = useState([]);
-  // const [friendSuggestion, setFriendSuggestion] = useState([]);
+  //const [pendingFriend, setPendingFriend] = useState([]);
+  //const [addFriendList, setAddFriendList] = useState([]);
   // const [isSetPenFr, setIsSetPenFr] = useState(true);
   // const [isSetFrsug, setIsSetFrsug] = useState(true);
   var pendingFriend = [];
   var friendSuggestion = [];
   var suggestedFriend = [];
   var pendingMatchFriend = [];
+
   if(user !== null) {
-    
     if (allUsers.length > 0) {
       pendingFriend = allUsers.reduce(function (filtered, option) {
         var matchFriend = [];
@@ -55,6 +62,8 @@ const AddFriendList = ({
         }
         return filtered;
       }, []);
+      //setPendingFriend(pendFriend);
+      //console.log('calling pending block');
     }
    //console.log('pending', pendingFriend);
     // if(isSetPenFr) {
@@ -76,6 +85,7 @@ const AddFriendList = ({
           return filtered;
         }, []);
       } 
+      //setAddFriendList(friendSuggestion);
     }
     //console.log('before Firen', friendSuggestion)
     var end = 0;
@@ -88,8 +98,7 @@ const AddFriendList = ({
       }
     }
     friendSuggestion.length = end;
-    
-    
+    //setAddFriendList(friendSuggestion);
     end = 0;
     for (var i = 0; i < friendSuggestion.length; i++) {
       var obj = friendSuggestion[i];
@@ -100,6 +109,8 @@ const AddFriendList = ({
       }
     }
     friendSuggestion.length = end;
+    //setAddFriendList(friendSuggestion);
+
   }
   
   // if(isSetFrsug) {
@@ -109,22 +120,24 @@ const AddFriendList = ({
   const addFriendRequest = (id) => {
     sendFriendRequest(id);
     setIsSendRequest(!isSendRequest);
-    window.location.replace('/friends');
+    
+    //window.location.replace('/friends');
   };
   const cancelFrRequest = (id) => {
     cancelFriendRequest(id);
     setIsSendRequest(!isSendRequest);
-    window.location.replace('/friends');
+    //window.location.reload(false);
+    //window.location.replace('/friends');
   };
   const deleteFrRequest = (id) => {
     deleteFriendRequest(id);
     setIsSendRequest(!isSendRequest);
-    window.location.replace('/friends');
+    //window.location.replace('/friends');
   };
   const acceptFrRequest = (id) => {
     acceptFriendRequest(id);
     setIsSendRequest(!isSendRequest);
-    window.location.replace('/friends');
+    //window.location.replace('/friends');
   };
   //console.log('user friends', user.friends);
   //console.log('Suggestion Friend', friendSuggestion);
