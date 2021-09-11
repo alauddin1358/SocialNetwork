@@ -582,8 +582,9 @@ def update_user(id):
         upload_result = None
         if 'file' in request.files:
             _file = request.files['file']
+            print(_file)
+            print(_file.filename)
             if _file and allowed_file(_file.filename):
-                print(_file)
                 _imagefilename = secure_filename(_file.filename)
                 # print(filename)
                 _filename = _imagefilename.split(".")[0]

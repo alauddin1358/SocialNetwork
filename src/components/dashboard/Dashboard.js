@@ -3,6 +3,7 @@ import { Link, Redirect } from 'react-router-dom';
 import { connect } from 'react-redux';
 import { logout } from '../../actions/auth';
 import { getAllUsers, loadUser } from '../../actions/auth'
+
 import TopSidebar from './TopSidebar';
 // import Pages from './Pages';
 // import Sidebar from './Sidebar';

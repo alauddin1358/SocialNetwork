@@ -77,7 +77,7 @@ export const getAllUsers = () => async dispatch => {
   };
   try {
     const res = await axios.get(`${API}/getAllUser`, config);
-    //console.log('All User',JSON.parse(res.data.data));
+    console.log('All User',JSON.parse(res.data.data));
     if(res.data.result.isError === 'true') {
       dispatch(setAlert(res.data.result.message, 'danger'));
     }

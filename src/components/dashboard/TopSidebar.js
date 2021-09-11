@@ -9,10 +9,11 @@ import AutosuggestHighlightParse from 'autosuggest-highlight/parse';
 import Pages from './Pages';
 import Footer from './Footer';
 import Alert from '../layout/Alert';
+import { toggleCssClass } from '../../actions/auth';
 const ADMIN = process.env.REACT_APP_ADMIN;
 const IMAGEURL = process.env.REACT_APP_CLOUDINARY;
 
-const TopSidebar = ({ props, auth: { user, allUsers }, logout }) => {
+const TopSidebar = ({ props, auth: { user, allUsers },toggleCssClass, logout }) => {
   const [value, setValue] = useState('');
   const [suggestions, setSuggestions] = useState([]);
   const [addClass, setAddClass] = useState(false);
@@ -25,7 +26,7 @@ const TopSidebar = ({ props, auth: { user, allUsers }, logout }) => {
   //         setSideToggle(false);
   //     }
   // }, [])
-  // console.log('Toggg', sideToggle);
+  //console.log('Togggsdgfd ', addClass);
   const toggleClass = () => {
     //console.log('Tobbar addclass before set ', addClass);
     setAddClass(!addClass);
@@ -167,7 +168,7 @@ const TopSidebar = ({ props, auth: { user, allUsers }, logout }) => {
           id='brand-image'
         >
           <img
-            src={process.env.PUBLIC_URL + '/img/AGLogoFinal.png'}
+            src={process.env.PUBLIC_URL + '/img/Agriculturist-logo_150x191.png'}
             alt='Agriculturist Logo'
           />
           {/* <img src="../../../public/img/Social_Fish2.png" alt="Agriculturist Logo"/> */}
@@ -183,6 +184,7 @@ const TopSidebar = ({ props, auth: { user, allUsers }, logout }) => {
                 showMyPost: false,
               },
             }}
+            // onClick={() => toggleCssClass(true)}
           >
             <i className='fas fa-fw fa-tachometer-alt'></i>
             <span>Dashboard</span>
@@ -216,6 +218,7 @@ const TopSidebar = ({ props, auth: { user, allUsers }, logout }) => {
                     edit: false,
                   },
                 }}
+                // onClick={() => toggleCssClass(true)}
               >
                 Add Post
               </Link>
@@ -227,6 +230,7 @@ const TopSidebar = ({ props, auth: { user, allUsers }, logout }) => {
                     showMyPost: true,
                   },
                 }}
+                // onClick={() => toggleCssClass(true)}
               >
                 Show MyPost
               </Link>
@@ -634,4 +638,4 @@ const TopSidebar = ({ props, auth: { user, allUsers }, logout }) => {
 const mapStateToProps = (state) => ({
   auth: state.auth,
 });
-export default connect(mapStateToProps, { logout })(TopSidebar);
+export default connect(mapStateToProps, { logout, toggleCssClass })(TopSidebar);

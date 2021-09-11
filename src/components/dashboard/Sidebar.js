@@ -21,7 +21,7 @@ const Sidebar = ({auth:{user, isAddClass}, toggleCssClass}) => {
                             showMyPost: false
                         }
                     }} id="brand-image">
-                        <img src={process.env.PUBLIC_URL + '/img/AGLogoFinal.png'} alt="Agriculturist Logo"/>
+                        <img src={process.env.PUBLIC_URL + '/img/Agriculturist-logo_150x191.png'} alt="Agriculturist Logo"/>
                         {/* <img src="../../../public/img/Social_Fish2.png" alt="Agriculturist Logo"/> */}
                         <span>Agriculturist</span>
                     </Link> 
@@ -32,7 +32,9 @@ const Sidebar = ({auth:{user, isAddClass}, toggleCssClass}) => {
                             state: {
                                 showMyPost: false
                             }
-                        }}>
+                        }} 
+                        // onClick={() => toggleCssClass(true)}
+                        >
                             <i className="fas fa-fw fa-tachometer-alt"></i>
                             <span>Dashboard</span>
                         </Link>
@@ -51,13 +53,17 @@ const Sidebar = ({auth:{user, isAddClass}, toggleCssClass}) => {
                                             id: null,
                                             edit: false
                                         }
-                                }}>Add Post</Link>
+                                }} 
+                                // onClick={() => toggleCssClass(true)}
+                                >Add Post</Link>
                                 <Link className="collapse-item" to={{
                                         pathname: '/dashboard',
                                         state: {
                                             showMyPost: true
                                         }
-                                }}>Show MyPost</Link>
+                                }} 
+                                // onClick={() => toggleCssClass(true)}
+                                >Show MyPost</Link>
                             </div>
                         </div>
                     </li>

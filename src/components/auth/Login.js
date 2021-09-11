@@ -52,10 +52,10 @@ const Login = ({auth:{isAuthenticated, token}, login}) => {
         <Fragment>
             <div className="form-wrapper auth">
 		        <form onSubmit={handleSubmit(onSubmit)}>
-                    <div id="brand-image">	
-                        <img src={process.env.PUBLIC_URL + '/img/AgLogoFinal.png'} style={{width: "150px"}} alt="logo" />
+                    <div className="text-center">	
+                        <img src={process.env.PUBLIC_URL + '/img/Agriculturist-logo_150x191.png'} alt="logo" />
                         <h2>
-                            <span>Log in to Agriculturist</span>
+                            <span>Login to Agriculturist</span>
                         </h2>
                     </div> 
                     {/* <h2>

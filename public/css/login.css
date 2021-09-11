@@ -40,13 +40,14 @@ html, body {
 .auth h2,
 .auth h2 i,
 .auth h2 span {
-	font-size: 35px;
+	font-size: 25px;
+	color: hsl(66, 69%, 55%);
 }
-.auth h3 { font-size: 30px; }
+.auth h3 { font-size: 20px; }
 .auth h4 { font-size: 25px; }
-.auth a { color: #fff; }
+.auth a { color: hsl(66, 69%, 55%); }
 .auth.form-wrapper {
-	background-image: url('../img/green-bg-1.jpg');
+	background-image: url('../img/green2.jpg');
 	background-size: cover;
     background-position: center;
 	min-height: 100vh;
@@ -60,8 +61,8 @@ html, body {
 
 /* --- Registration Form --- */
 .auth.form-wrapper form {
-	background: rgba(0, 0, 0, 0.5);
-	border: 1px solid #ccc;
+	background: rgba(0, 0, 0, 0);
+	border: 4px solid white;
 	border-radius: 8px;
 	color: #fff;
 	display: flex;
