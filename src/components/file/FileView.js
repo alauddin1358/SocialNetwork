@@ -19,13 +19,16 @@ const FileView = ({match}) => {
     const [pageNumber, setPageNumber] = useState(1);
     const [errorMsg, setErrorMsg] = useState('');
     const [fileURL, setFileURL] = useState(null);
+    const [fileExtension, setFileExtension] = useState(null);
 
     const viewFile = async (filename) => {
         try {
           const result = await axios.get(`${API}/file/${filename}`, {
             responseType: 'blob'
           });
-          //console.log("File Return Data = ", result.data);
+          let fileExt = filename.split('.').pop();
+          setFileExtension(fileExt);
+          console.log("File Return Data = ", fileExt);
           const fileURL = URL.createObjectURL(result.data)
           setFileURL(fileURL);
           setErrorMsg('');
@@ -62,27 +65,38 @@ const FileView = ({match}) => {
                         <FileHeader />
                           <div className="files-container">
                                 {errorMsg && <p className="errorMsg">{errorMsg}</p>}
-                                <Document
-                                    file={fileURL}
-                                    onLoadSuccess={onDocumentLoadSuccess}
-                                >
-                                    <Page pageNumber={pageNumber} />
-                                </Document>
-                                <div>
-                                    <p>
-                                    Page {pageNumber || (numPages ? 1 : "--")} of {numPages || "--"}
-                                    </p>
-                                    <button type="button" disabled={pageNumber <= 1} onClick={previousPage}>
-                                    Previous
-                                    </button>
-                                    <button
-                                    type="button"
-                                    disabled={pageNumber >= numPages}
-                                    onClick={nextPage}
+                                {
+                                  (fileExtension === 'png' || fileExtension === 'jpg' || fileExtension === 'jpeg') ? (<img className="view-image" src={fileURL} alt={match.params.filename} />
+                                  ) : (
+                                   <Fragment> 
+                                    <Document
+                                      file={fileURL}
+                                      onLoadSuccess={onDocumentLoadSuccess}
                                     >
-                                    Next
-                                    </button>
-                                </div>
+                                      <Page pageNumber={pageNumber} />
+                                    </Document>
+                                    <div>
+                                      <p>
+                                      Page {pageNumber || (numPages ? 1 : "--")} of {numPages || "--"}
+                                      </p>
+                                      <button 
+                                        type="button" 
+                                        disabled={pageNumber <= 1} 
+                                        onClick={previousPage}>
+                                        Previous
+                                      </button>
+                                      <button
+                                        type="button"
+                                        disabled={pageNumber >= numPages}
+                                        onClick={nextPage}
+                                      >
+                                        Next
+                                      </button>
+                                    </div>
+                                    </Fragment>
+                                  )
+                                }
+                                
                            </div>       
                     </Container>
                 </div>
