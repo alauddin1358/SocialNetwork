@@ -13,7 +13,7 @@ const AddFile = (props) => {
             <Sidebar />
                 <div id="content-wrapper" className="d-flex flex-column">
                     <div id="content">
-                        <Topbar />
+                        <Topbar props={props}/>
                         <Upload props={props}/>
                     </div>
                     <Footer />

@@ -8,16 +8,17 @@ import AddPost from './components/posts/AddPost';
 import PrivateRoute from './components/routing/PrivateRoute';
 import FileHome from './components/file/FileHome';
 import AddFile from './components/file/AddFile';
-import FilesList from './components/file/FilesList';
-import FileView from './components/file/FileView';
+import FilesListContainer from './components/file/FilesListContainer';
+import FileViewContainer from './components/file/FileViewContainer';
 import Profile from './components/profile/Profile';
 import ForgotPassword from './components/auth/ForgotPassword';
 import ResetPassword from './components/auth/ResetPassword';
 import ProfileSearchView from './components/profile/ProfileSearchView';
 import ShowAdvertise from './components/dashboard/ShowAdvertise';
-import UserList from './components/auth/UserList';
+import UserListContainer from './components/auth/UserListContainer';
 import AddFriend from './components/Friends/AddFriend';
 import FriendListContainer from './components/Friends/FriendListContainer';
+import SearchUserListContainer from './components/profile/SearchUserListContainer';
 import store from './store';
 import { BrowserRouter as Router, Route, Switch } from 'react-router-dom';
 import { Provider } from 'react-redux';
@@ -44,14 +45,15 @@ const App = () => {
               <Route exact path="/addpost" component={ AddPost } />
               <Route exact path="/file" component={ FileHome } />
               <Route exact path="/addfile" component={AddFile}  />
-              <Route exact path="/list" component={FilesList}  />
-              <Route exact path="/view/:filename" component={FileView}  />
+              <Route exact path="/list" component={FilesListContainer}  />
+              <Route exact path="/view/:filename" component={FileViewContainer}  />
               <Route exact path="/profile" render={(props) => <Profile {...props}/>}  />
               <Route exact path="/search" component={ProfileSearchView}  />
               <Route exact path="/showadvertise" component={ShowAdvertise}  />
-              <Route exact path="/userlist" component={UserList}  />
+              <Route exact path="/userlist" component={UserListContainer}  />
               <Route exact path="/friends" component = {AddFriend} />
               <Route exact path="/friendlist" component = {FriendListContainer} />
+              <Route exact path="/searchuser" render={(props) => <SearchUserListContainer {...props}/>} />
             </Switch>
           
         </Fragment>

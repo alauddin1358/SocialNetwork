@@ -7,7 +7,7 @@ import Topbar from '../dashboard/Topbar';
 //import {getPost} from '../../actions/post';
 //import PropTypes from 'prop-types';
 
-const Posts = ({ match }) => {
+const Posts = (props) => {
     
     //getPost(match.params.id);
     //console.log(post);
@@ -18,8 +18,8 @@ const Posts = ({ match }) => {
                 <Sidebar />
                 <div id="content-wrapper" className="d-flex flex-column">
                     <div id="content">
-                        <Topbar />
-                        <PostDetail match={match}/>
+                        <Topbar props={props}/>
+                        <PostDetail match={props.match}/>
                     </div>
                     <Footer />
                 </div>

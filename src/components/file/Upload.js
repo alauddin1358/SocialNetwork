@@ -167,13 +167,13 @@ const Upload = ({props, addFile,getFile,updateFile,auth, file: {files, isSuccess
                   onDrop={onDrop}
                   onDragEnter={() => updateBorder('over')}
                   onDragLeave={() => updateBorder('leave')}
-                  
+                  accept="image/*, application/pdf"
                   maxFiles={1}
                 >
                   {({ getRootProps, getInputProps }) => (
                     <div {...getRootProps({ className: 'drop-zone' })} ref={dropRef}>
                       <input {...getInputProps()} />
-                      <p>Drag and drop a file OR click here to select a file</p>
+                      <p>Click here OR drag and drop to select a pdf file or image</p>
                       {file && (
                               <div>
                                 <strong>Selected file:</strong> {file.name}

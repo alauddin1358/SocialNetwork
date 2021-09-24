@@ -8,7 +8,7 @@ import AutosuggestHighlightMatch from 'autosuggest-highlight/match';
 import AutosuggestHighlightParse from 'autosuggest-highlight/parse';
 const IMAGEURL = process.env.REACT_APP_CLOUDINARY;
 
-const Topbar = ({ auth: { user, allUsers }, logout, toggleCssClass }) => {
+const Topbar = ({props, auth: { user, allUsers }, logout, toggleCssClass }) => {
   const [value, setValue] = useState('');
   const [suggestions, setSuggestions] = useState([]);
   const [addClass, setAddClass] = useState(true);
@@ -58,7 +58,8 @@ const Topbar = ({ auth: { user, allUsers }, logout, toggleCssClass }) => {
   }
 
   function renderSuggestion(suggestion, { query }) {
-    //console.log('Sugestion ', suggestion);
+    // console.log('Sugestion ', suggestion);
+    // console.log('Query ', query);
     const suggestionText = `${suggestion.firstname} ${suggestion.middlename} ${suggestion.lastname}`;
     const matches = AutosuggestHighlightMatch(suggestionText, query);
     const parts = AutosuggestHighlightParse(suggestionText, matches);
@@ -97,6 +98,7 @@ const Topbar = ({ auth: { user, allUsers }, logout, toggleCssClass }) => {
 
   const onSuggestionsFetchRequested = ({ value }) => {
     setSuggestions(getSuggestions(value));
+    //console.log('Suggestions list ', suggestions);
   };
 
   const onSuggestionsClearRequested = () => {
@@ -105,28 +107,36 @@ const Topbar = ({ auth: { user, allUsers }, logout, toggleCssClass }) => {
 
   const submitSearchData = async (e) => {
     e.preventDefault();
-    let userArrayData = allUsers.filter(
-      (user) => user.name.toLowerCase() === value.toLowerCase()
-    );
-    //console.log('User in search = ', userArrayData)
-    let userData = Object.assign({}, userArrayData[0]);
-    //console.log('User in search = ', userData)
-    if (value === '') alert('User input search data is not given');
-    if (userArrayData.length > 0) {
-      return (
-        <Redirect
-          to={{
-            pathname: '/profile',
-            state: {
-              id: userData._id.$oid,
-            },
-          }}
-        />
-      );
-    } else if (value !== '') {
-      alert('Searching user is not found');
+    // let userArrayData = allUsers.filter(
+    //   (user) => user.name.toLowerCase() === value.toLowerCase()
+    // );
+    // //console.log('User in search = ', userArrayData)
+    // let userData = Object.assign({}, userArrayData[0]);
+    // //console.log('User in search = ', userData)
+    // if (value === '') alert('User input search data is not given');
+    // if (userArrayData.length > 0) {
+      
+    //   props.history.push('/profile',{
+    //     id: userData._id.$oid,
+    //   });
+    //   // return (
+    //   //   <Redirect
+    //   //     to={{
+    //   //       pathname: '/profile',
+    //   //       state: {
+    //   //         id: userData._id.$oid,
+    //   //       },
+    //   //     }}
+    //   //   />
+    //   // );
+    // } else 
+    if (value !== '') {
+        props.history.push('/searchuser',{
+          value: value,
+        });
     }
   };
+  
   const inputProps = {
     placeholder: 'Search for...',
     value,

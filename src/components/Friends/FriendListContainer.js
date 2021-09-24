@@ -4,14 +4,14 @@ import Footer from '../dashboard/Footer';
 import Topbar from '../dashboard/Topbar';
 import Alert from '../layout/Alert';
 import FriendList from './FriendList';
-const FriendListContainer = () => {
+const FriendListContainer = (props) => {
     return (
         <Fragment>
             <div id="wrapper">
             <Sidebar />
                 <div id="content-wrapper" className="d-flex flex-column">
                     <div id="content">
-                        <Topbar />
+                        <Topbar props={props}/>
                         <Alert />
                         <FriendList />
                     </div>
@@ -22,4 +22,4 @@ const FriendListContainer = () => {
     )
 }
 
-export default FriendListContainer
+export default FriendListContainer 

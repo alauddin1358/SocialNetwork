@@ -85,10 +85,11 @@
     width: 98%;
     overflow-x: auto;
   }
-  .files-container .view-image {
-    width: 60%;
-    height: 60%;
+  .files-container .view-file {
+    max-width: 80% !important;
+    height: 60% !important;
   }
+  
   .files-table {
     width: 100%;
     border: 1px solid #ccc;

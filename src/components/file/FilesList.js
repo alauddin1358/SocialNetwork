@@ -71,99 +71,90 @@ const FilesList = ({getFile, deleteFile, auth, file:{files, loading}}) => {
   
   return (
     <Fragment>
-        <div id="wrapper">
-            <Sidebar />
-            <div id="content-wrapper" className="d-flex flex-column">
-                <div id="content">
-                    <Topbar />
-                    <Alert />
-                    <Container>
-                      <div className="row">
-                        <div className="col-sm-12 col-md-6 col-lg-9">
-                          <FileHeader />
-                          <div className="files-container">
-                            {errorMsg && <p className="errorMsg">{errorMsg}</p>}
-                            {
-                              loading ? <Spinner /> : (
-                                <table className="files-table">
-                                  <thead>
-                                    <tr>
-                                      <th>Title</th>
-                                      <th>Description</th>
-                                      <th>Edit File</th>
-                                      <th>View File</th>
-                                      <th>Download File</th>
-                                      <th>Delete File</th>
-                                    </tr>
-                                  </thead>
-                                  <tbody>
-                                    {files.length > 0 ? (
-                                      files.map(
-                                        ({ _id, title, desc, filename, user, file_mimetype }, index) => (
-                                          <tr key={index}>
-                                            <td className="file-title">{title}</td>
-                                            <td className="file-description">{desc}</td>
-                                            <td>
-                                              { auth.user._id.$oid === user.userId.$oid || auth.user.email === ADMIN ?
-                                                (<Link to={{
-                                                      pathname: '/addfile',
-                                                      state: {
-                                                                  id: _id.$oid,
-                                                                  edit:true
-                                                              },
-                                                    }}
-                                                >
-                                                  Edit
-                                                </Link>) : null
-                                              }
-                                            </td>
-                                            <td>
-                                              <Link to={`/view/${filename}`} >
-                                                View
-                                              </Link>
-                                            </td>
-                                            <td>
-                                              <Link to="/list" onClick={() =>
-                                                  downloadFile(filename, file_mimetype)
-                                                }>
-                                                Download
-                                              </Link>
-                                            </td>
-                                            <td>
-                                            { auth.user._id.$oid === user.userId.$oid || auth.user.email === ADMIN ?
-                                              (<Link to="/list" onClick={() =>
-                                                  deleteFile(_id.$oid)
-                                                }>
-                                                Delete
-                                              </Link>) : null
-                                            }
-                                            </td>
-                                          </tr>
-                                        )
-                                      )
-                                    ) : (
-                                      <tr>
-                                        <td colSpan={3} style={{ fontWeight: '300' }}>
-                                          No files found. Please add some.
-                                        </td>
-                                      </tr>
-                                    )}
-                                  </tbody>
-                                </table>
-                              )
-                            }
-                          
-                          </div>       
-                        </div>
-                        <Advertisement />
-                      </div>
-                        
-                    </Container>
-                </div>
-                <Footer />
-            </div>
+        
+      <Container>
+        <div className="row">
+          <div className="col-sm-12 col-md-6 col-lg-9">
+            <FileHeader />
+            <div className="files-container">
+              {errorMsg && <p className="errorMsg">{errorMsg}</p>}
+              {
+                loading ? <Spinner /> : (
+                  <table className="files-table">
+                    <thead>
+                      <tr>
+                        <th>Title</th>
+                        <th>Description</th>
+                        <th>Edit File</th>
+                        <th>View File</th>
+                        <th>Download File</th>
+                        <th>Delete File</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      {files.length > 0 ? (
+                        files.map(
+                          ({ _id, title, desc, filename, user, file_mimetype }, index) => (
+                            <tr key={index}>
+                              <td className="file-title">{title}</td>
+                              <td className="file-description">{desc}</td>
+                              <td>
+                                { auth.user._id.$oid === user.userId.$oid || auth.user.email === ADMIN ?
+                                  (<Link to={{
+                                        pathname: '/addfile',
+                                        state: {
+                                                    id: _id.$oid,
+                                                    edit:true
+                                                },
+                                      }}
+                                  >
+                                    Edit
+                                  </Link>) : null
+                                }
+                              </td>
+                              <td>
+                                <Link to={`/view/${filename}`} >
+                                  View
+                                </Link>
+                              </td>
+                              <td>
+                                <Link to="/list" onClick={() =>
+                                    downloadFile(filename, file_mimetype)
+                                  }>
+                                  Download
+                                </Link>
+                              </td>
+                              <td>
+                              { auth.user._id.$oid === user.userId.$oid || auth.user.email === ADMIN ?
+                                (<Link to="/list" onClick={() =>
+                                    deleteFile(_id.$oid)
+                                  }>
+                                  Delete
+                                </Link>) : null
+                              }
+                              </td>
+                            </tr>
+                          )
+                        )
+                      ) : (
+                        <tr>
+                          <td colSpan={3} style={{ fontWeight: '300' }}>
+                            No files found. Please add some.
+                          </td>
+                        </tr>
+                      )}
+                    </tbody>
+                  </table>
+                )
+              }
             
+            </div>       
+          </div>
+          <Advertisement />
         </div>
+          
+      </Container>
+                
       </Fragment>
     
   );

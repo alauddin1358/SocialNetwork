@@ -16,7 +16,7 @@ const AddPost = (props) => {
             <Sidebar />
                 <div id="content-wrapper" className="d-flex flex-column">
                     <div id="content">
-                        <Topbar />
+                        <Topbar props={props}/>
                         <NewPost propsFromLink={propsFromLink}/>
                     </div>
                     <Footer />

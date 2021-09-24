@@ -12,7 +12,7 @@ import Alert from '../layout/Alert';
 const IMAGEURL = process.env.REACT_APP_CLOUDINARY;
 
 
-const ShowAdvertise = ({getAdvertise,deleteAdvertise, file:{advertise, loading}}) => {
+const ShowAdvertise = ({props,getAdvertise,deleteAdvertise, file:{advertise, loading}}) => {
   //const [filesList, setFilesList] = useState([]);
   //const [errorMsg, setErrorMsg] = useState('');
   
@@ -30,7 +30,7 @@ const ShowAdvertise = ({getAdvertise,deleteAdvertise, file:{advertise, loading}}
             <Sidebar />
             <div id="content-wrapper" className="d-flex flex-column">
                 <div id="content">
-                    <Topbar />
+                    <Topbar props={props}/>
                     <Alert />
                     <Container>
                         <div className="row">

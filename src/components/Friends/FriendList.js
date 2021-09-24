@@ -9,6 +9,7 @@ import PropTypes from 'prop-types';
 const IMAGEURL = process.env.REACT_APP_CLOUDINARY;
 
 const FriendList = ({
+  
   auth: { allUsers, user },
   getAllUsers,
   loadUser,
@@ -180,7 +181,7 @@ const FriendList = ({
           <Advertisement />
         </div>
       </div>
-    </Fragment>
+    </Fragment> 
   );
 };
 FriendList.propTypes = {

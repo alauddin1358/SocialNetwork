@@ -79,7 +79,7 @@ def token_required(f):
         if 'Authorization' in request.headers:
             token = request.headers['Authorization']
             ExBr = token.split(" ")
-            print("Token Testing: "+ExBr[1])
+            # print("Token Testing: "+ExBr[1])
             token = ExBr[1]
         if not token:
             message = {
@@ -90,7 +90,7 @@ def token_required(f):
         try:
             data = jwt.decode(
                 token, app.config['SECRET_KEY'], algorithms=["HS256"])
-            print(data)
+            # print(data)
             session['user'] = data['user']
         except:
             message = {
@@ -154,7 +154,7 @@ def protected():
 def login():
     try:
         _json = request.json
-        print(_json)
+        # print(_json)
         # _name = _json['name']
         _email = _json['email']
         _password = _json['password']
@@ -167,7 +167,7 @@ def login():
                     token = jwt.encode({'user': response['email'], 'exp': datetime.datetime.utcnow(
                     ) + datetime.timedelta(minutes=1060)}, app.config['SECRET_KEY'])
                     # usermail
-                    print(token)
+                    # print(token)
                     # returning the token
                     message = {
                         'data': {'token': token},
@@ -400,7 +400,7 @@ def confirm_email(token, id):
 def forgotPassword():
     try:
         _json = request.json
-        print(_json)
+        # print(_json)
         _email = _json['email']
         response = mongo.db.userReg.find_one({'email': _email})
         if response:
@@ -482,7 +482,7 @@ def getAllUser():
 def getUser():
     # data = jwt.decode(token, app.config['SECRET_KEY'])
     user = session['user']
-    print(user)
+    # print(user)
     # mongo query for finding all value
     user = mongo.db.userReg.find_one({'email': user})
     # print(user)
@@ -583,8 +583,9 @@ def update_user(id):
         if 'file' in request.files:
             _file = request.files['file']
             print(_file)
-            print(_file.filename)
+
             if _file and allowed_file(_file.filename):
+                print(_file.filename)
                 _imagefilename = secure_filename(_file.filename)
                 # print(filename)
                 _filename = _imagefilename.split(".")[0]
@@ -728,7 +729,7 @@ def create_post(id):
         try:
             # inserting new post
             user = mongo.db.userReg.find_one({'email': session['user']})
-            print(user['name'])
+            # print(user['name'])
             # _file = mongo.send_file(user['image'])
             insertData = mongo.db.posts.insert({
                 'title': _title,
@@ -743,7 +744,7 @@ def create_post(id):
                 'comments': [],
                 'date': _post_date
             })
-            print('PostId = ', insertData)
+            # print('PostId = ', insertData)
             message = {
                 'data': 'null',
                 'result': {'isError': 'false', 'message': 'post created successfull', 'status': 201, }

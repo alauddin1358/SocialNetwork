@@ -1,7 +1,7 @@
 import React, { Fragment, useState, useEffect } from 'react';
 import { connect } from 'react-redux';
 //import { Modal, ModalHeader, ModalBody } from 'reactstrap';
-import { Link } from 'react-router-dom';
+import { Link, Redirect } from 'react-router-dom';
 import { logout } from '../../actions/auth';
 import Autosuggest from 'react-autosuggest';
 import AutosuggestHighlightMatch from 'autosuggest-highlight/match';
@@ -76,6 +76,8 @@ const TopSidebar = ({ props, auth: { user, allUsers },toggleCssClass, logout }) 
   }
 
   function renderSuggestion(suggestion, { query }) {
+    // console.log('Sugestion ', suggestion);
+    // console.log('Query ', query);
     const suggestionText = `${suggestion.firstname} ${suggestion.middlename} ${suggestion.lastname}`;
     const matches = AutosuggestHighlightMatch(suggestionText, query);
     const parts = AutosuggestHighlightParse(suggestionText, matches);
@@ -114,6 +116,7 @@ const TopSidebar = ({ props, auth: { user, allUsers },toggleCssClass, logout }) 
 
   const onSuggestionsFetchRequested = ({ value }) => {
     setSuggestions(getSuggestions(value));
+    //console.log('Suggestions list ', suggestions);
   };
 
   const onSuggestionsClearRequested = () => {
@@ -122,28 +125,36 @@ const TopSidebar = ({ props, auth: { user, allUsers },toggleCssClass, logout }) 
 
   const submitSearchData = async (e) => {
     e.preventDefault();
-    let userArrayData = allUsers.filter(
-      (user) => user.name.toLowerCase() === value.toLowerCase()
-    );
-    let userData = Object.assign({}, userArrayData[0]);
-    //console.log('User in search = ', userData)
-    if (value === '') alert('User input search data is not given');
-    if (userArrayData.length > 0) {
-      return (
-        <Link
-          to={{
-            pathname: '/profile',
-            state: {
-              id: userData._id.$oid,
-            },
-          }}
-        >
-          {' '}
-          {value}{' '}
-        </Link>
-      );
-    } else if (value !== '') {
-      alert('Searching user is not found');
+    // let userArrayData = allUsers.filter(
+    //   (user) => user.name.toLowerCase() === value.toLowerCase()
+    // );
+    // let userData = Object.assign({}, userArrayData[0]);
+    // //console.log('User in search = ', userData)
+    // if (value === '') alert('User input search data is not given');
+    // if (userArrayData.length > 0) {
+    //   //console.log('Calling userData');
+    //   props.history.push('/profile',{
+    //             id: userData._id.$oid,
+    //           });
+    //   // return (
+    //   //   <Redirect
+    //   //     to={{
+    //   //       pathname: '/profile',
+    //   //       state: {
+    //   //         id: userData._id.$oid,
+    //   //       },
+    //   //     }}
+    //   //   >
+    //   //     {' '}
+    //   //     {value}{' '}
+    //   //   </Redirect>
+    //   // );
+    // } else 
+    if (value !== '') {
+      props.history.push('/searchuser',{
+        value: value,
+      });
+      //alert('Searching user is not found');
     }
   };
   const inputProps = {

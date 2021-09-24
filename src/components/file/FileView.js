@@ -6,6 +6,7 @@ import Footer from '../dashboard/Footer';
 import { Container } from 'reactstrap';
 import FileHeader from './FileHeader';
 import { Document, Page, pdfjs } from 'react-pdf';
+
 const API = process.env.REACT_APP_API;
 pdfjs.GlobalWorkerOptions.workerSrc = `//cdnjs.cloudflare.com/ajax/libs/pdf.js/${pdfjs.version}/pdf.worker.js`;
 
@@ -20,16 +21,21 @@ const FileView = ({match}) => {
     const [errorMsg, setErrorMsg] = useState('');
     const [fileURL, setFileURL] = useState(null);
     const [fileExtension, setFileExtension] = useState(null);
+    //const [fileRet, setFileRet] = useState([]);
 
     const viewFile = async (filename) => {
         try {
           const result = await axios.get(`${API}/file/${filename}`, {
             responseType: 'blob'
           });
+          
           let fileExt = filename.split('.').pop();
+          
+          //console.log("File Extension = ", fileExt);
           setFileExtension(fileExt);
-          console.log("File Return Data = ", fileExt);
+          
           const fileURL = URL.createObjectURL(result.data)
+          //console.log("File URL = ", fileRet);
           setFileURL(fileURL);
           setErrorMsg('');
         } catch (error) {
@@ -56,18 +62,14 @@ const FileView = ({match}) => {
       }
     return (
         <Fragment>
-        <div id="wrapper">
-            <Sidebar />
-            <div id="content-wrapper" className="d-flex flex-column">
-                <div id="content">
-                    <Topbar />
+        
                     <Container>
                         <FileHeader />
                           <div className="files-container">
+                            
                                 {errorMsg && <p className="errorMsg">{errorMsg}</p>}
                                 {
-                                  (fileExtension === 'png' || fileExtension === 'jpg' || fileExtension === 'jpeg') ? (<img className="view-image" src={fileURL} alt={match.params.filename} />
-                                  ) : (
+                                  (fileExtension === 'pdf') ? (
                                    <Fragment> 
                                     <Document
                                       file={fileURL}
@@ -94,16 +96,18 @@ const FileView = ({match}) => {
                                       </button>
                                     </div>
                                     </Fragment>
+                                  ) : (
+                                    <Fragment>
+                                      <img src={fileURL} alt={match.params.filename} className="view-file"/>
+                                    
+                                      
+                                    </Fragment>
                                   )
                                 }
                                 
                            </div>       
                     </Container>
-                </div>
-                <Footer />
-            </div>
-            
-        </div>
+                
       </Fragment>
     )
 }
