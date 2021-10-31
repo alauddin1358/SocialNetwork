@@ -78,7 +78,7 @@ const ProfilePage = ({
           getFile(otherUserId);
           setFileLoading(false);
         }
-        //console.log('Search in profile ', allUsers);
+        console.log('Search in file ', files);
         let userSearch = [];
         userSearch = allUsers.filter(
           (us) => us._id.$oid === otherUserId
@@ -337,10 +337,11 @@ const ProfilePage = ({
                             <table className="files-table">
                               <thead>
                                 <tr>
+                                  <th>Type</th>
                                   <th>Title</th>
                                   <th>Description</th>
-                                  <th>View File</th>
-                                  <th>Download File</th>
+                                  <th>Actions</th>
+                                
                                 </tr>
                               </thead>
                               <tbody>
@@ -348,18 +349,24 @@ const ProfilePage = ({
                                   files.map(
                                     ({ _id, title, desc, filename, user, file_mimetype }, index) => (
                                       <tr key={index}>
+                                        <td className="file-type">
+                                          {(filename.split('.').pop() === 'pdf')?(
+                                            <i className="fas fa-file-pdf"></i>
+                                          ):(
+                                            <i className="fas fa-image"></i>
+                                          )}
+                                        </td>
                                         <td className="file-title">{title}</td>
                                         <td className="file-description">{desc}</td>
-                                        <td>
-                                          <Link to={`/view/${filename}`} >
-                                            View
+                                        <td className="file-actions">
+                                          <Link to={`/view/${filename}`} className="profile-action" >
+                                            <i className="fas fa-eye"></i>
                                           </Link>
-                                        </td>
-                                        <td>
-                                          <Link to="/profile" onClick={() =>
+                                        
+                                          <Link to="/profile" className="profile-action" onClick={() =>
                                               downloadFile(filename, file_mimetype)
                                             }>
-                                            Download
+                                            <i className="fas fa-file-download"></i>
                                           </Link>
                                         </td>
                                         

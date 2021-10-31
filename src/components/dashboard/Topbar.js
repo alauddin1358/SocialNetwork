@@ -156,7 +156,7 @@ const Topbar = ({props, auth: { user, allUsers }, logout, toggleCssClass }) => {
           <i className='fa fa-bars'></i>
         </button>
 
-        <div id='dashboard-header-dropdown' className='dropdown'>
+        {/* <div id='dashboard-header-dropdown' className='dropdown'>
           <a
             className='btn dropdown-toggle'
             href='/#'
@@ -195,7 +195,7 @@ const Topbar = ({props, auth: { user, allUsers }, logout, toggleCssClass }) => {
               Groups
             </Link>
           </div>
-        </div>
+        </div> */}
 
         <form
           className='d-none d-sm-inline-block form-inline mr-auto ml-md-3 my-2 my-md-0 mw-100 navbar-search'
@@ -324,7 +324,7 @@ const Topbar = ({props, auth: { user, allUsers }, logout, toggleCssClass }) => {
             ) : null}
           </li>
 
-          <li className='nav-item dropdown no-arrow mx-1'>
+          {/* <li className='nav-item dropdown no-arrow mx-1'>
             <a
               className='nav-link dropdown-toggle'
               href='/#'
@@ -337,7 +337,7 @@ const Topbar = ({props, auth: { user, allUsers }, logout, toggleCssClass }) => {
               <i className='fas fa-envelope fa-fw'></i>
               <span className='badge badge-danger badge-counter'></span>
             </a>
-          </li>
+          </li> */}
 
           <div className='topbar-divider d-none d-sm-block'></div>
 

@@ -1,4 +1,4 @@
-import React, { Fragment, useEffect } from 'react'
+import React, { Fragment, useEffect, useState } from 'react'
 //import { Link } from 'react-router-dom';
 import { connect } from 'react-redux';
 import PostItem from './PostItem';
@@ -11,22 +11,32 @@ const Pages = ({ getPosts, deletePost, auth:{user}, post: {posts, loading}, prop
     useEffect(() => {
         getPosts();
     }, [getPosts, deletePost]);
+    const [mypost, setMypost] = useState(false);
+    
     if(props.location.state) {
+        //console.log(props.location.state.showMyPost);
         if(props.location.state.showMyPost) {
-            console.log(props.location.state.showMyPost);
+            
+            if(!mypost) setMypost(true);
             posts = posts.filter((post) => user._id.$oid === post.user.userId.$oid)
+        }
+        else {
+            if(mypost) setMypost(false);
         }
     }
     
+    
     // console.log('Posts in pages', posts);
-    // console.log('Loading in pages ', loading);
+    //console.log('Loading in pages ', mypost);
     //console.log('Auth in post', user);
     return (
         <Fragment>
             <div className="container-fluid">
                 <div className="d-sm-flex align-items-center 
                             justify-content-between mb-4">
-                    <h1 className="h3 mb-0 text-gray-800">Dashboard</h1>
+                    
+                    {!mypost ? (<h1 className="h3 mb-0 text-gray-800">Dashboard</h1>
+                                ) : (<h1 className="h3 mb-0 text-gray-800">My Posts</h1>)}
                 </div>
                 
                 <div className="row">
@@ -49,6 +59,7 @@ const Pages = ({ getPosts, deletePost, auth:{user}, post: {posts, loading}, prop
                     <Advertisement />
                 </div>
             </div>
+            
         </Fragment>
     )
 }

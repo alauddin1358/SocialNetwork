@@ -18,6 +18,7 @@ const ADMIN = process.env.REACT_APP_ADMIN;
 const FilesList = ({getFile, deleteFile, auth, file:{files, loading}}) => {
   //const [filesList, setFilesList] = useState([]);
   const [errorMsg, setErrorMsg] = useState('');
+  const [deleteId, setDeleteId] = useState(null);
   const [fileLoading, setFileLoading] = useState(true);
   useEffect(() => {
     console.log('calling filelist useEffect');
@@ -68,7 +69,20 @@ const FilesList = ({getFile, deleteFile, auth, file:{files, loading}}) => {
     }
   };
 
-  
+  //const text = children;
+  const [isReadTitleMore, setIsReadTitleMore] = useState(true);
+  const toggleReadTitleMore = () => {
+    setIsReadTitleMore(!isReadTitleMore);
+  };
+  const [isReadMore, setIsReadMore] = useState(true);
+  const toggleReadMore = () => {
+    setIsReadMore(!isReadMore);
+  };
+  //Set ID for delete
+  const fileDeleteId = (id) => {
+    console.log('Dellete id ',id);
+    setDeleteId(id);
+  }
   return (
     <Fragment>
         
@@ -83,12 +97,10 @@ const FilesList = ({getFile, deleteFile, auth, file:{files, loading}}) => {
                   <table className="files-table">
                     <thead>
                       <tr>
+                        <th>Type</th>
                         <th>Title</th>
                         <th>Description</th>
-                        <th>Edit File</th>
-                        <th>View File</th>
-                        <th>Download File</th>
-                        <th>Delete File</th>
+                        <th>Actions</th>
                       </tr>
                     </thead>
                     <tbody>
@@ -96,9 +108,31 @@ const FilesList = ({getFile, deleteFile, auth, file:{files, loading}}) => {
                         files.map(
                           ({ _id, title, desc, filename, user, file_mimetype }, index) => (
                             <tr key={index}>
-                              <td className="file-title">{title}</td>
-                              <td className="file-description">{desc}</td>
-                              <td>
+                              <td className="file-type">
+                                  {(filename.split('.').pop() === 'pdf')?(
+                                    <i className="fas fa-file-pdf"></i>
+                                  ):(
+                                    <i className="fas fa-image"></i>
+                                  )}
+                              </td>
+                              <td className="file-title">
+                              {isReadTitleMore ? title.slice(0, 20) : title}
+                                {title.length > 20 ? (
+                                  <span onClick={toggleReadTitleMore} className="read-or-hide">
+                                    {isReadTitleMore ? "...read more" : " show less"}
+                                </span>
+                                ) : null }
+                              </td>
+                              <td className="file-description">
+                                {isReadMore ? desc.slice(0, 50) : desc}
+                                {desc.length > 50 ? (
+                                  <span onClick={toggleReadMore} className="read-or-hide">
+                                    {isReadMore ? "...read more" : " show less"}
+                                </span>
+                                ) : null }
+                                
+                              </td>
+                              <td className="file-actions">
                                 { auth.user._id.$oid === user.userId.$oid || auth.user.email === ADMIN ?
                                   (<Link to={{
                                         pathname: '/addfile',
@@ -107,30 +141,33 @@ const FilesList = ({getFile, deleteFile, auth, file:{files, loading}}) => {
                                                     edit:true
                                                 },
                                       }}
+                                      className="action"
                                   >
-                                    Edit
+                                  <i className="fas fa-edit"></i>
                                   </Link>) : null
                                 }
-                              </td>
-                              <td>
-                                <Link to={`/view/${filename}`} >
-                                  View
+                              
+                                <Link to={`/view/${filename}`} className="action">
+                                  <i className="fas fa-eye"></i>
                                 </Link>
-                              </td>
-                              <td>
-                                <Link to="/list" onClick={() =>
+                              
+                                <Link to="/list" className="action" onClick={() =>
                                     downloadFile(filename, file_mimetype)
                                   }>
-                                  Download
+                                  <i className="fas fa-file-download"></i>
                                 </Link>
-                              </td>
-                              <td>
+                            
                               { auth.user._id.$oid === user.userId.$oid || auth.user.email === ADMIN ?
-                                (<Link to="/list" onClick={() =>
-                                    deleteFile(_id.$oid)
-                                  }>
-                                  Delete
-                                </Link>) : null
+                                
+                                (<a
+                                  href='/#'
+                                  className='action'
+                                  data-toggle='modal'
+                                  data-target='#fileDeleteModal'
+                                  onClick={() => fileDeleteId(_id.$oid)}
+                                >
+                                  <i className="fas fa-trash-alt"></i>
+                                </a>):null
                               }
                               </td>
                             </tr>
@@ -154,7 +191,29 @@ const FilesList = ({getFile, deleteFile, auth, file:{files, loading}}) => {
         </div>
           
       </Container>
-                
+        <div className="modal fade" id="fileDeleteModal" tabIndex="-1" 
+              role="dialog" aria-labelledby="exampleModalLabel"
+              aria-hidden="true">
+            <div className="modal-dialog" role="document">
+              <div className="modal-content">
+                <div className="modal-header">
+                    <h5 className="modal-title" id="exampleModalLabel">Delete File</h5>
+                    <button className="close" type="button" data-dismiss="modal" aria-label="Close">
+                      <span aria-hidden="true">×</span>
+                    </button>
+                </div>
+              <div className="modal-body">Do you want to delete the file?</div>
+              <div className="modal-footer">
+                <button className="btn btn-secondary" type="button" data-dismiss="modal">Cancel</button>
+                <Link to="/list" className="btn btn-primary" 
+                      onClick={() => deleteFile(deleteId)} data-dismiss="modal"
+                >
+                  Delete
+                </Link>
+              </div>
+            </div>
+          </div>
+        </div>
       </Fragment>
     
   );

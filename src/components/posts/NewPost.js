@@ -14,6 +14,8 @@ const initialState = {
 const NewPost = ({propsFromLink, addPost, post:{posts, loading}}) => {
     const [postData, setPostData] = useState(initialState)
     const [isSubmit, setIsSubmit] = useState(false);
+    const [errorTitle, setErrorTitle] = useState('');
+    const [errorBody, setErrorBody] = useState('');
     let {id, edit} = propsFromLink;
     useEffect(() => {
         
@@ -40,8 +42,18 @@ const NewPost = ({propsFromLink, addPost, post:{posts, loading}}) => {
 
     const onPostSubmit = async (e) => {
         e.preventDefault();
-        addPost(postData,  propsFromLink.id, propsFromLink.edit);
-        setIsSubmit(true);
+        const { title, body } = postData;
+        if (title.trim() !== '' && body.trim() !== '') {
+            setErrorTitle('');
+            setErrorBody('');
+            addPost(postData,  propsFromLink.id, propsFromLink.edit);
+            setIsSubmit(true);
+        } else {
+            if(title.trim() === '')
+                setErrorTitle('Please enter the post title.');
+            if(body.trim() === '')
+                setErrorBody('Please enter the post body.');
+          }
     };
     
     if(isSubmit) {
@@ -58,7 +70,7 @@ const NewPost = ({propsFromLink, addPost, post:{posts, loading}}) => {
                             <h6 className="m-0 font-weight-bold text-primary">Add Post</h6>
                         </div>
                         <div id="posts-list" className="card-body">                 
-                            <form onSubmit={onPostSubmit}>
+                            <form onSubmit={onPostSubmit} className='file'>
                                 <div className="form-group">
                                     <label htmlFor="title">Title</label>
                                     <input type="text" 
@@ -68,6 +80,7 @@ const NewPost = ({propsFromLink, addPost, post:{posts, loading}}) => {
                                             name="title"
                                             value={title}
                                             onChange={onChange} />
+                                    {errorTitle && <p className="errorMsg">{errorTitle}</p>}
                                 </div>
                                 <div className="form-group">
                                     <label htmlFor="body">Body</label>
@@ -76,6 +89,7 @@ const NewPost = ({propsFromLink, addPost, post:{posts, loading}}) => {
                                             name="body"  value={body}
                                             onChange={onChange} >
                                     </textarea>
+                                    {errorBody && <p className="errorMsg">{errorBody}</p>}
                                 </div>
                                 {/* <div className="form-group">
                                     <label htmlFor="category">Category</label>

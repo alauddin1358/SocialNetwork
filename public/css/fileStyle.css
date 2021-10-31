@@ -26,6 +26,7 @@
     padding: 1rem;
   }
   
+  
   .file .header {
     margin-bottom: 20px;
   }
@@ -99,13 +100,39 @@
       border: 1px solid #ccc;
       padding: 10px;
     }
-  
+    .files-table .file-type {
+      width: 5%;
+      color: #34A853;
+      font-size: 22px;
+      text-align: center;
+    }
     .files-table .file-title {
-      width: 15%;
+      width: 20%;
     }
   
     .files-table .file-description {
-      width: 50%;
+      width: 60%;
+    }
+    /* .files-table .file-actions {
+      text-align: center;
+    } */
+    .files-table .file-actions .action{
+        padding-right: 3px;
+        font-size: 17px;
+        color:#34A853;
+    }
+    
+    .files-table .file-actions .profile-action{
+      padding-right: 5px;
+      padding-left: 5px;
+      font-size: 20px;
+      color:#34A853;
+    }
+    .read-or-hide{
+      color: rgb(6, 241, 112);
+      cursor: pointer;
+      font-size: 15px;
+      display: block;
     }
   
   @media screen and (max-width: 1000px) {

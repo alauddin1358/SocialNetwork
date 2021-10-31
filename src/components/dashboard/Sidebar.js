@@ -27,7 +27,7 @@ const Sidebar = ({auth:{user, isAddClass}, toggleCssClass}) => {
                     </Link> 
                     <hr className="sidebar-divider my-0" />
                     <li className="nav-item active">
-                        <Link className="nav-link" to={{
+                        <Link className="nav-link collapsed" to={{
                             pathname: '/dashboard',
                             state: {
                                 showMyPost: false

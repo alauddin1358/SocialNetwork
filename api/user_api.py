@@ -41,8 +41,8 @@ app = Flask(__name__)
 # random secrect key initialization
 app.secret_key = "thisisthesecretkey"
 # db config
-# app.config['MONGO_URI'] = "mongodb://localhost:27017/userReg"
-app.config['MONGO_URI'] = "mongodb://root:iritadb2021@127.0.0.1:27020/userReg?authSource=admin"
+app.config['MONGO_URI'] = "mongodb://localhost:27017/userReg"
+#app.config['MONGO_URI'] = "mongodb://root:iritadb2021@127.0.0.1:27020/userReg?authSource=admin"
 # app.config['MONGO_URI'] = "mongodb://admin:iritadb2021@localhost:27020/userReg?authSource=admin"
 # configuration for flask-mail
 app.config["MAIL_SERVER"] = 'mail.iritatech.com'
@@ -371,7 +371,7 @@ def confirm_email(token, id):
             msg = Message(subject='Account Confirmation',
                           sender='admin@iritatech.com', recipients=[_userEmail])
             link = url_for('confirm_account', _external=True)
-            msg.body = """Hello, Your account was successfully created in https://www.agriculturist.org
+            msg.body = """Hello, Your account was successfully created in https://agriculturist.org
             Please click the link to login"""
             msgReply = mail.send(msg)
     except SignatureExpired:
@@ -403,15 +403,20 @@ def forgotPassword():
         # print(_json)
         _email = _json['email']
         response = mongo.db.userReg.find_one({'email': _email})
+        # print(response)
         if response:
             token = safeSerializer.dumps(
                 _email, salt='email-confirm')
+
             msg = Message(subject='Reset password',
                           sender='admin@iritatech.com', recipients=[_email])
+            print(_json)
             link = url_for('confirm_account', token=token, _external=True)
-            msg.body = """Click the link to reset password https://www.agriculturist.org/resetpassword"""
+            msg.body = """Click the link to reset password https://agriculturist.org/resetpassword"""
             # msg.body = """Click the link to reset password https://www.agriculturist.org/resetpassword"""
+
             mail.send(msg)
+            # print(msg)
             message = {
                 'data': "null",
                 'result': {'isError': 'false', 'message': 'A mail is sent to your Email, Click the link to reset password', 'status': 200, }
@@ -423,7 +428,8 @@ def forgotPassword():
                 'result': {'isError': 'true', 'message': 'Email does not exist, please enter registered email', 'status': 200, }
             }
             return jsonify(message)
-    except:
+    except Exception as e:
+        print('Error ', e)
         return internal_error()
 
 # Reset password
