@@ -2,6 +2,7 @@ import {
     ADD_POST,
     POST_ERROR,
     GET_POST,
+    GET_SHAREPOST,
     GET_POSTS,
     DELETE_POST,
     ADD_COMMENT,
@@ -109,9 +110,43 @@ export const getPost = id => async dispatch => {
     });
   }
 };
+// For Sharing get post
+// Get post
+export const getSharePost = id => async dispatch => {
+  //console.log("Calling GetPost = ", id);
+  const config = {
+    headers : {
+        'Content-Type':'application/json',
+        'Access-Control-Allow-Origin': '*',
+        'Access-Control-Allow-Credentials': true
+    }
+  };
+  try {
+    const res = await instance.get(`${API}/get_sharepost/${id}`,config);
+    //console.log("Getting Post = ", res.data.data);
+    if(res.data.result.isError === 'true') {
+      dispatch(setAlert(res.data.result.message, 'danger'));
+    }
+    else {
+      dispatch({
+        type: GET_SHAREPOST,
+        payload: JSON.parse(res.data.data.post)
+      });
+    }
+  } catch (err) {
+    dispatch(setAlert('Post not found', 'danger'));
+    dispatch({
+      type: POST_ERROR,
+      payload: { msg: err.response }
+    });
+  }
+};
+
+
+
 //Delete Post
 export const deletePost = id => async dispatch => {
-  //console.log("Calling Deletpost = ", id);
+  console.log("Calling Deletpost = ", id);
   const config = {
     headers : {
         'Authorization': `Bearer ${localStorage.token}`,
@@ -122,7 +157,7 @@ export const deletePost = id => async dispatch => {
   };
   try {
     const res = await instance.delete(`${API}/delete_post/${id}`,config);
-    //console.log("Getting Delete Data = ", res.data);
+    console.log("Getting Delete Data = ", res.data);
     if(res.data.result.isError === 'true') {
       dispatch(setAlert(res.data.result.message, 'danger'));
     }

@@ -4,6 +4,7 @@ import {
     DELETE_POST,
     ADD_POST,
     GET_POST,
+    GET_SHAREPOST,
     ADD_COMMENT,
     REMOVE_COMMENT
   } from '../actions/types';
@@ -11,6 +12,7 @@ import {
   const initialState = {
     posts: [],
     post: null,
+    sharepost: null,
     file: null,
     loading: true,
     isSuccess: false,
@@ -33,6 +35,12 @@ import {
           post: payload,
           loading: false
         };
+      case GET_SHAREPOST:
+        return {
+            ...state,
+            sharepost: payload,
+            loading: false
+          };
       case ADD_POST:
         return {
           ...state,

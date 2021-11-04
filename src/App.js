@@ -23,6 +23,7 @@ import store from './store';
 import { BrowserRouter as Router, Route, Switch } from 'react-router-dom';
 import { Provider } from 'react-redux';
 import { loadUser } from './actions/auth';
+import SharePage from './components/Share/SharePage';
 
 const App = () => {
   useEffect(() => {
@@ -53,6 +54,7 @@ const App = () => {
               <Route exact path="/userlist" component={UserListContainer}  />
               <Route exact path="/friends" component = {AddFriend} />
               <Route exact path="/friendlist" component = {FriendListContainer} />
+              <Route exact path="/sharepost/:id" component = {SharePage} />
               <Route exact path="/searchuser" render={(props) => <SearchUserListContainer {...props}/>} />
             </Switch>
           

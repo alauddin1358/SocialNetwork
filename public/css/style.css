@@ -82,7 +82,10 @@ p {
 .post-card {
 	box-shadow: 0px 2px 3px 0px #bbb;
 }
-.post-card small,
+.post-card small {
+	margin-right: 15px !important;
+}
+
 .post-info small {
 	margin-right: 30px;
 }

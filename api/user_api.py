@@ -797,6 +797,22 @@ def get_post(id):
     else:
         return not_found()
 
+# For Share post
+
+
+@ app.route('/get_sharepost/<id>', methods=['GET'])
+@ cross_origin(supports_credentials=True)
+def get_sharepost(id):
+    post = mongo.db.posts.find_one({'_id': ObjectId(id)})
+    if post and request.method == 'GET':
+        message = {
+            'data': {'post': dumps(post)},
+            'result': {'isError': 'false', 'message': 'Post return successfully', 'status': 200, }
+        }
+        return jsonify(message)
+    else:
+        return not_found()
+
 
 @ app.route('/delete_post/<id>', methods=['DELETE'])
 @ cross_origin(supports_credentials=True)
