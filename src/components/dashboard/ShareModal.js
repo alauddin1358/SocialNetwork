@@ -60,7 +60,7 @@ const ShareModal = (props) => {
 
                         <FacebookShareButton
                             url={url}
-                            quote={body}
+                           
                             style={{marginRight: 10}}
                         >
                             <FacebookIcon size={32} round /> Facebook

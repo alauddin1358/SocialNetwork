@@ -341,3 +341,8 @@ p {
 	height: 2rem;
   	width: 2rem;
 }
+.not-user {
+	position: absolute;
+	right: 80px;
+	
+}

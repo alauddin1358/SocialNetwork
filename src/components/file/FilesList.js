@@ -71,16 +71,17 @@ const FilesList = ({getFile, deleteFile, auth, file:{files, loading}}) => {
 
   //const text = children;
   const [isReadTitleMore, setIsReadTitleMore] = useState(true);
-  const toggleReadTitleMore = () => {
-    setIsReadTitleMore(!isReadTitleMore);
+  const toggleReadTitleMore = (data) => {
+    setIsReadTitleMore(data);
   };
-  const [isReadMore, setIsReadMore] = useState(true);
-  const toggleReadMore = () => {
-    setIsReadMore(!isReadMore);
+  const [isReadMore, setIsReadMore] = useState(null);
+  const toggleReadMore = (data) => {
+    setIsReadMore(data);
+    //console.log('toggle data',data);
   };
   //Set ID for delete
   const fileDeleteId = (id) => {
-    console.log('Dellete id ',id);
+    //console.log('Dellete id ',id);
     setDeleteId(id);
   }
   return (
@@ -116,19 +117,32 @@ const FilesList = ({getFile, deleteFile, auth, file:{files, loading}}) => {
                                   )}
                               </td>
                               <td className="file-title">
-                              {isReadTitleMore ? title.slice(0, 20) : title}
+                              {isReadTitleMore === index ? title : title.slice(0, 20)}
                                 {title.length > 20 ? (
-                                  <span onClick={toggleReadTitleMore} className="read-or-hide">
-                                    {isReadTitleMore ? "...read more" : " show less"}
-                                </span>
+                                isReadTitleMore === index ? (
+                                    <span onClick={()=>toggleReadTitleMore(index+files.length)} className="read-or-hide">
+                                    Read less ▲
+                                    </span>
+                                  ): (
+                                    <span onClick={()=>toggleReadTitleMore(index)} className="read-or-hide">
+                                    Read more ▼
+                                    </span>
+                                  )
                                 ) : null }
                               </td>
                               <td className="file-description">
-                                {isReadMore ? desc.slice(0, 50) : desc}
+                                {isReadMore === index ? desc : desc.slice(0, 50)}
                                 {desc.length > 50 ? (
-                                  <span onClick={toggleReadMore} className="read-or-hide">
-                                    {isReadMore ? "...read more" : " show less"}
-                                </span>
+                                  isReadMore === index ? (
+                                    <span onClick={()=>toggleReadMore(index+files.length)} className="read-or-hide">
+                                    Read less ▲
+                                    </span>
+                                  ): (
+                                    <span onClick={()=>toggleReadMore(index)} className="read-or-hide">
+                                    Read more ▼
+                                    </span>
+                                  )
+                                  
                                 ) : null }
                                 
                               </td>

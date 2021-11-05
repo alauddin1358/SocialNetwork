@@ -142,12 +142,18 @@ const Topbar = ({props, auth: { user, allUsers }, logout, toggleCssClass }) => {
     value,
     onChange: onChange,
   };
+  
   return (
     <Fragment>
-      <nav
+     
+        
+          <nav
         className='navbar navbar-expand navbar-light 
                     bg-white topbar mb-4 static-top shadow'
       >
+       {
+      user !== null ? (
+        <>
         <button
           id='sidebarToggleTop'
           onClick={toggleClass}
@@ -382,7 +388,19 @@ const Topbar = ({props, auth: { user, allUsers }, logout, toggleCssClass }) => {
             </div>
           </li>
         </ul>
+        </>
+        ) : (
+          
+            <div className="not-user">
+              <span>Not a user? <Link to="/register">Register Here</Link></span>
+            </div>
+          
+        )
+        
+      }
       </nav>
+        
+
 
       {/* {searchUser.length > 0 ? 
                         <ListGroup className="list-group">
@@ -431,14 +449,7 @@ const Topbar = ({props, auth: { user, allUsers }, logout, toggleCssClass }) => {
           </div>
         </div>
       </div>
-      {/* <div>
-                <Modal isOpen={display} toggle={toggle} className="suggestion-container">
-                    <ModalHeader toggle={toggle}>Users List</ModalHeader>
-                    <ModalBody>
-                        hello
-                    </ModalBody>
-                </Modal>
-            </div>  */}
+     
     </Fragment>
   );
 };

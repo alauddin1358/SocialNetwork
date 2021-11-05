@@ -26,7 +26,10 @@ const Sidebar = ({auth:{user, isAddClass}, toggleCssClass}) => {
                         <span>Agriculturist</span>
                     </Link> 
                     <hr className="sidebar-divider my-0" />
-                    <li className="nav-item active">
+                    {
+                        user !== null ? (
+                            <>
+                            <li className="nav-item active">
                         <Link className="nav-link collapsed" to={{
                             pathname: '/dashboard',
                             state: {
@@ -120,6 +123,10 @@ const Sidebar = ({auth:{user, isAddClass}, toggleCssClass}) => {
                     <div className="text-center d-none d-md-inline">
                         <button className="rounded-circle border-0" id="sidebarToggle" onClick={toggleClass}></button>
                     </div>
+                    </>
+                        ): <div className="not-user"></div>
+                    }
+                   
 
                 </ul>
         </Fragment>
