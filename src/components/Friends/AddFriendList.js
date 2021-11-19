@@ -72,13 +72,16 @@ const AddFriendList = ({
     // }
     
     if (user !== null) {
+      //Eliminate user
       friendSuggestion = allUsers.filter(
         (allu) => allu._id.$oid !== user._id.$oid
       );
+      //Eliminate already friend
       suggestedFriend = user.friends.reduce(function (filtered, option) {
         filtered.push(option.$id.$oid);
         return filtered;
       }, []);
+      //Eliminate already sending friend request
       if (user.hasOwnProperty('friend_pending')) {
         pendingMatchFriend = user.friend_pending.reduce(function (filtered, option) {
           filtered.push(option.$id.$oid);

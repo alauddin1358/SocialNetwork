@@ -45,10 +45,12 @@ app.config['MONGO_URI'] = "mongodb://localhost:27017/userReg"
 #app.config['MONGO_URI'] = "mongodb://root:iritadb2021@127.0.0.1:27020/userReg?authSource=admin"
 # app.config['MONGO_URI'] = "mongodb://admin:iritadb2021@localhost:27020/userReg?authSource=admin"
 # configuration for flask-mail
-app.config["MAIL_SERVER"] = 'mail.iritatech.com'
+app.config["MAIL_SERVER"] = 'webmail.iritatech.com'
 app.config["MAIL_PORT"] = 465
 app.config["MAIL_USERNAME"] = 'admin@iritatech.com'
-app.config['MAIL_PASSWORD'] = 'X5Y[qN!GM3Yu'
+# app.config['MAIL_PASSWORD'] = 'X5Y[qN!GM3Yu'
+app.config['MAIL_PASSWORD'] = 'kV32_9ZZ}B2s'
+
 
 app.config['MAIL_USE_TLS'] = False
 app.config['MAIL_USE_SSL'] = True

@@ -98,6 +98,7 @@ const ProfilePage = ({
     firstname,
     middlename,
     lastname,
+    user_category,
     student_type,
     job_type,
     specialization_type,
@@ -442,8 +443,8 @@ const ProfilePage = ({
                             </div>
                           </fieldset>
                           <fieldset>
-                            <legend>User Type *</legend>
-                            <div className='form-group'>
+                            {/* <legend>User Type</legend>
+                             <div className='form-group'>
                               <select
                                 name='student_type'
                                 className='form-control'
@@ -455,20 +456,57 @@ const ProfilePage = ({
                                 <option value='msc'>MSc</option>
                                 <option value='phd'>PhD</option>
                               </select>
+                            </div>  */}
+                            <div className='form-group'>
+                            <label htmlFor='user_category'>User Category</label>
+                            <input
+                              type='text'
+                              className='form-control'
+                              placeholder='Enter Educational Qualification'
+                              id='user_category' 
+                              name='user_category'
+                              value={user_category}
+                              onChange={onChange}
+                              disabled
+                            />
                             </div>
                             <div className='form-group'>
+                            <label htmlFor='student_type'>Educational Qualification</label>
+                            <input
+                              type='text'
+                              className='form-control'
+                              placeholder='Enter Educational Qualification'
+                              id='student_type'
+                              name='student_type'
+                              value={student_type}
+                              onChange={onChange}
+                            />
+                          </div>
+                            <div className='form-group'>
+                            <label htmlFor='job_type'>Add/Edit Job</label>
+                            <input
+                              type='text'
+                              className='form-control'
+                              placeholder='Enter Job'
+                              id='job_type'
+                              name='job_type'
+                              value={job_type}
+                              onChange={onChange}
+                            />
+                          </div>
+                            {/* <div className='form-group'>
                               <select
                                 name='job_type'
                                 className='form-control'
                                 value={job_type}
                                 onChange={onChange}
                               >
-                                <option value=''>Select Job</option>
+                                <option value=''>Add/Edit Job</option>
                                 <option value='job1'>Job 1</option>
                                 <option value='job2'>Job 2</option>
                                 <option value='job3'>Job 3</option>
                               </select>
-                            </div>
+                            </div> */}
                             {/* <div className='form-group'>
                               <select
                                 name='specialization_type'
@@ -483,6 +521,7 @@ const ProfilePage = ({
                               </select>
                             </div> */}
                           </fieldset>
+                          
                           <div className='form-group'>
                             <label htmlFor='email'>Email Address *</label>
                             <input
