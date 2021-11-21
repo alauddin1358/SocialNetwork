@@ -15,6 +15,7 @@ import json
 from bson.objectid import ObjectId
 # for wraping
 from functools import wraps
+from functools import reduce
 # for token
 import jwt
 # token expired time
@@ -462,9 +463,8 @@ def resetPassword():
         print(e)
         return internal_error()
 
+
 # Getting All user
-
-
 @app.route('/getAllUser')
 @cross_origin(supports_credentials=True)
 def getAllUser():
@@ -1761,9 +1761,113 @@ def update():
 
 # ..........friends start......................
 
+# Get pending friend user
+
+
+@app.route('/getPendFrUser', methods=['GET'])
+@ cross_origin(supports_credentials=True)
+@ token_required
+def getPendFrUser():
+    # mongo query for finding all value
+    users = mongo.db.userReg.find({'emailconfirm': True})
+    user = mongo.db.userReg.find_one(
+        {'email': session['user']})
+    # print(pend_fruser)
+    # data = str(pend_fruser.get('friend_pending')[0].id)
+    pending_friend = []
+    if 'friend_pending' in user:
+        # pend_fruser = dumps(pend_fruser['friend_pending'])
+        pend_fruser = user['friend_pending']
+        # print(pend_fruser)
+
+        for us in users:
+            # print('id in user ', us['_id'])
+            for u in pend_fruser:
+                # print(u.id)
+                if u.id == us['_id']:
+                    pending_friend.append(us)
+
+    message = {
+        'data': dumps(pending_friend),
+        'result': {'isError': 'false', 'message': 'Valid', 'status': 200, }
+    }
+    return jsonify(message)
+
+
+# Get the user's friend
+
+
+@app.route('/getUserFriend', methods=['GET'])
+@ cross_origin(supports_credentials=True)
+@ token_required
+def getUserFriend():
+    # mongo query for finding all value
+    users = mongo.db.userReg.find({'emailconfirm': True})
+    user = mongo.db.userReg.find_one(
+        {'email': session['user']})
+    # print(pend_fruser)
+    # data = str(pend_fruser.get('friend_pending')[0].id)
+    user_friend = []
+    if 'friends' in user:
+        # pend_fruser = dumps(pend_fruser['friend_pending'])
+        fruser = user['friends']
+        # print(pend_fruser)
+
+        for us in users:
+            # print('id in user ', us['_id'])
+            for u in fruser:
+                # print(u.id)
+                if u.id == us['_id']:
+                    user_friend.append(us)
+
+    message = {
+        'data': dumps(user_friend),
+        'result': {'isError': 'false', 'message': 'Valid', 'status': 200, }
+    }
+    return jsonify(message)
+
+# Get the user's friend
+
+
+@app.route('/getFriendSuggestion', methods=['GET'])
+@ cross_origin(supports_credentials=True)
+@ token_required
+def getFriendSuggestion():
+    # mongo query for finding all value
+    users = mongo.db.userReg.find({'emailconfirm': True})
+    user = mongo.db.userReg.find_one(
+        {'email': session['user']})
+    friend_suggestion = []
+    # Remove own user for creating friend suggestion list
+    for us in users:
+        if user['_id'] != us['_id']:
+            friend_suggestion.append(us)
+
+    # Remove user's pending friend for creating friend suggestion list
+    temp_list = friend_suggestion[:]
+    if 'friend_pending' in user:
+        pend_fruser = user['friend_pending']
+        for i, us in enumerate(temp_list):
+            for u in pend_fruser:
+                if u.id == us['_id']:
+                    friend_suggestion.remove(us)
+    temp_list = friend_suggestion[:]
+    # Remove user's friend for creating friend suggestion list
+    if 'friends' in user:
+        fruser = user['friends']
+        for us in temp_list:
+            for u in fruser:
+                if u.id == us['_id']:
+                    friend_suggestion.remove(us)
+
+    message = {
+        'data': dumps(friend_suggestion),
+        'result': {'isError': 'false', 'message': 'Valid', 'status': 200, }
+    }
+    return jsonify(message)
+
+
 # adding existing friend to (existing)userReg
-
-
 @ app.route('/friendReq/<id>', methods=['POST', 'GET'])
 @ cross_origin(supports_credentials=True)
 @ token_required
@@ -1811,12 +1915,13 @@ def friendReq(id):
 @ token_required
 def cancelFrndReq(id):
     try:
-        # print('id = ', id)
+        print('id = ', id)
         # print('User ', session['user'])
         current_user = mongo.db.userReg.find_one({'email': session['user']})
         # existing_user = mongo.db.userReg.find_one({'_id': ObjectId(id)})
         pending_friend = mongo.db.userReg.find_one(
             {'_id': ObjectId(id), 'friend_pending': DBRef(collection="userReg", id=current_user['_id'])})
+        print('Pending frined ', pending_friend)
         if pending_friend:
             mongo.db.userReg.update_one({'_id': ObjectId(id)}, {'$set': {
                                         'isFrndReqAccepted': False

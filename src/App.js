@@ -25,10 +25,12 @@ import { Provider } from 'react-redux';
 import { loadUser } from './actions/auth';
 import SharePage from './components/Share/SharePage';
 
+
 const App = () => {
   useEffect(() => {
     console.log('calling useEffect');
     store.dispatch(loadUser());
+    //store.dispatch(getPendingFrUser);
   }, []);
   return (
     <Provider store={store}>

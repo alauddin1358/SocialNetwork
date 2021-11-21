@@ -42,7 +42,7 @@ import { FacebookShareButton, LinkedinShareButton } from "react-share";
 import { FacebookIcon, LinkedinIcon} from "react-share";
 
 const ShareModal = (props) => {
-    console.log(props.data);
+    //console.log(props.data);
     const {id, title, body} = props.data;
     const url = "https://agriculturist.org/sharepost/"+`${id}`;
         return (

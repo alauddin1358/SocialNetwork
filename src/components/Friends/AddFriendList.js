@@ -8,17 +8,22 @@ import {
   acceptFriendRequest,
   deleteFriendRequest,
   cancelFriendRequest,
+  getPendingFrUser,
+  getFriendSuggestion
 } from '../../actions/friends';
 import PropTypes from 'prop-types';
 const IMAGEURL = process.env.REACT_APP_CLOUDINARY;
 
 const AddFriendList = ({
   auth: { allUsers, user },
+  friend: {pendingFriend, friendSuggestion},
   getAllUsers,
   sendFriendRequest,
   acceptFriendRequest,
   deleteFriendRequest,
   cancelFriendRequest,
+  getPendingFrUser,
+  getFriendSuggestion,
   loadUser,
 }) => {
   const [isSendRequest, setIsSendRequest] = useState(false);
@@ -26,100 +31,16 @@ const AddFriendList = ({
     console.log('calling useEffect of AddFriendList');
     loadUser();
     getAllUsers();
-    // if(user === null){
-    //   loadUser();
-    // }
-    // if(allUsers.length < 1){
-    //   getAllUsers();
-    // }
-    
+    getPendingFrUser();
+    getFriendSuggestion();
     setIsSendRequest(isSendRequest);
-    //console.log('calling addfriend  useeffect');
-    //console.log('IsRequest',isSendRequest);
-  }, [getAllUsers, loadUser, isSendRequest]);
+    
+  }, [getAllUsers, loadUser, isSendRequest, getFriendSuggestion, getPendingFrUser]);
   //const [pendingFriend, setPendingFriend] = useState([]);
   //const [addFriendList, setAddFriendList] = useState([]);
   // const [isSetPenFr, setIsSetPenFr] = useState(true);
   // const [isSetFrsug, setIsSetFrsug] = useState(true);
-  var pendingFriend = [];
-  var friendSuggestion = [];
-  var suggestedFriend = [];
-  var pendingMatchFriend = [];
-
-  if(user !== null) {
-    if (allUsers.length > 0) {
-      pendingFriend = allUsers.reduce(function (filtered, option) {
-        var matchFriend = [];
-        if (user !== null) {
-          if (user.hasOwnProperty('friend_pending')) {
-            matchFriend = user.friend_pending.filter(
-              (friend) => friend.$id.$oid === option._id.$oid
-            );
-          }
-        }
-        if (matchFriend.length > 0) {
-          filtered.push(option);
-        }
-        return filtered;
-      }, []);
-      //setPendingFriend(pendFriend);
-      //console.log('calling pending block');
-    }
-   //console.log('pending', pendingFriend);
-    // if(isSetPenFr) {
-    //   setPendinFriend(pendFriend);
-    //   setIsSetPenFr(false);
-    // }
-    
-    if (user !== null) {
-      //Eliminate user
-      friendSuggestion = allUsers.filter(
-        (allu) => allu._id.$oid !== user._id.$oid
-      );
-      //Eliminate already friend
-      suggestedFriend = user.friends.reduce(function (filtered, option) {
-        filtered.push(option.$id.$oid);
-        return filtered;
-      }, []);
-      //Eliminate already sending friend request
-      if (user.hasOwnProperty('friend_pending')) {
-        pendingMatchFriend = user.friend_pending.reduce(function (filtered, option) {
-          filtered.push(option.$id.$oid);
-          return filtered;
-        }, []);
-      } 
-      //setAddFriendList(friendSuggestion);
-    }
-    //console.log('before Firen', friendSuggestion)
-    var end = 0;
-    for (var i = 0; i < friendSuggestion.length; i++) {
-      var obj = friendSuggestion[i];
-      //console.log('Friend Obj', obj._id.$oid);
-      if (suggestedFriend.indexOf(obj._id.$oid) === -1) {
-        //console.log('True');
-        friendSuggestion[end++] = obj;
-      }
-    }
-    friendSuggestion.length = end;
-    //setAddFriendList(friendSuggestion);
-    end = 0;
-    for (var i = 0; i < friendSuggestion.length; i++) {
-      var obj = friendSuggestion[i];
-      //console.log('Friend Obj', obj._id.$oid);
-      if (pendingMatchFriend.indexOf(obj._id.$oid) === -1) {
-        //console.log('True');
-        friendSuggestion[end++] = obj;
-      }
-    }
-    friendSuggestion.length = end;
-    //setAddFriendList(friendSuggestion);
-
-  }
   
-  // if(isSetFrsug) {
-  //   setFriendSuggestion(frndSuggestion);
-  //   setIsSetFrsug(false);
-  // }
   const addFriendRequest = (id) => {
     sendFriendRequest(id);
     setIsSendRequest(!isSendRequest);
@@ -317,6 +238,7 @@ AddFriendList.propTypes = {
 };
 const mapStateToProps = (state) => ({
   auth: state.auth,
+  friend: state.friend
 });
 export default connect(mapStateToProps, {
   getAllUsers,
@@ -324,5 +246,7 @@ export default connect(mapStateToProps, {
   acceptFriendRequest,
   deleteFriendRequest,
   cancelFriendRequest,
+  getPendingFrUser,
   loadUser,
+  getFriendSuggestion
 })(AddFriendList);

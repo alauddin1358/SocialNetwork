@@ -4,7 +4,7 @@ import { Modal, Button } from 'react-bootstrap';
 
 
 const PostDeleteModal = (props) => {
-    console.log(props.deleteId);
+    //console.log(props.deleteId);
         return (
             <div>
                 <Modal show={props.show} onHide={() => props.onHide()}>

@@ -4,16 +4,17 @@ import { connect } from 'react-redux';
 import { Link } from 'react-router-dom';
 import Advertisement from '../dashboard/Advertisement';
 import { getAllUsers, loadUser } from '../../actions/auth';
-import { removeFriendFromFrList } from '../../actions/friends';
+import { getUserMyFr, removeFriendFromFrList } from '../../actions/friends';
 import PropTypes from 'prop-types';
 const IMAGEURL = process.env.REACT_APP_CLOUDINARY;
 
 const FriendList = ({
-  
+  friend: {myFriend},
   auth: { allUsers, user },
   getAllUsers,
   loadUser,
   removeFriendFromFrList,
+  getUserMyFr
 }) => {
   const [isSendRequest, setIsSendRequest] = useState(false);
   useEffect(() => {
@@ -21,26 +22,10 @@ const FriendList = ({
     loadUser();
     getAllUsers();
     setIsSendRequest(isSendRequest);
+    getUserMyFr();
     //console.log('isSendRequest ', isSendRequest);
-  }, [getAllUsers, loadUser, isSendRequest]);
-  //if(user !== null) console.log('User Friends', user.friends);
-  //   var friendUser = [];
-  //   friendUser = allUsers.filter(us => us._id.$oid === user.friends.map(friend => friend.$id.$oid));
-  var friendUser = allUsers.reduce(function (filtered, option) {
-    //console.log('Single option', option);
-    var matchFriend = [];
-    if (user !== null) {
-      matchFriend = user.friends.filter(
-        (friend) => friend.$id.$oid === option._id.$oid
-      );
-    }
-    //console.log('Match Friend',matchFriend);
-    if (matchFriend.length > 0) {
-      filtered.push(option);
-    }
-    return filtered;
-  }, []);
-  //console.log('FriendUser ', friendUser);
+  }, [getAllUsers, loadUser, isSendRequest, getUserMyFr]);
+
   const unFriend = (id) => {
     //console.log('remove ID ', id);
     removeFriendFromFrList(id);
@@ -62,8 +47,8 @@ const FriendList = ({
               <div className='card-header py-3'>
                 <h6 className='m-0 font-weight-bold text-primary'>My Friend</h6>
               </div>
-              {friendUser.length > 0 ? (
-                friendUser.map((userFr) => (
+              {myFriend.length > 0 ? (
+                myFriend.map((userFr) => (
                   <Fragment key={userFr._id.$oid}>
                     <div
                       id='posts-list'
@@ -191,9 +176,11 @@ FriendList.propTypes = {
 };
 const mapStateToProps = (state) => ({
   auth: state.auth,
+  friend: state.friend
 });
 export default connect(mapStateToProps, {
   getAllUsers,
   loadUser,
   removeFriendFromFrList,
+  getUserMyFr
 })(FriendList);

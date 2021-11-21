@@ -1,16 +1,116 @@
-// import {
-//     ADD_FRIEND,
-//     REMOVE_FRIEND,
-//     DELETE_FRIEND,
-//     ACCEPT_FRIEND,
-//     ERROR_FRIEND
-// } from './types';
-//import axios from 'axios';
+import {
+    GET_PENDINGFRIEND,
+    GET_MYFRIEND,
+    GET_FRIENDSUGGESTION
+} from './types';
+import axios from 'axios';
 import {instance} from './instance';
 import { setAlert } from './alert';
 //import {config} from './config';
 import {getAllUsers, loadUser} from './auth';
 const API = process.env.REACT_APP_API;
+
+
+
+//Load pending user friend
+export const getPendingFrUser = () => async dispatch => {
+  //console.log('Calling pending user function');
+  const config = {
+    headers : {
+        'Authorization': `Bearer ${localStorage.token}`,
+        'Content-Type':'application/json',
+        'Access-Control-Allow-Origin': '*',
+        'Access-Control-Allow-Credentials': true
+    }
+  };
+  try {
+    const res = await instance.get(`${API}/getPendFrUser`, config);
+    console.log('All pending User',JSON.parse(res.data.data));
+    if(res.data.result.isError === 'true') {
+      dispatch(setAlert(res.data.result.message, 'danger'));
+    }
+    else {
+      dispatch({
+        type: GET_PENDINGFRIEND,
+        payload: JSON.parse(res.data.data)
+      });
+    }
+  } catch (err) {
+    //const errors = err.response;
+    dispatch(setAlert('Something went wrong', 'danger'));
+    console.log('Error in getting all pending user = ',err);
+    // dispatch({
+    //   type: AUTH_ERROR
+    // });
+  }
+}
+
+//Load pending user friend
+export const getUserMyFr = () => async dispatch => {
+  //console.log('Calling pending user function');
+  const config = {
+    headers : {
+        'Authorization': `Bearer ${localStorage.token}`,
+        'Content-Type':'application/json',
+        'Access-Control-Allow-Origin': '*',
+        'Access-Control-Allow-Credentials': true
+    }
+  };
+  try {
+    const res = await instance.get(`${API}/getUserFriend`, config);
+    console.log('All User Friend',JSON.parse(res.data.data));
+    if(res.data.result.isError === 'true') {
+      dispatch(setAlert(res.data.result.message, 'danger'));
+    }
+    else {
+      dispatch({
+        type: GET_MYFRIEND,
+        payload: JSON.parse(res.data.data)
+      });
+    }
+  } catch (err) {
+    //const errors = err.response;
+    dispatch(setAlert('Something went wrong', 'danger'));
+    console.log('Error in getting all users friend = ',err);
+    // dispatch({
+    //   type: AUTH_ERROR
+    // });
+  }
+}
+
+//Load user friend suggestion
+export const getFriendSuggestion = () => async dispatch => {
+  //console.log('Calling pending user function');
+  const config = {
+    headers : {
+        'Authorization': `Bearer ${localStorage.token}`,
+        'Content-Type':'application/json',
+        'Access-Control-Allow-Origin': '*',
+        'Access-Control-Allow-Credentials': true
+    }
+  };
+  try {
+    const res = await instance.get(`${API}/getFriendSuggestion`, config);
+    console.log('All Suggested Friend',JSON.parse(res.data.data));
+    if(res.data.result.isError === 'true') {
+      dispatch(setAlert(res.data.result.message, 'danger'));
+    }
+    else {
+      dispatch({
+        type: GET_FRIENDSUGGESTION,
+        payload: JSON.parse(res.data.data)
+      });
+    }
+  } catch (err) {
+    //const errors = err.response;
+    dispatch(setAlert('Something went wrong', 'danger'));
+    console.log('Error in getting friend Suggestion = ',err);
+    // dispatch({
+    //   type: AUTH_ERROR
+    // });
+  }
+}
+
 
 // Send Friend request
 export const sendFriendRequest = (id) => async dispatch => {
