@@ -18,10 +18,10 @@ const PostItem = ({deletePost, postOwner, post:{_id, title, body, date,user}}) =
     const [deletemodalshow, setDeletemodalshow] = useState(false); 
     //Set ID for delete
     const postDeleteId = (id) => {
-        console.log('Dellete id ',id);
+        //console.log('Dellete id ',id);
         setDeleteId(id);
         setDeletemodalshow(true);
-        console.log('deletemodalshow', deletemodalshow);
+        //console.log('deletemodalshow', deletemodalshow);
     }
     const postBodyFunc = (id, body, title) => {
         setPostBody({

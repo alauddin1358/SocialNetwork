@@ -12,11 +12,12 @@ import {
   getFriendSuggestion
 } from '../../actions/friends';
 import PropTypes from 'prop-types';
+import Spinner from '../layout/Spinner';
 const IMAGEURL = process.env.REACT_APP_CLOUDINARY;
 
 const AddFriendList = ({
   auth: { allUsers, user },
-  friend: {pendingFriend, friendSuggestion},
+  friend: {pendingFriend, friendSuggestion, loadingFriend},
   getAllUsers,
   sendFriendRequest,
   acceptFriendRequest,
@@ -34,40 +35,54 @@ const AddFriendList = ({
     getPendingFrUser();
     getFriendSuggestion();
     setIsSendRequest(isSendRequest);
+    setTimeout(() => {
+      setLoadFriend(false) 
+    }, 2000);
     
   }, [getAllUsers, loadUser, isSendRequest, getFriendSuggestion, getPendingFrUser]);
   //const [pendingFriend, setPendingFriend] = useState([]);
   //const [addFriendList, setAddFriendList] = useState([]);
   // const [isSetPenFr, setIsSetPenFr] = useState(true);
-  // const [isSetFrsug, setIsSetFrsug] = useState(true);
+  const [loadFriend, setLoadFriend] = useState(loadingFriend);
   
   const addFriendRequest = (id) => {
     sendFriendRequest(id);
     setIsSendRequest(!isSendRequest);
-    
+    setLoadFriend(true);
+    // setTimeout(() => {
+    //   setLoadFriend(false) 
+    // }, 2000);
     //window.location.replace('/friends');
   };
   const cancelFrRequest = (id) => {
     cancelFriendRequest(id);
     setIsSendRequest(!isSendRequest);
+    setLoadFriend(true);
+    // setTimeout(() => {
+    //   setLoadFriend(false) 
+    // }, 2000);
     //window.location.reload(false);
     //window.location.replace('/friends');
   };
   const deleteFrRequest = (id) => {
     deleteFriendRequest(id);
     setIsSendRequest(!isSendRequest);
+    setLoadFriend(true);
     //window.location.replace('/friends');
   };
   const acceptFrRequest = (id) => {
     acceptFriendRequest(id);
     setIsSendRequest(!isSendRequest);
+    setLoadFriend(true);
     //window.location.replace('/friends');
   };
-  //console.log('user friends', user.friends);
+  console.log('user friends loading', loadFriend);
   //console.log('Suggestion Friend', friendSuggestion);
   //console.log(suggestedFriend);
 
-  return (
+  return loadFriend ? (
+    <Spinner />
+  ) : (
     <Fragment>
       <div className='container-fluid'>
         <div
@@ -235,6 +250,7 @@ AddFriendList.propTypes = {
   getAllUsers: PropTypes.func.isRequired,
   sendFriendRequest: PropTypes.func.isRequired,
   auth: PropTypes.object.isRequired,
+  friend: PropTypes.object.isRequired
 };
 const mapStateToProps = (state) => ({
   auth: state.auth,

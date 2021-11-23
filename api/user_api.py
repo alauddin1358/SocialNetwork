@@ -42,8 +42,8 @@ app = Flask(__name__)
 # random secrect key initialization
 app.secret_key = "thisisthesecretkey"
 # db config
-app.config['MONGO_URI'] = "mongodb://localhost:27017/userReg"
-#app.config['MONGO_URI'] = "mongodb://root:iritadb2021@127.0.0.1:27020/userReg?authSource=admin"
+# app.config['MONGO_URI'] = "mongodb://localhost:27017/userReg"
+app.config['MONGO_URI'] = "mongodb://root:iritadb2021@127.0.0.1:27020/userReg?authSource=admin"
 # app.config['MONGO_URI'] = "mongodb://admin:iritadb2021@localhost:27020/userReg?authSource=admin"
 # configuration for flask-mail
 app.config["MAIL_SERVER"] = 'webmail.iritatech.com'
@@ -1838,27 +1838,34 @@ def getFriendSuggestion():
     user = mongo.db.userReg.find_one(
         {'email': session['user']})
     friend_suggestion = []
+
     # Remove own user for creating friend suggestion list
     for us in users:
         if user['_id'] != us['_id']:
             friend_suggestion.append(us)
-
+    # print(friend_suggestion)
     # Remove user's pending friend for creating friend suggestion list
     temp_list = friend_suggestion[:]
+    size_oflist = len(friend_suggestion)
+
     if 'friend_pending' in user:
         pend_fruser = user['friend_pending']
-        for i, us in enumerate(temp_list):
+        for pf in temp_list[:]:
             for u in pend_fruser:
                 if u.id == us['_id']:
-                    friend_suggestion.remove(us)
+                    if pf in friend_suggestion:
+                        friend_suggestion.remove(pf)
     temp_list = friend_suggestion[:]
+    size_oflist = len(friend_suggestion)
+
     # Remove user's friend for creating friend suggestion list
     if 'friends' in user:
         fruser = user['friends']
-        for us in temp_list:
+        for us in temp_list[:]:
             for u in fruser:
                 if u.id == us['_id']:
-                    friend_suggestion.remove(us)
+                    if us in friend_suggestion:
+                        friend_suggestion.remove(us)
 
     message = {
         'data': dumps(friend_suggestion),
@@ -1921,13 +1928,13 @@ def cancelFrndReq(id):
         # existing_user = mongo.db.userReg.find_one({'_id': ObjectId(id)})
         pending_friend = mongo.db.userReg.find_one(
             {'_id': ObjectId(id), 'friend_pending': DBRef(collection="userReg", id=current_user['_id'])})
-        print('Pending frined ', pending_friend)
+        # print('Pending frined ', pending_friend)
         if pending_friend:
             mongo.db.userReg.update_one({'_id': ObjectId(id)}, {'$set': {
                                         'isFrndReqAccepted': False
                                         }})
-            mongo.db.userReg.update_one({'_id': ObjectId(id), 'friend_pending': DBRef(
-                collection="userReg", id=current_user['_id'])}, {'$pop': {'friend_pending': -1}})
+            mongo.db.userReg.update_one({'_id': ObjectId(id)}, {'$pull': {'friend_pending': DBRef(
+                collection="userReg", id=current_user['_id'])}})
 
             message = {
                 'data': "null",
@@ -1959,8 +1966,8 @@ def acceptFriendReq(id):
                                         '$push': {'friends': DBRef(collection="userReg", id=ObjectId(id))}})
             mongo.db.userReg.update_one({'_id': ObjectId(id)}, {
                                         '$push': {'friends': DBRef(collection="userReg", id=current_user['_id'])}})
-            mongo.db.userReg.update_one({'email': session['user'], 'friend_pending': DBRef(
-                collection="userReg", id=ObjectId(id))}, {'$pop': {'friend_pending': -1}})
+            mongo.db.userReg.update_one({'email': session['user']}, {'$pull': {'friend_pending': DBRef(
+                collection="userReg", id=ObjectId(id))}})
             message = {
                 'data': "null",
                 'result': {'isError': 'false', 'message': 'Friend Request Accepted', 'status': 200, }
@@ -1987,8 +1994,8 @@ def friendReqDel(id):
             mongo.db.userReg.update_one({'email': session['user']}, {'$set': {
                                         'isFrndReqAccepted': False
                                         }})
-            mongo.db.userReg.update_one({'email': session['user'], 'friend_pending': DBRef(
-                collection="userReg", id=ObjectId(id))}, {'$pop': {'friend_pending': -1}})
+            mongo.db.userReg.update_one({'email': session['user']}, {'$pull': {'friend_pending': DBRef(
+                collection="userReg", id=ObjectId(id))}})
             message = {
                 'data': "null",
                 'result': {'isError': 'false', 'message': 'Friend Request Declined', 'status': 200, }
@@ -2016,6 +2023,7 @@ def rmFriend(id):
         if existing_user:
             existing_friend = mongo.db.userReg.find_one(
                 {'email': session['user'], 'friends': DBRef(collection="userReg", id=ObjectId(id))})
+            # print(existing_friend)
             if existing_friend is None:
                 message = {
                     'data': "null",
@@ -2025,10 +2033,10 @@ def rmFriend(id):
                 return jsonify(message)
         if existing_user and (existing_friend):
             # update userReg with pop the target existing friend
-            mongo.db.userReg.update_one({'email': session['user'], 'friends': DBRef(
-                collection="userReg", id=ObjectId(id))}, {'$pop': {'friends': -1}})
-            mongo.db.userReg.update_one({'_id': ObjectId(id), 'friends': DBRef(
-                collection="userReg", id=current_user['_id'])}, {'$pop': {'friends': -1}})
+            mongo.db.userReg.update_one({'email': session['user']}, {'$pull': {'friends':  DBRef(
+                collection="userReg", id=ObjectId(id))}})
+            mongo.db.userReg.update_one({'_id': ObjectId(id)}, {'$pull': {'friends':  DBRef(
+                collection="userReg", id=current_user['_id'])}})
             message = {
                 'data': "null",
                 'result': {'isError': 'false', 'message': 'Removed from friend list', 'status': 200, }
@@ -2037,7 +2045,8 @@ def rmFriend(id):
             return jsonify(message)
         else:
             return not_found()
-    except:
+    except Exception as e:
+        print('Error in remove ', e)
         return internal_error()
 
 # ................friends end..........................

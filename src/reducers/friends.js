@@ -10,7 +10,7 @@ import {
     GET_FRIENDSUGGESTION
 } from '../actions/types';
 const initialState = {
-    loading: true,
+    loadingFriend: true,
     pendingFriend: [],
     myFriend: [],
     friendSuggestion: []
@@ -21,51 +21,54 @@ export default  function friendReducer(state = initialState, action) {
       case ADD_FRIEND:
           return {
             ...state,
-            loading: false,
+            loadingFriend: false,
             friendSuggestion: payload 
           };
       case GET_PENDINGFRIEND:
           return {
               ...state,
-              loading: false,
+              loadingFriend: false,
               pendingFriend: payload 
             };
       case GET_MYFRIEND:
         return {
             ...state,
-            loading: false,
+            loadingFriend: false,
             myFriend: payload 
           };
       case GET_FRIENDSUGGESTION:
         return {
             ...state,
-            loading: false,
+            loadingFriend: false,
             friendSuggestion: payload 
           };
       case ACCEPT_REQUEST:
           return {
             ...state,
-            loading: false
+            pendingFriend: state.pendingFriend.filter((pendFr) => pendFr._id.$oid !== payload),
+            loadingFriend: false
           };
       case CANCEL_REQUEST:
         return {
           ...state,
-          loading: false
+          loadingFriend: false
         };
       case REMOVE_FRIEND:
           return {
             ...state,
-            loading: false
+            myFriend: state.myFriend.filter((myFr) => myFr._id.$oid !== payload),
+            loadingFriend: false
           };
       case ERROR_REQUEST:
         return {
           ...state,
-          loading: false
+          loadingFriend: false
         };
       case DELETE_REQUEST:
           return {
             ...state,
-            loading: false
+            pendingFriend: state.pendingFriend.filter((pendFr) => pendFr._id.$oid !== payload),
+            loadingFriend: false
           };
       default:
         return state;

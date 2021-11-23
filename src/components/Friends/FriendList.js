@@ -6,10 +6,12 @@ import Advertisement from '../dashboard/Advertisement';
 import { getAllUsers, loadUser } from '../../actions/auth';
 import { getUserMyFr, removeFriendFromFrList } from '../../actions/friends';
 import PropTypes from 'prop-types';
+import Spinner from '../layout/Spinner';
+import UnfriendModal from './UnfriendModal';
 const IMAGEURL = process.env.REACT_APP_CLOUDINARY;
 
 const FriendList = ({
-  friend: {myFriend},
+  friend: {myFriend, loadingFriend},
   auth: { allUsers, user },
   getAllUsers,
   loadUser,
@@ -17,22 +19,40 @@ const FriendList = ({
   getUserMyFr
 }) => {
   const [isSendRequest, setIsSendRequest] = useState(false);
+  const [loadFriend, setLoadFriend] = useState(loadingFriend);
+  const [deleteId, setDeleteId] = useState(null);
+  //const [show, setshow] = useState(false);
+  const [unfriendModalShow, setUnfriendModalShow] = useState(false); 
   useEffect(() => {
     console.log('calling useEffect of FriendList');
     loadUser();
     getAllUsers();
     setIsSendRequest(isSendRequest);
     getUserMyFr();
+    setTimeout(() => {
+      setLoadFriend(false) 
+    }, 2000);
     //console.log('isSendRequest ', isSendRequest);
   }, [getAllUsers, loadUser, isSendRequest, getUserMyFr]);
 
   const unFriend = (id) => {
     //console.log('remove ID ', id);
+    
     removeFriendFromFrList(id);
     setIsSendRequest(!isSendRequest);
+    setLoadFriend(true);
     //window.location.replace('/friendlist');
   };
-  return (
+  const unFriendUserModal = (id) => {
+    setDeleteId(id);
+    setUnfriendModalShow(true);
+  }
+  const modalClose = () => {
+    setUnfriendModalShow(false);
+  };
+  return loadFriend ? (
+    <Spinner />
+  ) : (
     <Fragment>
       <div className='container-fluid'>
         <div
@@ -80,9 +100,7 @@ const FriendList = ({
                             <Link
                               to='/friendlist'
                               className='btn btn-primary'
-                              // data-toggle='modal'
-                              // data-target='#unFriendModal'
-                              onClick={() => unFriend(userFr._id.$oid)}
+                              onClick={() => unFriendUserModal(userFr._id.$oid)}
                             >
                               Unfriend
                             </Link>
@@ -90,63 +108,7 @@ const FriendList = ({
                         </div>
                       </div>
                     </div>
-                    <div
-                      className='modal fade'
-                      id='unFriendModal'
-                      tabIndex='-1'
-                      role='dialog'
-                      aria-labelledby='exampleModalLabel'
-                      aria-hidden='true'
-                    >
-                      <div className='modal-dialog' role='document'>
-                        <div className='modal-content'>
-                          <div className='modal-header'>
-                            <h5 className='modal-title' id='exampleModalLabel'>
-                              Unfriend user
-                            </h5>
-                            <button
-                              className='close'
-                              type='button'
-                              data-dismiss='modal'
-                              aria-label='Close'
-                            >
-                              <span aria-hidden='true'>×</span>
-                            </button>
-                          </div>
-                          <div className='modal-body'>
-                            Select "Remove" below if you want to remove{' '}
-                            {userFr !== null ? (
-                              <span
-                                style={{
-                                  fontSize: 20,
-                                  fontWeight: 'bold',
-                                  fontFamily: 'cursive',
-                                }}
-                              >
-                                {userFr.name}
-                              </span>
-                            ) : null}{' '}
-                            from your friend list.
-                          </div>
-                          <div className='modal-footer'>
-                            <button
-                              className='btn btn-secondary'
-                              type='button'
-                              data-dismiss='modal'
-                            >
-                              Cancel
-                            </button>
-                            <Link
-                              to='/friendlist'
-                              className='btn btn-primary'
-                              onClick={() => unFriend(userFr._id.$oid)}
-                            >
-                              Remove
-                            </Link>
-                          </div>
-                        </div>
-                      </div>
-                    </div>
+                    
                   </Fragment>
                 ))
               ) : (
@@ -166,6 +128,12 @@ const FriendList = ({
           <Advertisement />
         </div>
       </div>
+      <UnfriendModal
+          show={unfriendModalShow}
+          deleteId={deleteId}
+          onClick={modalClose}
+          onHide={modalClose}
+          unFriend = {unFriend} />
     </Fragment> 
   );
 };
@@ -173,6 +141,7 @@ FriendList.propTypes = {
   //setAlert: PropTypes.func.isRequired,
   getAllUsers: PropTypes.func.isRequired,
   auth: PropTypes.object.isRequired,
+  friend: PropTypes.object.isRequired
 };
 const mapStateToProps = (state) => ({
   auth: state.auth,

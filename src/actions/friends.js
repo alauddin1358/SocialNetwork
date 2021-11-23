@@ -1,7 +1,11 @@
 import {
     GET_PENDINGFRIEND,
     GET_MYFRIEND,
-    GET_FRIENDSUGGESTION
+    GET_FRIENDSUGGESTION,
+    ERROR_REQUEST,
+    REMOVE_FRIEND,
+    DELETE_REQUEST,
+    ACCEPT_REQUEST
 } from './types';
 import axios from 'axios';
 import {instance} from './instance';
@@ -39,9 +43,9 @@ export const getPendingFrUser = () => async dispatch => {
     //const errors = err.response;
     dispatch(setAlert('Something went wrong', 'danger'));
     console.log('Error in getting all pending user = ',err);
-    // dispatch({
-    //   type: AUTH_ERROR
-    // });
+    dispatch({
+      type: ERROR_REQUEST
+    });
   }
 }
 
@@ -72,9 +76,9 @@ export const getUserMyFr = () => async dispatch => {
     //const errors = err.response;
     dispatch(setAlert('Something went wrong', 'danger'));
     console.log('Error in getting all users friend = ',err);
-    // dispatch({
-    //   type: AUTH_ERROR
-    // });
+    dispatch({
+      type: ERROR_REQUEST
+    });
   }
 }
 
@@ -105,9 +109,9 @@ export const getFriendSuggestion = () => async dispatch => {
     //const errors = err.response;
     dispatch(setAlert('Something went wrong', 'danger'));
     console.log('Error in getting friend Suggestion = ',err);
-    // dispatch({
-    //   type: AUTH_ERROR
-    // });
+    dispatch({
+      type: ERROR_REQUEST
+    });
   }
 }
 
@@ -130,7 +134,8 @@ export const sendFriendRequest = (id) => async dispatch => {
       //console.log('Friend response = ',res.data);
       if(res.data.result.isError === 'false') {
         // console.log('calling getalluser from friend');
-        getAllUsers();
+        //getAllUsers();
+        getFriendSuggestion();
         loadUser();
         dispatch(setAlert(res.data.result.message, 'success'));
         //window.location.reload(false);
@@ -141,17 +146,17 @@ export const sendFriendRequest = (id) => async dispatch => {
       }
       else {
         dispatch(setAlert(res.data.result.message, 'danger'));
-        // dispatch({
-        //   type: ERROR_FRIEND
-        // });
+        dispatch({
+          type: ERROR_REQUEST
+        });
       }
       
     } catch (err) {
       console.log('Error in sending friend request',err);
       dispatch(setAlert('Something went wrong', 'danger'));
-      // dispatch({
-      //   type: ERROR_FRIEND
-      // });
+      dispatch({
+        type: ERROR_REQUEST
+      });
     }
   };
 
@@ -172,28 +177,29 @@ export const acceptFriendRequest = (id) => async dispatch => {
       const res = await instance.get(`${API}/friendReqAccept/${id}`, config);
       //console.log('Accept Friend response = ',res.data);
       if(res.data.result.isError === 'false') {
-        getAllUsers();
+        //getAllUsers();
+        getPendingFrUser();
         loadUser();
         dispatch(setAlert(res.data.result.message, 'success'));
         //window.location.reload(false);
-      //   dispatch({
-      //     type: ADD_FRIEND,
-      //     payload: JSON.parse(res.data.data)
-      //   });
+        dispatch({
+          type: ACCEPT_REQUEST,
+          payload: id
+        });
       }
       else {
         dispatch(setAlert(res.data.result.message, 'danger'));
-        // dispatch({
-        //   type: ERROR_FRIEND
-        // });
+        dispatch({
+          type: ERROR_REQUEST
+        });
       }
       
     } catch (err) {
       console.log('Error in sending friend request',err);
       dispatch(setAlert('Something went wrong', 'danger'));
-      // dispatch({
-      //   type: ERROR_FRIEND
-      // });
+      dispatch({
+        type: ERROR_REQUEST
+      });
     }
   };
 
@@ -214,19 +220,21 @@ export const deleteFriendRequest = (id) => async dispatch => {
       const res = await instance.get(`${API}/friendReqDel/${id}`, config);
       //console.log('Delete Friend response = ',res.data);
       if(res.data.result.isError === 'false') {
-        getAllUsers();
+        //getAllUsers();
+        getFriendSuggestion();
+        getPendingFrUser();
         loadUser();
-        //dispatch(setAlert(res.data.result.message, 'success'));
-      //   dispatch({
-      //     type: ADD_FRIEND,
-      //     payload: JSON.parse(res.data.data)
-      //   });
+        dispatch(setAlert(res.data.result.message, 'success'));
+        dispatch({
+          type: DELETE_REQUEST,
+          payload: id
+        });
       }
       else {
         dispatch(setAlert(res.data.result.message, 'danger'));
-        // dispatch({
-        //   type: ERROR_FRIEND
-        // });
+        dispatch({
+          type: ERROR_REQUEST
+        });
       }
       
     } catch (err) {
@@ -254,27 +262,28 @@ export const removeFriendFromFrList = (id) => async dispatch => {
       const res = await instance.get(`${API}/rmFriend/${id}`, config);
       //console.log('Remove Friend response = ',res.data);
       if(res.data.result.isError === 'false') {
-        getAllUsers();
+        //getAllUsers();
+        getUserMyFr();
         loadUser();
         dispatch(setAlert(res.data.result.message, 'success'));
-      //   dispatch({
-      //     type: ADD_FRIEND,
-      //     payload: JSON.parse(res.data.data)
-      //   });
+        dispatch({
+          type: REMOVE_FRIEND,
+          payload: id
+        });
       }
       else {
         dispatch(setAlert(res.data.result.message, 'danger'));
-        // dispatch({
-        //   type: ERROR_FRIEND
-        // });
+        dispatch({
+          type: ERROR_REQUEST
+        });
       }
       
     } catch (err) {
       console.log('Error in removing friend request',err);
       dispatch(setAlert('Something went wrong', 'danger'));
-      // dispatch({
-      //   type: ERROR_FRIEND
-      // });
+      dispatch({
+        type: ERROR_REQUEST
+      });
     }
   };
   // Cancel Friend request
@@ -294,7 +303,8 @@ export const cancelFriendRequest = (id) => async dispatch => {
       const res = await instance.get(`${API}/cancelFrndReq/${id}`, config);
       //console.log('Cancel Friend response = ',res.data);
       if(res.data.result.isError === 'false') {
-        getAllUsers();
+        //getAllUsers();
+        getFriendSuggestion();
         loadUser();
         dispatch(setAlert(res.data.result.message, 'success'));
         //window.location.reload(false);
@@ -305,16 +315,16 @@ export const cancelFriendRequest = (id) => async dispatch => {
       }
       else {
         dispatch(setAlert(res.data.result.message, 'danger'));
-        // dispatch({
-        //   type: ERROR_FRIEND
-        // });
+        dispatch({
+          type: ERROR_REQUEST
+        });
       }
       
     } catch (err) {
       console.log('Error in sending friend request',err);
       dispatch(setAlert('Something went wrong', 'danger'));
-      // dispatch({
-      //   type: ERROR_FRIEND
-      // });
+      dispatch({
+        type: ERROR_REQUEST
+      });
     }
   };
