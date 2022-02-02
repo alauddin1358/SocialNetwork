@@ -1,6 +1,7 @@
 import React, { Fragment, useEffect, useState } from 'react';
-import { connect } from 'react-redux';
+import { connect, useDispatch } from 'react-redux';
 import { Link } from 'react-router-dom';
+import store from '../../store';
 import Advertisement from '../dashboard/Advertisement';
 import { getAllUsers, loadUser } from '../../actions/auth';
 import {
@@ -28,23 +29,37 @@ const AddFriendList = ({
   loadUser,
 }) => {
   const [isSendRequest, setIsSendRequest] = useState(false);
+  // const dispatch = useDispatch()
+  // const [friendSuggestionList, setFriendSuggestionList] = useState([])
+  const [loadFriend, setLoadFriend] = useState(loadingFriend);
   useEffect(() => {
     console.log('calling useEffect of AddFriendList');
     loadUser();
-    getAllUsers();
     getPendingFrUser();
-    getFriendSuggestion();
     setIsSendRequest(isSendRequest);
+    //getFriends();
+    getFriendSuggestion();
     setTimeout(() => {
       setLoadFriend(false) 
     }, 2000);
     
-  }, [getAllUsers, loadUser, isSendRequest, getFriendSuggestion, getPendingFrUser]);
+  }, [getAllUsers, loadUser, isSendRequest, getPendingFrUser]);
   //const [pendingFriend, setPendingFriend] = useState([]);
   //const [addFriendList, setAddFriendList] = useState([]);
   // const [isSetPenFr, setIsSetPenFr] = useState(true);
-  const [loadFriend, setLoadFriend] = useState(loadingFriend);
   
+//   const getFriends = async () => {
+//     let userInfo = []
+
+//     dispatch(getFriendSuggestion((res, err) => {
+//         if (res?.data?.data) {
+//             setLoadFriend(false)
+//             userInfo = JSON.parse(res.data.data)
+//             console.log('Friend suggestion in callback ',userInfo);
+//         }
+//     }))
+//     setFriendSuggestionList(userInfo || [])
+// }
   const addFriendRequest = (id) => {
     sendFriendRequest(id);
     setIsSendRequest(!isSendRequest);

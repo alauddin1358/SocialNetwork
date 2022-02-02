@@ -24,6 +24,7 @@ import { BrowserRouter as Router, Route, Switch } from 'react-router-dom';
 import { Provider } from 'react-redux';
 import { loadUser } from './actions/auth';
 import SharePage from './components/Share/SharePage';
+import PrivacyPolicy from './components/Share/PrivacyPolicy';
 
 
 const App = () => {
@@ -58,6 +59,7 @@ const App = () => {
               <Route exact path="/friendlist" component = {FriendListContainer} />
               <Route exact path="/sharepost/:id" component = {SharePage} />
               <Route exact path="/searchuser" render={(props) => <SearchUserListContainer {...props}/>} />
+              <Route exact path="/privacypolicy" component = {PrivacyPolicy} />
             </Switch>
           
         </Fragment>

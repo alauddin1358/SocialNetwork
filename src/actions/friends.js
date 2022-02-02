@@ -83,7 +83,7 @@ export const getUserMyFr = () => async dispatch => {
 }
 
 //Load user friend suggestion
-export const getFriendSuggestion = () => async dispatch => {
+export const getFriendSuggestion = () => async (dispatch) => {
   //console.log('Calling pending user function');
   const config = {
     headers : {
@@ -105,6 +105,7 @@ export const getFriendSuggestion = () => async dispatch => {
         payload: JSON.parse(res.data.data)
       });
     }
+    //callback(res, null)
   } catch (err) {
     //const errors = err.response;
     dispatch(setAlert('Something went wrong', 'danger'));
@@ -112,6 +113,7 @@ export const getFriendSuggestion = () => async dispatch => {
     dispatch({
       type: ERROR_REQUEST
     });
+    //callback(null, err.response)
   }
 }
 

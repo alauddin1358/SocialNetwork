@@ -4,7 +4,7 @@ import React, { Fragment } from 'react';
 import Sidebar from '../dashboard/Sidebar';
 import Footer from '../dashboard/Footer';
 import Topbar from '../dashboard/Topbar';
-import SharePageDetail from './SharePageDetail';
+import SharePageDetail from './SharePageDetail'; 
 const SharePage = (props) => {
     return (
       <Fragment>

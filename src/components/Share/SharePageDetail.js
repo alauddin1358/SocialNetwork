@@ -5,7 +5,7 @@ import formatDate from '../../utils/formatDate';
 import PropTypes from 'prop-types';
 import Advertisement from '../dashboard/Advertisement';
 // import CommentForm from './CommentForm';
-// import CommentItem from './CommentItem';
+// import CommentItem from './CommentItem'; 
 import Spinner from '../layout/Spinner';
 import Alert from '../layout/Alert';
 const SharePageDetail = ({getSharePost, post:{sharepost, loading}, match}) => {

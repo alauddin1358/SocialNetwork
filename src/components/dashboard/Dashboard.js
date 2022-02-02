@@ -31,9 +31,9 @@ const Dashboard = ({
     loadUser();
     getAllUsers();
     getPendingFrUser();
-    getFriendSuggestion();
+    
     getUserMyFr();
-  }, [loadUser, getAllUsers, getFriendSuggestion, getPendingFrUser, getUserMyFr]);
+  }, [loadUser, getAllUsers, getPendingFrUser, getUserMyFr]);
   //console.log('IsAuthenticated', isAuthenticated);
   if (!isAuthenticated && token === null) {
     return <Redirect to='/login' />;
@@ -107,6 +107,5 @@ export default connect(mapStateToProps, {
   loadUser,
   getAllUsers,
   getPendingFrUser,
-  getUserMyFr,
-  getFriendSuggestion
+  getUserMyFr
 })(Dashboard);
