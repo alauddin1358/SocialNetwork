@@ -13,7 +13,9 @@ import { toggleCssClass } from '../../actions/auth';
 const ADMIN = process.env.REACT_APP_ADMIN;
 const IMAGEURL = process.env.REACT_APP_CLOUDINARY;
 
-const TopSidebar = ({ props, auth: { user, allUsers },toggleCssClass, logout }) => {
+const TopSidebar = ({ props, auth: { user, allUsers },
+  friend: {pendingFriend},
+  toggleCssClass, logout }) => {
   const [value, setValue] = useState('');
   const [suggestions, setSuggestions] = useState([]);
   const [addClass, setAddClass] = useState(false);
@@ -41,21 +43,7 @@ const TopSidebar = ({ props, auth: { user, allUsers },toggleCssClass, logout }) 
       setStopCondition(false);
     }
   }
-  var pendinFriend = [];
-  pendinFriend = allUsers.reduce(function (filtered, option) {
-    var matchFriend = [];
-    if (user !== null) {
-      if(user.hasOwnProperty('friend_pending')){
-        matchFriend = user.friend_pending.filter(
-          (friend) => friend.$id.$oid === option._id.$oid
-        );
-        }
-    }
-    if (matchFriend.length > 0) {
-      filtered.push(option);
-    }
-    return filtered;
-  }, []);
+  
   function escapeRegexCharacters(str) {
     return str.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
   }
@@ -472,17 +460,17 @@ const TopSidebar = ({ props, auth: { user, allUsers },toggleCssClass, logout }) 
                 >
                   <i className='fas fa-bell fa-fw'></i>
                   <span className='badge badge-danger badge-counter'>
-                    {pendinFriend.length > 0 ? pendinFriend.length : null}
+                    {pendingFriend.length > 0 ? pendingFriend.length : null}
                   </span>
                 </a>
-                {pendinFriend.length > 0 ? (
+                {pendingFriend.length > 0 ? (
                   <div
                     className='dropdown-list dropdown-menu dropdown-menu-right shadow animated--grow-in'
                     aria-labelledby='alertsDropdown'
                   >
                     <h6 className='dropdown-header'>Notification Center</h6>
-                    {pendinFriend.length > 0
-                      ? pendinFriend.map((pendingUser) => (
+                    {pendingFriend.length > 0
+                      ? pendingFriend.map((pendingUser) => (
                           <Link
                             className='dropdown-item d-flex align-items-center'
                             to="/friends"
@@ -648,5 +636,6 @@ const TopSidebar = ({ props, auth: { user, allUsers },toggleCssClass, logout }) 
 };
 const mapStateToProps = (state) => ({
   auth: state.auth,
+  friend: state.friend
 });
 export default connect(mapStateToProps, { logout, toggleCssClass })(TopSidebar);

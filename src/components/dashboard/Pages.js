@@ -48,7 +48,7 @@ const Pages = ({ getPosts, deletePost, auth:{user}, post: {posts, loading}, prop
                             </div>
                             <div id="posts-list" className="card-body">
                                 <div className="post-card card">
-                                        {user === null ? (<Spinner />) : (posts.length <= 0 ? null : (posts.map((post) => (
+                                        {user === null ? (<Spinner />) : (posts.length <= 0 ? (<h5>You have no post yet</h5>) : (posts.map((post) => (
                                             <PostItem key={post._id.$oid} post={post} postOwner={user} deletePost={deletePost} /> 
                                         )))) }
                                 </div>

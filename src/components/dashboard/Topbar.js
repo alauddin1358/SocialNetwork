@@ -8,7 +8,9 @@ import AutosuggestHighlightMatch from 'autosuggest-highlight/match';
 import AutosuggestHighlightParse from 'autosuggest-highlight/parse';
 const IMAGEURL = process.env.REACT_APP_CLOUDINARY;
 
-const Topbar = ({props, auth: { user, allUsers }, logout, toggleCssClass }) => {
+const Topbar = ({props, auth: { user, allUsers }, 
+  friend: {pendingFriend},
+  logout, toggleCssClass }) => {
   const [value, setValue] = useState('');
   const [suggestions, setSuggestions] = useState([]);
   const [addClass, setAddClass] = useState(true);
@@ -19,25 +21,7 @@ const Topbar = ({props, auth: { user, allUsers }, logout, toggleCssClass }) => {
     toggleCssClass(addClass);
     //console.log('Tobbar addclass after set ', addClass);
   };
-  //Pending friend request for notification
-  var pendinFriend = [];
-  if (allUsers.length > 0) {
-    pendinFriend = allUsers.reduce(function (filtered, option) {
-      var matchFriend = [];
-      if (user !== null) {
-        if (user.hasOwnProperty('friend_pending')) {
-          matchFriend = user.friend_pending.filter(
-            (friend) => friend.$id.$oid === option._id.$oid
-          );
-        }
-      }
-      if (matchFriend.length > 0) {
-        filtered.push(option);
-      }
-      return filtered;
-    }, []);
-  }
-
+ 
   function escapeRegexCharacters(str) {
     return str.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
   }
@@ -281,17 +265,17 @@ const Topbar = ({props, auth: { user, allUsers }, logout, toggleCssClass }) => {
             >
               <i className='fas fa-bell fa-fw'></i>
               <span className='badge badge-danger badge-counter'>
-                {pendinFriend.length > 0 ? pendinFriend.length : null}
+                {pendingFriend.length > 0 ? pendingFriend.length : null}
               </span>
             </a>
-            {pendinFriend.length > 0 ? (
+            {pendingFriend.length > 0 ? (
               <div
                 className='dropdown-list dropdown-menu dropdown-menu-right shadow animated--grow-in'
                 aria-labelledby='alertsDropdown'
               >
                 <h6 className='dropdown-header'>Notification Center</h6>
-                {pendinFriend.length > 0
-                  ? pendinFriend.map((pendingUser) => (
+                {pendingFriend.length > 0
+                  ? pendingFriend.map((pendingUser) => (
                       <Link
                         key={pendingUser._id.$oid}
                         className='dropdown-item d-flex align-items-center'
@@ -455,5 +439,6 @@ const Topbar = ({props, auth: { user, allUsers }, logout, toggleCssClass }) => {
 };
 const mapStateToProps = (state) => ({
   auth: state.auth,
+  friend: state.friend
 });
 export default connect(mapStateToProps, { logout, toggleCssClass })(Topbar);

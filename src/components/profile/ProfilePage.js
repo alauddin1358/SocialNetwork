@@ -12,6 +12,11 @@ import Compress from 'browser-image-compression';
 import {Image} from 'cloudinary-react';
 import download from 'downloadjs';
 import axios from 'axios';
+import {
+  sendFriendRequest,
+  cancelFriendRequest
+} from '../../actions/friends';
+
 const ADMIN = process.env.REACT_APP_ADMIN;
 const IMAGEURL = process.env.REACT_APP_CLOUDINARY;
 const API = process.env.REACT_APP_API;
@@ -33,12 +38,16 @@ const initialState = {
   referrer_name: '',
   referrer_email: '',
 };
+
 const ProfilePage = ({
   auth: { user, loading, allUsers },
   file:{files},
+  friend: {myFriend, friendSuggestion, loadingFriend},
+  getAllUsers,
+  sendFriendRequest,
+  cancelFriendRequest,
   loadUser,
   updateProfile,
-  getAllUsers,
   props,
   getFile,
 }) => {
@@ -48,14 +57,16 @@ const ProfilePage = ({
   const [formData, setFormData] = useState(initialState);
   const [errorMsg, setErrorMsg] = useState('');
   const [fileLoading, setFileLoading] = useState(true);
-  let isSearch = false, userEmail = null, otherUserId=null;
+  const [isSendRequest, setIsSendRequest] = useState(false);
+  const [loadFriend, setLoadFriend] = useState(false);
+  //const [ownUser, setOwnUser] = useState(null);
+  let isSearch = false, userEmail = null, otherUserId=null, ownUser=[];
   useEffect(() => {
     console.log('Calling profilePage useEffect');
-    if (user === null){
-        //console.log('Loading = ', loading);
-        loadUser();
-        getAllUsers();
-    } 
+    
+      getAllUsers();
+      loadUser();
+    
     
     if (!loading && user) {
       const profileData = { ...initialState };
@@ -65,20 +76,31 @@ const ProfilePage = ({
       //console.log("Profile Data = ", profileData);
       setFormData(profileData);
     }
+    //getPendingFrUser();
+    setIsSendRequest(isSendRequest);
+    //getFriends();
+    //getFriendSuggestion();
+    setTimeout(() => {
+      setLoadFriend(false) 
+    }, 5000);
     
   }, [loading, user, loadUser, getAllUsers]);
-  // console.log('Loading in Profilepage', loading);
+  //console.log('Loading in Profilepage', loading);
   //console.log('User in ProfilePage', user);
   if (props.location.state) {
+    //console.log('Calling location state');
     if (user !== null) {
       userEmail = user.email;
       otherUserId = props.location.state.id;
+      ownUser = user;
+      
       if (user._id.$oid !== otherUserId) {
         if(fileLoading) {
+          //console.log('Search in file profile page ', files);
           getFile(otherUserId);
           setFileLoading(false);
         }
-        console.log('Search in file ', files);
+        
         let userSearch = [];
         userSearch = allUsers.filter(
           (us) => us._id.$oid === otherUserId
@@ -87,6 +109,7 @@ const ProfilePage = ({
             user = Object.assign({}, userSearch[0]);
             isSearch = true;
         }
+        
       }
     }
   }
@@ -110,7 +133,16 @@ const ProfilePage = ({
     referrer_name,
     referrer_email,
   } = formData;
-
+  const addFriendRequest = (id) => {
+    sendFriendRequest(id);
+    setIsSendRequest(!isSendRequest);
+    setLoadFriend(true);
+  };
+  const cancelFrRequest = (id) => {
+    cancelFriendRequest(id);
+    setIsSendRequest(!isSendRequest);
+    setLoadFriend(true);
+  };
   const onChange = (e) =>
     setFormData({ ...formData, [e.target.name]: e.target.value });
 
@@ -187,8 +219,7 @@ const ProfilePage = ({
   };
   
   return (
-    <Fragment>
-      {user !== null ? (
+    !loadFriend && user !== null ? (
         <Fragment>
           <div className='container-fluid'>
             <div className='d-sm-flex align-items-center justify-content-between mb-4'>
@@ -220,7 +251,8 @@ const ProfilePage = ({
                       <img src={' http://127.0.0.1:8080/image/garden-festival.jpg'} alt='profile' />  */}
                       {/* <h6>{user.name}</h6> */}
                     </div>
-                    {!isSearch ? (
+                    
+                    {/* {!isSearch ? (
                       <Link to='/profile' className='profile-add-link'>
                         Add Contact
                       </Link>
@@ -233,8 +265,8 @@ const ProfilePage = ({
                       >
                         Add Contact
                       </Link>
-                    )}
-                    {!isSearch ? (
+                    )} */}
+                    {/* {!isSearch ? (
                       <Link to='/profile' className='profile-message-link'>
                         Message
                       </Link>
@@ -247,7 +279,138 @@ const ProfilePage = ({
                       >
                         Message
                       </Link>
-                    )}
+                    )} */}
+                    {
+                      isSearch ? (
+                        myFriend.length > 0 ? (
+                          myFriend.filter(
+                            (usr) => usr._id.$oid === user._id.$oid
+                          ).length > 0 ? (
+                            <button
+                              style={{ cursor: 'default' }} 
+                              className='profile-add-link'>
+                              Already Friend
+                            </button>
+                          ):(
+                            user.hasOwnProperty('friend_pending') ? (
+                              user.friend_pending.filter(
+                                (usr) => usr.$id.$oid === ownUser._id.$oid
+                              ).length > 0 ? (
+                                <>
+                                  <Link
+                                    to={{
+                                pathname: '/profile',
+                                state: {
+                                  id: user._id.$oid,
+                                },
+                              }}
+                              className='profile-add-link'
+                                    onClick={() =>
+                                      cancelFrRequest(user._id.$oid)
+                                    }
+                            
+                                  >
+                                    Cancel Request
+                                  </Link>
+                                </>
+                              ) : (
+                                <>
+                                  <Link
+                                    to={{
+                                pathname: '/profile',
+                                state: {
+                                  id: user._id.$oid,
+                                },
+                              }}
+                              className='profile-add-link'
+                                    onClick={() =>
+                                      addFriendRequest(user._id.$oid)
+                                    }
+                                  >
+                                    Add Friend
+                                  </Link>
+                                </>
+                              )
+                            ) : (
+                              <>
+                                <Link
+                                  to={{
+                                pathname: '/profile',
+                                state: {
+                                  id: user._id.$oid,
+                                },
+                              }}
+                              className='profile-add-link'
+                                  onClick={() =>
+                                    sendFriendRequest(user._id.$oid)
+                                  }
+                                >
+                                  Add Friend
+                                </Link>
+                              </>
+                            )
+                          )
+                        ) : (
+                          user.hasOwnProperty('friend_pending') ? (
+                              user.friend_pending.filter(
+                                (usr) => usr.$id.$oid === ownUser._id.$oid
+                              ).length > 0 ? (
+                                <>
+                                  <Link
+                                    to={{
+                                pathname: '/profile',
+                                state: {
+                                  id: user._id.$oid,
+                                },
+                              }}
+                              className='profile-add-link'
+                                    onClick={() =>
+                                      cancelFrRequest(user._id.$oid)
+                                    }
+                            
+                                  >
+                                    Cancel Request
+                                  </Link>
+                                </>
+                              ) : (
+                                <>
+                                  <Link
+                                    to={{
+                                pathname: '/profile',
+                                state: {
+                                  id: user._id.$oid,
+                                },
+                              }}
+                              className='profile-add-link'
+                                    onClick={() =>
+                                      addFriendRequest(user._id.$oid)
+                                    }
+                                  >
+                                    Add Friend
+                                  </Link>
+                                </>
+                              )
+                            ) : (
+                              <>
+                                <Link
+                                  to={{
+                                pathname: '/profile',
+                                state: {
+                                  id: user._id.$oid,
+                                },
+                              }}
+                              className='profile-add-link'
+                                  onClick={() =>
+                                    sendFriendRequest(user._id.$oid)
+                                  }
+                                >
+                                  Add Friend
+                                </Link>
+                              </>
+                            )
+                          )
+                      ) : (null)
+                    }
                   </div>
                 </div>
                 <div className='common-card'>
@@ -627,8 +790,8 @@ const ProfilePage = ({
         </Fragment>
       ) : (
         <Spinner />
-      )}
-    </Fragment>
+      )
+   
   );
 };
 ProfilePage.propTypes = {
@@ -638,8 +801,14 @@ ProfilePage.propTypes = {
 };
 const mapStateToProps = (state) => ({
   auth: state.auth,
-  file: state.file
+  file: state.file,
+  friend: state.friend
 });
-export default connect(mapStateToProps, { loadUser, updateProfile,getAllUsers, getFile})(
-  ProfilePage
-);
+export default connect(mapStateToProps, { 
+                    getAllUsers,
+                    sendFriendRequest,
+                    cancelFriendRequest,
+                    loadUser,
+                    updateProfile,
+                    getFile})
+(ProfilePage);

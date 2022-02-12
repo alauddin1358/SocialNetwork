@@ -318,7 +318,7 @@ p {
 	text-align: center;
 }
 .profile-add-link {
-    background: linear-gradient(to bottom, #34A853, #fff);
+    background: linear-gradient(to bottom, #34A853, rgb(70, 126, 70));
     top: 251px;
     z-index: 2;
     left: 20px;
@@ -331,8 +331,11 @@ p {
     left: 35px;
     width: 190px;
 }
+.profile-add-link:hover, 
 .profile-message-link:hover {
-	background: #fff;
+	background: rgb(243, 247, 246);
+	color: rgb(5, 248, 5);
+	font-size: 20px;
 }
 #modal-profile-picture img {
 	max-width: 180px !important;

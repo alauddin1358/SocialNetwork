@@ -83,9 +83,9 @@ const NewPost = ({propsFromLink, addPost, post:{posts, loading}}) => {
                                     {errorTitle && <p className="errorMsg">{errorTitle}</p>}
                                 </div>
                                 <div className="form-group">
-                                    <label htmlFor="body">Body</label>
+                                    <label htmlFor="body">Description</label>
                                     <textarea className="form-control" id="body" 
-                                            placeholder="Enter Body" rows="5" 
+                                            placeholder="Enter the description of the post" rows="5" 
                                             name="body"  value={body}
                                             onChange={onChange} >
                                     </textarea>
