@@ -199,9 +199,9 @@ p {
 
 .comment span {
     float: right;
-    background-color: #2B53C5;
+    background-color: #f0f2f5 !important;
     border-radius: 8px;
-    color: #fff;
+    color: #050505 !important;
     padding: 15px 20px;
     position: relative;
     margin-left: auto;
@@ -210,7 +210,7 @@ p {
     width: 81%;
 }
 .comment span::before {
-	background: #2B53C5;
+	background: #ebeef7 !important;
 	content: "";
 	display: block;
 	position: absolute;

@@ -48,6 +48,39 @@
     border-color: #e74a3b;
     margin-left: 10px;
 }
+.file-post {
+    color: black;
+    padding: 5px;
+    margin-bottom: 10px;
+    background-color: rgb(239, 247, 244) !important;
+}
+.file-post-icon {
+    padding-left: 10px;
+    text-align: center;
+    color: white;
+}
+.file-post-header {
+    margin-bottom: 0% !important;
+    font-family:Georgia, 'Times New Roman', Times, serif;
+    padding-bottom: 5px;
+}
+.file-post-title {
+    font-family:Georgia, 'Times New Roman', Times, serif;
+    font-weight: bold;
+    font-size: smaller;
+    max-width: 95%;
+    height: 25px;
+    overflow: hidden;
+    margin-bottom: 0%;
+}
+/* .file-post-desc {
+    margin-bottom: 5px !important;
+    font-family:'Lucida Sans', 'Lucida Sans Regular', 'Lucida Grande', 'Lucida Sans Unicode', Geneva, Verdana, sans-serif;
+    font-size: smaller;
+    max-width: 95%;
+    height: 20px;
+    overflow: hidden;
+} */
 @media screen and (max-width: 1024px)  {
     .friendCard {
         width: 100%;

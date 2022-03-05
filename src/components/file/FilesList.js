@@ -10,15 +10,17 @@ import FileHeader from './FileHeader';
 import { Link } from 'react-router-dom';
 import { connect } from 'react-redux';
 import { deleteFile, getFile } from '../../actions/file';
+import { deletePost } from '../../actions/post';
 import Alert from '../layout/Alert';
 import Advertisement from '../dashboard/Advertisement';
 const API = process.env.REACT_APP_API;
 const ADMIN = process.env.REACT_APP_ADMIN;
 
-const FilesList = ({getFile, deleteFile, auth, file:{files, loading}}) => {
+const FilesList = ({getFile, deleteFile, deletePost, auth, file:{files, loading}}) => {
   //const [filesList, setFilesList] = useState([]);
   const [errorMsg, setErrorMsg] = useState('');
   const [deleteId, setDeleteId] = useState(null);
+  const [postDeleteID, setPostDeleteID] = useState(null);
   const [fileLoading, setFileLoading] = useState(true);
   useEffect(() => {
     console.log('calling filelist useEffect');
@@ -80,9 +82,10 @@ const FilesList = ({getFile, deleteFile, auth, file:{files, loading}}) => {
     //console.log('toggle data',data);
   };
   //Set ID for delete
-  const fileDeleteId = (id) => {
+  const fileDeleteId = (id, pID) => {
     //console.log('Dellete id ',id);
     setDeleteId(id);
+    setPostDeleteID(pID);
   }
   return (
     <Fragment>
@@ -107,7 +110,7 @@ const FilesList = ({getFile, deleteFile, auth, file:{files, loading}}) => {
                     <tbody>
                       {files.length > 0 ? (
                         files.map(
-                          ({ _id, title, desc, filename, user, file_mimetype }, index) => (
+                          ({ _id, title, desc,postID, filename, user, file_mimetype }, index) => (
                             <tr key={index}>
                               <td className="file-type">
                                   {(filename.split('.').pop() === 'pdf')?(
@@ -178,7 +181,7 @@ const FilesList = ({getFile, deleteFile, auth, file:{files, loading}}) => {
                                   className='action'
                                   data-toggle='modal'
                                   data-target='#fileDeleteModal'
-                                  onClick={() => fileDeleteId(_id.$oid)}
+                                  onClick={() => fileDeleteId(_id.$oid, postID.$oid)}
                                 >
                                   <i className="fas fa-trash-alt"></i>
                                 </a>):null
@@ -220,7 +223,11 @@ const FilesList = ({getFile, deleteFile, auth, file:{files, loading}}) => {
               <div className="modal-footer">
                 <button className="btn btn-secondary" type="button" data-dismiss="modal">Cancel</button>
                 <Link to="/list" className="btn btn-primary" 
-                      onClick={() => deleteFile(deleteId)} data-dismiss="modal"
+                      onClick={() => {
+                        deleteFile(deleteId);
+                        deletePost(postDeleteID);
+                      }}
+                      data-dismiss="modal"
                 >
                   Delete
                 </Link>
@@ -229,11 +236,10 @@ const FilesList = ({getFile, deleteFile, auth, file:{files, loading}}) => {
           </div>
         </div>
       </Fragment>
-    
   );
 };
 const mapStateToProps = (state) => ({
   auth: state.auth,
   file: state.file
 });
-export default connect(mapStateToProps, {getFile, deleteFile})(FilesList);
+export default connect(mapStateToProps, {getFile, deleteFile, deletePost})(FilesList);

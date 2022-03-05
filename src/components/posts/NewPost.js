@@ -9,7 +9,7 @@ import Alert from '../layout/Alert';
 import '../../css/style.css';
 const initialState = {
     title : '',
-    body : ''
+    desc : ''
 }
 const NewPost = ({propsFromLink, addPost, post:{posts, loading}}) => {
     const [postData, setPostData] = useState(initialState)
@@ -36,22 +36,26 @@ const NewPost = ({propsFromLink, addPost, post:{posts, loading}}) => {
           setPostData(postData);
         }
       },[loading,posts, propsFromLink]);
-    const { title, body } = postData;
+    const { title, desc } = postData;
     const onChange = (e) =>
         setPostData({ ...postData, [e.target.name]: e.target.value });
 
     const onPostSubmit = async (e) => {
         e.preventDefault();
-        const { title, body } = postData;
-        if (title.trim() !== '' && body.trim() !== '') {
+        const { title, desc } = postData;
+        if (title.trim() !== '' && desc.trim() !== '') {
             setErrorTitle('');
             setErrorBody('');
-            addPost(postData,  propsFromLink.id, propsFromLink.edit);
+            const formData = new FormData();
+            formData.append('title', title);
+            formData.append('desc', desc);
+            formData.append('filename', null);
+            addPost({formData},  propsFromLink.id, propsFromLink.edit);
             setIsSubmit(true);
         } else {
             if(title.trim() === '')
                 setErrorTitle('Please enter the post title.');
-            if(body.trim() === '')
+            if(desc.trim() === '')
                 setErrorBody('Please enter the post body.');
           }
     };
@@ -86,7 +90,7 @@ const NewPost = ({propsFromLink, addPost, post:{posts, loading}}) => {
                                     <label htmlFor="body">Description</label>
                                     <textarea className="form-control" id="body" 
                                             placeholder="Enter the description of the post" rows="5" 
-                                            name="body"  value={body}
+                                            name="desc"  value={desc}
                                             onChange={onChange} >
                                     </textarea>
                                     {errorBody && <p className="errorMsg">{errorBody}</p>}

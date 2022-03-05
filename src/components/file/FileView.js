@@ -62,51 +62,50 @@ const FileView = ({match}) => {
       }
     return (
         <Fragment>
-        
-                    <Container>
-                        <FileHeader />
-                          <div className="files-container">
-                            
-                                {errorMsg && <p className="errorMsg">{errorMsg}</p>}
-                                {
-                                  (fileExtension === 'pdf') ? (
-                                   <Fragment> 
-                                    <Document
-                                      file={fileURL}
-                                      onLoadSuccess={onDocumentLoadSuccess}
-                                    >
-                                      <Page pageNumber={pageNumber} />
-                                    </Document>
-                                    <div>
-                                      <p>
-                                      Page {pageNumber || (numPages ? 1 : "--")} of {numPages || "--"}
-                                      </p>
-                                      <button 
-                                        type="button" 
-                                        disabled={pageNumber <= 1} 
-                                        onClick={previousPage}>
-                                        Previous
-                                      </button>
-                                      <button
-                                        type="button"
-                                        disabled={pageNumber >= numPages}
-                                        onClick={nextPage}
-                                      >
-                                        Next
-                                      </button>
-                                    </div>
-                                    </Fragment>
-                                  ) : (
-                                    <Fragment>
-                                      <img src={fileURL} alt={match.params.filename} className="view-file"/>
-                                    
-                                      
-                                    </Fragment>
-                                  )
-                                }
+              <Container>
+                  <FileHeader />
+                    <div className="files-container">
+                      
+                          {errorMsg && <p className="errorMsg">{errorMsg}</p>}
+                          {
+                            (fileExtension === 'pdf') ? (
+                              <Fragment> 
+                              <Document
+                                file={fileURL}
+                                onLoadSuccess={onDocumentLoadSuccess}
+                              >
+                                <Page pageNumber={pageNumber} />
+                              </Document>
+                              <div>
+                                <p>
+                                Page {pageNumber || (numPages ? 1 : "--")} of {numPages || "--"}
+                                </p>
+                                <button 
+                                  type="button" 
+                                  disabled={pageNumber <= 1} 
+                                  onClick={previousPage}>
+                                  Previous
+                                </button>
+                                <button
+                                  type="button"
+                                  disabled={pageNumber >= numPages}
+                                  onClick={nextPage}
+                                >
+                                  Next
+                                </button>
+                              </div>
+                              </Fragment>
+                            ) : (
+                              <Fragment>
+                                <img src={fileURL} alt={match.params.filename} className="view-file"/>
+                              
                                 
-                           </div>       
-                    </Container>
+                              </Fragment>
+                            )
+                          }
+                          
+                      </div>       
+              </Container>
                 
       </Fragment>
     )

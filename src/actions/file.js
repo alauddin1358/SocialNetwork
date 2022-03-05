@@ -6,10 +6,12 @@ import {
     ADD_ADV,
     GET_ADV,
     ADV_ERROR,
-    DELETE_ADV
+    DELETE_ADV,
+    ADD_POST
   } from './types';
 import {instance} from './instance';
 import { setAlert } from './alert';
+import { getPosts } from './post';
 const API = process.env.REACT_APP_API;
 
 
@@ -45,7 +47,7 @@ export const getFile = (id) => async dispatch => {
 }
 
 //Add File
-export const addFile = ({formData}) => async dispatch => {
+export const addFile = ({formData},id) => async dispatch => {
   const config = {
     headers : {
       'Authorization': `Bearer ${localStorage.token}`,
@@ -55,19 +57,25 @@ export const addFile = ({formData}) => async dispatch => {
     }
   };
       try {
-        //console.log(localStorage.token);
-        const res = await instance.post(`${API}/file_upload`, formData, config);
+        console.log('ID = ', id);
+        const res = await instance.post(`${API}/posts/${id}`, formData,config);
         if(res.data.result.isError === 'true') {
             dispatch(setAlert(res.data.result.message, 'danger'));
           }
           else {
-            dispatch({
-              type: ADD_FILE,
-              payload: res.data
-            });
-            //dispatch(getFile());
-            dispatch(setAlert('File Added', 'success'));
-          }
+              dispatch({
+                type: ADD_FILE,
+                payload: res.data
+              });
+              dispatch({
+                type: ADD_POST,
+                payload: res.data
+              });
+              dispatch(getPosts());
+              //dispatch(getFile());
+              dispatch(setAlert('File uploaded', 'success'));
+            }
+            
       } catch (error) {
         console.log(error);
         console.log(error.response);
@@ -80,7 +88,7 @@ export const addFile = ({formData}) => async dispatch => {
       
   }
   //Add File
-export const updateFile = ({formData},id) => async dispatch => {
+export const updateFile = ({formData},id, filePostID) => async dispatch => {
   const config = {
     headers : {
       'Authorization': `Bearer ${localStorage.token}`,
@@ -90,18 +98,31 @@ export const updateFile = ({formData},id) => async dispatch => {
     }
   };
       try {
-        //console.log(localStorage.token);
+        console.log('ID in action',filePostID);
         const res = await instance.put(`${API}/file_update/${id}`, formData, config);
         if(res.data.result.isError === 'true') {
             dispatch(setAlert(res.data.result.message, 'danger'));
           }
           else {
-            dispatch({
-              type: ADD_FILE,
-              payload: res.data
-            });
+            const postResp = await instance.post(`${API}/posts/${filePostID}`, formData,config);
+            if(postResp.data.result.isError === 'true') {
+              dispatch(setAlert(res.data.result.message, 'danger'));
+            }
+            else {
+              dispatch({
+                type: ADD_FILE,
+                payload: res.data
+              });
+              dispatch({
+                type: ADD_POST,
+                payload: postResp.data
+              });
+              dispatch(getPosts());
+              dispatch(setAlert('File Edited', 'success'));
+            }
+            
             //dispatch(getFile());
-            dispatch(setAlert('File Edited', 'success'));
+            
           }
       } catch (error) {
         console.log(error);

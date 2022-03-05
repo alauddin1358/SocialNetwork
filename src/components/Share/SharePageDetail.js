@@ -29,7 +29,7 @@ const SharePageDetail = ({getSharePost, post:{sharepost, loading}, match}) => {
                             </div>
                             <div id="post-details">
                                 <p>
-                                {sharepost.body}
+                                {sharepost.desc}
                                 </p>
                             </div>
                         </div>

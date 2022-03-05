@@ -42,8 +42,8 @@ app = Flask(__name__)
 # random secrect key initialization
 app.secret_key = "thisisthesecretkey"
 # db config
-# app.config['MONGO_URI'] = "mongodb://localhost:27017/userReg"
-app.config['MONGO_URI'] = "mongodb://root:iritadb2021@127.0.0.1:27020/userReg?authSource=admin"
+app.config['MONGO_URI'] = "mongodb://localhost:27017/userReg"
+#app.config['MONGO_URI'] = "mongodb://root:iritadb2021@127.0.0.1:27020/userReg?authSource=admin"
 # app.config['MONGO_URI'] = "mongodb://admin:iritadb2021@localhost:27020/userReg?authSource=admin"
 # configuration for flask-mail
 app.config["MAIL_SERVER"] = 'webmail.iritatech.com'
@@ -241,11 +241,9 @@ def otp_verify():
 @app.route('/add', methods=['POST'])
 @cross_origin(supports_credentials=True)
 def add_user():
-    # convert json
     # _json = request.get_json()
     try:
         _json = request.form
-
         _firstname = _json['firstname']
         _middlename = _json['middlename']
         _lastname = _json['lastname']
@@ -704,21 +702,25 @@ def internal_error(error=None):
 @ token_required
 def create_post(id):
     # receiving from post
-    _json = request.json
+    _json = request.form
     _id = id
     _title = _json['title']
-    _body = _json['body']
+    _desc = _json['desc']
     # _category = _json['category']
     # _tags = _json['tags']
     _post_date = datetime.datetime.now()
-    # print(session)
-    # print(_id)
+
+    _filename = _json['filename']
+    _fileID = '0123456789ab0123456789ab'
+    if 'file' in request.files:
+        _file = request.files['file']
+        _filename = _file.filename
     if _id != 'null':
-        if _title and _body:
+        if _title and _desc:
             try:
                 mongo.db.posts.update_one({'_id': ObjectId(_id['$oid']) if '$oid' in _id else ObjectId(_id)},
                                           {'$set': {
-                                              'title': _title, 'body': _body, 'date': _post_date
+                                              'title': _title, 'desc': _desc, 'filename': _filename, 'date': _post_date
                                           }
                 })
                 # print('PostId = ', postId)
@@ -737,11 +739,25 @@ def create_post(id):
         try:
             # inserting new post
             user = mongo.db.userReg.find_one({'email': session['user']})
-            # print(user['name'])
-            # _file = mongo.send_file(user['image'])
-            insertData = mongo.db.posts.insert({
+            _postID = 'null'
+            if 'file' in request.files:
+                _file_mimetype = _file.content_type
+                mongo.save_file(_file.filename, request.files['file'])
+                mongo.db.upload.insert_one(
+                    {'title': _title, 'desc': _desc, 'filename': _filename,
+                     'file_mimetype': _file_mimetype, 'postID': _postID, 'user': {'userId': user['_id']}, 'date': datetime.datetime.now()})
+                _insertedRecord = mongo.db.upload.find(
+                    {}).sort('date', -1).limit(1)
+                for doc in _insertedRecord:
+                    _newFile = doc
+                    _fileID = _newFile['_id']
+                    print('DOC = ', _newFile['_id'])
+            print('Checkkkk')
+            mongo.db.posts.insert_one({
                 'title': _title,
-                'body': _body,
+                'desc': _desc,
+                'filename': _filename,
+                'fileID': ObjectId(_fileID),
                 # 'category': _category,
                 # 'tags': _tags,
                 'user': {
@@ -752,13 +768,23 @@ def create_post(id):
                 'comments': [],
                 'date': _post_date
             })
+            print('Checkkkk')
+            if 'file' in request.files:
+                _insertedPost = mongo.db.posts.find(
+                    {}).sort('date', -1).limit(1)
+                for doc in _insertedPost:
+                    _newPost = doc
+                    _postID = _newPost['_id']
+                mongo.db.upload.update_one({'_id': ObjectId(_fileID)},
+                                           {'$set': {'postID': _postID}})
             # print('PostId = ', insertData)
             message = {
                 'data': 'null',
                 'result': {'isError': 'false', 'message': 'post created successfull', 'status': 201, }
             }
             return jsonify(message)
-        except:
+        except Exception as e:
+            print('Error in post ', e)
             message = {
                 'data': 'null',
                 'result': {'isError': 'true', 'message': 'post created Unsuccessfull', 'status': 201, }
@@ -1051,10 +1077,15 @@ def file_upload():
 
     # # mongo.db.upload.insert(
     # #     {'upload_file_name': _file.filename})
-        mongo.db.upload.insert(
+        mongo.db.upload.insert_one(
             {'title': _title, 'desc': _desc, 'filename': _filename,
                 'file_mimetype': _file_mimetype, 'user': {'userId': user['_id']}, 'date': datetime.datetime.now()})
+        _insertedRecord = mongo.db.upload.find({}).sort('date', -1).limit(1)
         # mongo.db.upload.insert({'upload_file_name': _file.filename})
+
+        for doc in _insertedRecord:
+            _newFile = doc
+            print('DOC = ', _newFile['_id'])
         message = {
             # 'data': dumps(_file.filename),
             'data': "null",
@@ -1092,24 +1123,7 @@ def file_update(id):
             existing_file = mongo.db.upload.find_one({'_id': ObjectId(id)})
             _filename = existing_file['filename']
             _file_mimetype = existing_file['file_mimetype']
-        # _filedata = _json['filedata']
 
-        # print(_image)
-        # print(_json)
-        # cloudinary.config(cloud_name="daf1cgy1c", api_key="228197214629277",
-        #                   api_secret="DferVvyNAJovYz-cOug7zIx6cR4")
-        # upload_result = None
-        # if _file:
-
-        # _filenameUpload = _filename.split(".")[0]
-        # app.logger.info('%s file_to_upload', _file)
-        # upload_result = cloudinary.uploader.upload(
-        #     request.files['file'], public_id=_filenameUpload)
-        # app.logger.info(upload_result)
-        # print(_file.filename)
-
-    # # mongo.db.upload.insert(
-    # #     {'upload_file_name': _file.filename})
         mongo.db.upload.update_one({'_id': ObjectId(_id['$oid']) if '$oid' in _id else ObjectId(_id)},
                                    {'$set': {'title': _title, 'desc': _desc,
                                              'filename': _filename, 'file_mimetype': _file_mimetype, 'date': datetime.datetime.now()}})

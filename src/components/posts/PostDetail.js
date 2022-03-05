@@ -1,5 +1,6 @@
 import React, { Fragment, useEffect } from 'react';
 import { connect } from 'react-redux';
+import { Link } from 'react-router-dom';
 import { getPost } from '../../actions/post';
 import formatDate from '../../utils/formatDate';
 import PropTypes from 'prop-types';
@@ -30,9 +31,47 @@ const PostDetail = ({getPost, post:{post, loading}, match, auth:{user}}) => {
                             </div>
                             <div id="post-details">
                                 <p>
-                                {post.body}
+                                {post.desc}
                                 </p>
                             </div>
+                            {
+                post.filename !== 'null' ? (
+                    <div>
+                        <Link to={`/view/${post.filename}`}>
+                            <div className='post-card card file-post'>
+                            {
+                                ( post.filename.split('.').pop() === 'pdf' ) ? (
+                                    <div className='row'>
+                                    <div className='col-lg-2 col-sm-3'>
+                                    <img className='file-post-icon' src={process.env.PUBLIC_URL + '/img/pdfIcon.png'} alt="PDF FILE"/>
+                                    </div>
+                                    <div className='col-lg-10 col-sm-9'>
+                                        <h6 className='file-post-header'>
+                                            PDF
+                                        </h6>
+                                        <p className='file-post-title'>{post.filename}</p>
+                                    </div>
+                                    </div>
+                                ) : (
+                                    <div className='row'>
+                                    <div className='col-lg-2 col-sm-3'>
+                                    <img className='file-post-icon' src={process.env.PUBLIC_URL + '/img/postImageIcon.png'} alt="IMAGE FILE"/>
+                                    </div>
+                                    <div className='col-lg-10 col-sm-9'>
+                                        <h6 className='file-post-header'>
+                                            IMAGE
+                                        </h6>
+                                        <p className='file-post-title'>{post.filename}</p>
+                                    </div>
+                                </div>
+                                )
+                            }
+                                
+                            </div>
+                        </Link>
+                    </div>
+                ): null
+            }
                         </div>
                         <div className="card-body shadow mb-4">
                             <h3>Comments</h3>

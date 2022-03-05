@@ -1,4 +1,4 @@
-import React, { Fragment, useEffect } from 'react';
+import React, { Fragment, useEffect, useState } from 'react';
 import { Link, Redirect } from 'react-router-dom';
 import { connect } from 'react-redux';
 import { logout } from '../../actions/auth';
@@ -10,12 +10,9 @@ import {
 } from '../../actions/friends';
 
 import TopSidebar from './TopSidebar';
-// import Pages from './Pages';
-// import Sidebar from './Sidebar';
-// import Footer from './Footer';
-// import Alert from '../layout/Alert';
 import PropTypes from 'prop-types';
-
+import { getFile } from '../../actions/file';
+const ADMIN = process.env.REACT_APP_ADMIN;
 const Dashboard = ({
   props,
   logout,
@@ -24,16 +21,31 @@ const Dashboard = ({
   getFriendSuggestion,
   getUserMyFr,
   loadUser,
-  auth: { isAuthenticated, token },
+  getFile,
+  auth: { isAuthenticated, token, user, loading },
 }) => {
+  const [fileLoading, setFileLoading] = useState(true);
   useEffect(() => {
     console.log('calling useEffect in Dashboard');
     loadUser();
     getAllUsers();
     getPendingFrUser();
-    
     getUserMyFr();
-  }, [loadUser, getAllUsers, getPendingFrUser, getUserMyFr]);
+    if(user !== null) {
+      if(!loading){
+        if (fileLoading && user.email !== ADMIN) {
+          console.log('Calling User getFile');
+          getFile(user._id.$oid);
+          setFileLoading(false)
+        }
+        else if(fileLoading && user.email === ADMIN){
+          //console.log('Calling ADMIN getFile');
+          getFile(null);
+          setFileLoading(false)
+        }
+      }
+    }
+  }, [loadUser, getAllUsers, getPendingFrUser, getUserMyFr, getFile]);
   //console.log('IsAuthenticated', isAuthenticated);
   if (!isAuthenticated && token === null) {
     return <Redirect to='/login' />;
@@ -107,5 +119,6 @@ export default connect(mapStateToProps, {
   loadUser,
   getAllUsers,
   getPendingFrUser,
-  getUserMyFr
+  getUserMyFr,
+  getFile
 })(Dashboard);

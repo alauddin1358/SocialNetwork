@@ -4,10 +4,11 @@ import { connect } from 'react-redux';
 import PostItem from './PostItem';
 import PropTypes from 'prop-types';
 import { getPosts, deletePost } from '../../actions/post';
+import { deleteFile } from '../../actions/file';
 import Spinner from '../layout/Spinner';
 import Advertisement from './Advertisement';
 
-const Pages = ({ getPosts, deletePost, auth:{user}, post: {posts, loading}, props}) => {
+const Pages = ({ getPosts, deletePost,deleteFile, auth:{user}, post: {posts, loading}, props}) => {
     useEffect(() => {
         getPosts();
     }, [getPosts, deletePost]);
@@ -25,10 +26,6 @@ const Pages = ({ getPosts, deletePost, auth:{user}, post: {posts, loading}, prop
         }
     }
     
-    
-    // console.log('Posts in pages', posts);
-    //console.log('Loading in pages ', mypost);
-    //console.log('Auth in post', user);
     return (
         <Fragment>
             <div className="container-fluid">
@@ -48,8 +45,8 @@ const Pages = ({ getPosts, deletePost, auth:{user}, post: {posts, loading}, prop
                             </div>
                             <div id="posts-list" className="card-body">
                                 <div className="post-card card">
-                                        {user === null ? (<Spinner />) : (posts.length <= 0 ? (<h5>You have no post yet</h5>) : (posts.map((post) => (
-                                            <PostItem key={post._id.$oid} post={post} postOwner={user} deletePost={deletePost} /> 
+                                        {user === null ? (<Spinner />) : (posts.length <= 0 ? (<h5>You have no post yet</h5>) : (posts.map((post, index) => (
+                                            <PostItem key={post._id.$oid} post={post} postOwner={user} deletePost={deletePost} deleteFile={deleteFile} index={index}/> 
                                         )))) }
                                 </div>
                             </div>
@@ -74,4 +71,4 @@ const mapStateToProps = (state) => ({
     post : state.post,
     auth: state.auth
 });
-export default connect(mapStateToProps, { getPosts, deletePost })(Pages); 
+export default connect(mapStateToProps, { getPosts, deletePost, deleteFile })(Pages); 

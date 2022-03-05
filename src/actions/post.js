@@ -43,7 +43,7 @@ export const getPosts = () => async dispatch => {
   }
 };
 // Add post
-export const addPost = (postData, id, edit=false) => async dispatch => {
+export const addPost = ({formData}, id, edit=false) => async dispatch => {
     const config = {
         headers : {
             'Authorization': `Bearer ${localStorage.token}`,
@@ -54,7 +54,7 @@ export const addPost = (postData, id, edit=false) => async dispatch => {
     };
     try {
       //console.log('Id in addpost = ', id);
-      const res = await instance.post(`${API}/posts/${id}`, postData,config);
+      const res = await instance.post(`${API}/posts/${id}`, formData,config);
       //console.log('Post Response', res.data);
       if(res.data.result.isError === 'true') {
         dispatch(setAlert(res.data.result.message, 'danger'));

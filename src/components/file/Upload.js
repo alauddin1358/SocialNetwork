@@ -26,12 +26,13 @@ const Upload = ({props, addFile,getFile,updateFile,auth, file: {files, isSuccess
   const [errorMsg, setErrorMsg] = useState('');
   const [fileLoading, setFileLoading] = useState(true);
   const [isEdit, setIsEdit] = useState(false);
+  const [filePostID, setFilePostID] = useState(null);
   //const [isPreviewAvailable, setIsPreviewAvailable] = useState(false); // state to show preview only for images
   const dropRef = useRef(); // React ref for managing the hover state of droppable area
   const propsFromLink = props.location.state;
   let {id, edit} = propsFromLink;
+  let filteredFile;
   useEffect(() => {
-    let filteredFile;
     if (edit) {
         //getPost(id);
         setIsEdit(true);
@@ -51,7 +52,9 @@ const Upload = ({props, addFile,getFile,updateFile,auth, file: {files, isSuccess
         }
         filteredFile = files.filter((fl) => fl._id.$oid === id)
         filteredFile = Object.assign({}, filteredFile[0]);
-        //console.log('filtered file ',filteredFile);
+        setFilePostID(filteredFile['postID']);
+        //console.log('filtered file ',filePostID);
+        // console.log('filtered id ',id);
     } 
     if (!loading && filteredFile) {
       const fileData = { ...initialState };
@@ -98,23 +101,35 @@ const Upload = ({props, addFile,getFile,updateFile,auth, file: {files, isSuccess
     event.preventDefault(); 
 
     try {
-      const { title, desc } = fileData;
+      const { title, desc, filename } = fileData;
       if (title.trim() !== '' && desc.trim() !== '') {
         const formData = new FormData();
         formData.append('title', title);
         formData.append('desc', desc);
-        if (file) {
-          formData.append('file', file); 
-        } 
-        setErrorMsg('');
+        formData.append('filename', filename);
         if(edit) {
-          updateFile({formData},id)
+          
+          if (file) {
+            formData.append('file', file);
+          }
+          
+          setErrorMsg('');
+          
+          updateFile({formData},id, filePostID.$oid);
+          props.history.push('/dashboard');
         }
         else {
-          addFile({formData});
+          if (file) {
+            formData.append('file', file); 
+            setErrorMsg(''); 
+            addFile({formData},id);
+            props.history.push('/dashboard');
+          } 
+          else {
+            setErrorMsg('Please select a file.');
+          }
         }
         
-        props.history.push('/list');
       } else {
         setErrorMsg('Please enter all the field values.');
       }
@@ -124,7 +139,7 @@ const Upload = ({props, addFile,getFile,updateFile,auth, file: {files, isSuccess
     
   };
   if(isSuccess) {
-    return <Redirect to = "/list" />;
+    return <Redirect to = "/dashboard" />;
   } 
   return loading ? (
       <Spinner />
@@ -213,7 +228,7 @@ const Upload = ({props, addFile,getFile,updateFile,auth, file: {files, isSuccess
                       <Button variant="primary" type="submit">
                           Update
                       </Button>
-                      <Link to='/list'
+                      <Link to='/dashboard'
                             className='btn btn-danger'
                       >
                           Cancel

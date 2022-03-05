@@ -5,28 +5,45 @@ import { FacebookShareButton, LinkedinShareButton } from "react-share";
 import { FacebookIcon, LinkedinIcon} from "react-share";
 import ShareModal from './ShareModal';
 import PostDeleteModal from './PostDeleteModal';
+import FilePostDeleteModal from './FilePostDeleteModal';
+
 const ADMIN = process.env.REACT_APP_ADMIN;
-const PostItem = ({deletePost, postOwner, post:{_id, title, body, date,user}}) => {
+
+
+const PostItem = ({index, deletePost,deleteFile, postOwner, post:{_id, title, desc,filename,fileID, date,user}}) => {
     //console.log('Id in postItem', _id);
     const [deleteId, setDeleteId] = useState(null);
+    
+    const [fileDeleteId, setFileDeleteId] = useState(null);
     const [postBody, setPostBody] = useState({
         id: null,
-        body: "",
+        desc: "",
         title: ""
     });
+    const url = "https://agriculturist.org/";
     const [show, setshow] = useState(false);
+    
+    const [fileDeletemodalshow, setFileDeletemodalshow] = useState(false); 
     const [deletemodalshow, setDeletemodalshow] = useState(false); 
+    
     //Set ID for delete
+    const filePostDeleteId = (id, fID) => {
+        //console.log('Dellete id ',id);
+        setDeleteId(id);
+        setFileDeleteId(fID);
+        setFileDeletemodalshow(true);
+        //console.log('deletemodalshow', deletemodalshow);
+    }
     const postDeleteId = (id) => {
         //console.log('Dellete id ',id);
         setDeleteId(id);
         setDeletemodalshow(true);
         //console.log('deletemodalshow', deletemodalshow);
     }
-    const postBodyFunc = (id, body, title) => {
+    const postBodyFunc = (id, desc, title) => {
         setPostBody({
             id: id,
-            body:body,
+            desc:desc,
             title:title
         });
         setshow(true);
@@ -35,17 +52,77 @@ const PostItem = ({deletePost, postOwner, post:{_id, title, body, date,user}}) =
    
         setshow(false);
         setDeletemodalshow(false);
+        setFileDeletemodalshow(false);
         
+      };
+    
+      const [isReadPostTitleMore, setIsReadPostTitleMore] = useState(true);
+      const toggleReadTitleMore = (data) => {
+        setIsReadPostTitleMore(data);
+      };
+      const [isReadDescMore, setIsReadDescMore] = useState(null);
+      const toggleReadMore = (data) => {
+        setIsReadDescMore(data);
+        //console.log('toggle data',data);
       };
     return (
     <>
         <div className="card-body">
             <h5><Link to={`/post/${_id.$oid}`}>
-               {title} </Link>
+               {title} 
+                </Link>
             </h5>
             <p>
-                {body}
+            {isReadDescMore === index ? desc : desc.slice(0, 300)}
+            {desc.length > 300 ? (
+                <>
+                <span style={{padding:5}}>.....</span>
+                <Link to={`/post/${_id.$oid}`} className="read-more-button">
+                            Read more
+                </Link>
+                </> 
+                
+            ) : null }
             </p>
+            {
+                filename !== 'null' ? (
+                    <div>
+                        <Link to={`/view/${filename}`}>
+                            <div className='post-card card file-post'>
+                            {
+                                ( filename.split('.').pop() === 'pdf' ) ? (
+                                    <div className='row'>
+                                    <div className='col-lg-2 col-sm-3'>
+                                    <img className='file-post-icon' src={process.env.PUBLIC_URL + '/img/pdfIcon.png'} alt="PDF FILE"/>
+                                    </div>
+                                    <div className='col-lg-10 col-sm-9'>
+                                        <h6 className='file-post-header'>
+                                            PDF
+                                        </h6>
+                                        <p className='file-post-title'>{filename}</p>
+                                    </div>
+                                    </div>
+                                ) : (
+                                    <div className='row'>
+                                    <div className='col-lg-2 col-sm-3'>
+                                    <img className='file-post-icon' src={process.env.PUBLIC_URL + '/img/postImageIcon.png'} alt="IMAGE FILE"/>
+                                    </div>
+                                    <div className='col-lg-10 col-sm-9'>
+                                        <h6 className='file-post-header'>
+                                            IMAGE
+                                        </h6>
+                                        <p className='file-post-title'>{filename}</p>
+                                    </div>
+                                </div>
+                                )
+                            }
+                                
+                            </div>
+                        </Link>
+                    </div>
+                ): null
+            }
+            
             <div>
                 <small><i className="fa fa-calendar"></i>
                     Publish Date: {formatDate(date.$date)}
@@ -60,30 +137,67 @@ const PostItem = ({deletePost, postOwner, post:{_id, title, body, date,user}}) =
                 </small>
                 <small><i className="fas fa-share"></i>
                     <Link to="/dashboard" 
-                          onClick={()=>postBodyFunc(_id.$oid, body, title)}
+                          onClick={()=>postBodyFunc(_id.$oid, desc, title)}
                     >
                         share
                     </Link>
                 </small>
-                {postOwner._id.$oid === user.userId.$oid || postOwner.email === ADMIN ? (<small>
-                    <i className="fas fa-pen"></i>
-                    <Link to={{
-                        pathname: '/addpost',
-                        state: {
-                            id: _id.$oid,
-                            edit: true
-                        }
-                    }}>
-                        edit
-                    </Link>
-                </small>):null }
+                {postOwner._id.$oid === user.userId.$oid || postOwner.email === ADMIN ? (
+                    <small>
+                    {
+                        filename === 'null' ? (
+                            <>
+                            <i className="fas fa-pen"></i>
+                            <Link to={{
+                                pathname: '/addpost',
+                                state: {
+                                    id: _id.$oid,
+                                    edit: true
+                                }
+                            }}>
+                                edit
+                            </Link>
+                            </>
+                        ) : (
+                            <>
+                            <i className="fas fa-pen"></i>
+                            <Link to={{
+                                        pathname: '/addfile',
+                                        state: {
+                                                    id: fileID.$oid,
+                                                    edit:true
+                                                },
+                                    }}>
+                                edit
+                            </Link>
+                            </>
+                        )
+                    }
+                    </small>
+                ):null }
                 { postOwner._id.$oid === user.userId.$oid || postOwner.email === ADMIN ?
                 (<small>
-                    <i className="fa fa-trash" aria-hidden="true"></i>
-                    <Link to="/dashboard"
-                          onClick={()=>postDeleteId(_id.$oid)}>
-                        delete
-                    </Link>
+                    {
+                        filename === 'null' ? (
+                            <>
+                            <i className="fa fa-trash" aria-hidden="true"></i>
+                            <Link to="/dashboard"
+                                onClick={()=>postDeleteId(_id.$oid)}>
+                                delete
+                            </Link>
+                            </>
+                        ):(
+                            <>
+                            <i className="fa fa-trash" aria-hidden="true"></i>
+                            <Link to="/dashboard"
+                                onClick={()=>filePostDeleteId(_id.$oid, fileID.$oid)}>
+                                delete
+                            </Link>
+                            </>
+                            
+                        )
+                    }
+                    
                 </small> ): null}
             </div>
         </div>
@@ -121,7 +235,16 @@ const PostItem = ({deletePost, postOwner, post:{_id, title, body, date,user}}) =
           deleteId={deleteId}
           onClick={handleClose}
           onHide={handleClose}
-          deletePost = {deletePost} />
+          deletePost = {deletePost}
+          />
+        <FilePostDeleteModal
+          show={fileDeletemodalshow}
+          deleteId={deleteId}
+          fileDeleteId = {fileDeleteId}
+          onClick={handleClose}
+          onHide={handleClose}
+          deletePost = {deletePost}
+          deleteFile = {deleteFile} />
         
                            
     </>
