@@ -98,7 +98,7 @@ export const updateFile = ({formData},id, filePostID) => async dispatch => {
     }
   };
       try {
-        console.log('ID in action',filePostID);
+        //console.log('ID in action',filePostID);
         const res = await instance.put(`${API}/file_update/${id}`, formData, config);
         if(res.data.result.isError === 'true') {
             dispatch(setAlert(res.data.result.message, 'danger'));

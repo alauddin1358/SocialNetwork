@@ -120,7 +120,7 @@ const Upload = ({props, addFile,getFile,updateFile,auth, file: {files, isSuccess
         }
         else {
           if (file) {
-            formData.append('file', file); 
+            formData.append('file', file);  
             setErrorMsg(''); 
             addFile({formData},id);
             props.history.push('/dashboard');

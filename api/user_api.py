@@ -287,7 +287,7 @@ def add_user():
         if 'file' in request.files:
             _file = request.files['file']
             if _file and allowed_file(_file.filename):
-                print(_file)
+                # print(_file)
                 _imagefilename = secure_filename(_file.filename)
                 # print(filename)
                 _filename = _imagefilename.split(".")[0]
@@ -712,9 +712,18 @@ def create_post(id):
 
     _filename = _json['filename']
     _fileID = '0123456789ab0123456789ab'
+
     if 'file' in request.files:
         _file = request.files['file']
-        _filename = _file.filename
+        _filename = secure_filename(_file.filename)
+        _filenameExt = _filename.split(".")[1]
+        if _filenameExt in ALLOWED_EXTENSIONS and _id != 'null':
+            print(_filenameExt)
+            cloudinary.config(cloud_name="daf1cgy1c", api_key="228197214629277",
+                              api_secret="DferVvyNAJovYz-cOug7zIx6cR4")
+            _filenameWithoutExt = _filename.split(".")[0]
+            cloudinary.uploader.upload(_file, public_id=_filenameWithoutExt)
+
     if _id != 'null':
         if _title and _desc:
             try:
@@ -741,7 +750,24 @@ def create_post(id):
             user = mongo.db.userReg.find_one({'email': session['user']})
             _postID = 'null'
             if 'file' in request.files:
+                _file = request.files['file']
                 _file_mimetype = _file.content_type
+
+                _filename = secure_filename(_file.filename)
+                _filenameExt = _filename.split(".")[1]
+                cloudinary.config(cloud_name="daf1cgy1c", api_key="228197214629277",
+                                  api_secret="DferVvyNAJovYz-cOug7zIx6cR4")
+                print(_filenameExt)
+                if _filenameExt in ALLOWED_EXTENSIONS:
+                    print(_filenameExt)
+                    _filenameWithoutExt = _filename.split(".")[0]
+                    print(_file)
+                    _file = request.files['file']
+                    if _file and allowed_file(_file.filename):
+                        print(_filenameWithoutExt)
+                        upload_result = cloudinary.uploader.upload(
+                            request.files['file'], public_id=_filenameWithoutExt)
+
                 mongo.save_file(_file.filename, request.files['file'])
                 mongo.db.upload.insert_one(
                     {'title': _title, 'desc': _desc, 'filename': _filename,
@@ -751,8 +777,8 @@ def create_post(id):
                 for doc in _insertedRecord:
                     _newFile = doc
                     _fileID = _newFile['_id']
-                    print('DOC = ', _newFile['_id'])
-            print('Checkkkk')
+                    #print('DOC = ', _newFile['_id'])
+
             mongo.db.posts.insert_one({
                 'title': _title,
                 'desc': _desc,
@@ -768,7 +794,7 @@ def create_post(id):
                 'comments': [],
                 'date': _post_date
             })
-            print('Checkkkk')
+
             if 'file' in request.files:
                 _insertedPost = mongo.db.posts.find(
                     {}).sort('date', -1).limit(1)
@@ -784,7 +810,7 @@ def create_post(id):
             }
             return jsonify(message)
         except Exception as e:
-            print('Error in post ', e)
+            print('Error in post adding', e)
             message = {
                 'data': 'null',
                 'result': {'isError': 'true', 'message': 'post created Unsuccessfull', 'status': 201, }

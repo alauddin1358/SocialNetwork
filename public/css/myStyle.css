@@ -73,6 +73,13 @@
     overflow: hidden;
     margin-bottom: 0%;
 }
+.image-file-post {
+    padding: 10px;
+    padding-left: 70px;
+    width: 90%;
+    text-align: center;
+    height: 400px;
+}
 /* .file-post-desc {
     margin-bottom: 5px !important;
     font-family:'Lucida Sans', 'Lucida Sans Regular', 'Lucida Grande', 'Lucida Sans Unicode', Geneva, Verdana, sans-serif;
@@ -111,6 +118,11 @@
         font-size: 14px;
         margin-top: 6px;
         
+    }
+    .image-file-post {
+        padding: 10px 10px;
+        width: 90%;
+        height: 150px;
     }
 }
 .policy {

@@ -6,7 +6,9 @@ import { FacebookIcon, LinkedinIcon} from "react-share";
 import ShareModal from './ShareModal';
 import PostDeleteModal from './PostDeleteModal';
 import FilePostDeleteModal from './FilePostDeleteModal';
+import {Image} from 'cloudinary-react';
 
+const IMAGEURL = process.env.REACT_APP_CLOUDINARY;
 const ADMIN = process.env.REACT_APP_ADMIN;
 
 
@@ -104,16 +106,17 @@ const PostItem = ({index, deletePost,deleteFile, postOwner, post:{_id, title, de
                                     </div>
                                 ) : (
                                     <div className='row'>
-                                    <div className='col-lg-2 col-sm-3'>
-                                    <img className='file-post-icon' src={process.env.PUBLIC_URL + '/img/postImageIcon.png'} alt="IMAGE FILE"/>
-                                    </div>
-                                    <div className='col-lg-10 col-sm-9'>
-                                        <h6 className='file-post-header'>
+                                        <Image className="image-file-post" cloudName="daf1cgy1c" publicId={IMAGEURL+filename}/>
+                                        {/* <div className='col-lg-2 col-sm-3'>
+                                            <img className='file-post-icon' src={process.env.PUBLIC_URL + '/img/postImageIcon.png'} alt="IMAGE FILE"/>
+                                        </div>
+                                        <div className='col-lg-10 col-sm-9'>
+                                            <h6 className='file-post-header'>
                                             IMAGE
-                                        </h6>
-                                        <p className='file-post-title'>{filename}</p>
+                                            </h6>
+                                            <p className='file-post-title'>{filename}</p>
+                                        </div> */}
                                     </div>
-                                </div>
                                 )
                             }
                                 
