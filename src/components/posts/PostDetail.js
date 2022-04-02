@@ -9,6 +9,9 @@ import CommentForm from './CommentForm';
 import CommentItem from './CommentItem';
 import Spinner from '../layout/Spinner';
 import Alert from '../layout/Alert';
+import {Image} from 'cloudinary-react';
+
+const IMAGEURL = process.env.REACT_APP_CLOUDINARY;
 const PostDetail = ({getPost, post:{post, loading}, match, auth:{user}}) => {
     useEffect(() => {
         console.log("Calling Getpost in useeffect");
@@ -54,16 +57,8 @@ const PostDetail = ({getPost, post:{post, loading}, match, auth:{user}}) => {
                                     </div>
                                 ) : (
                                     <div className='row'>
-                                    <div className='col-lg-2 col-sm-3'>
-                                    <img className='file-post-icon' src={process.env.PUBLIC_URL + '/img/postImageIcon.png'} alt="IMAGE FILE"/>
+                                        <Image className="image-file-post" cloudName="daf1cgy1c" publicId={IMAGEURL+post.filename}/>
                                     </div>
-                                    <div className='col-lg-10 col-sm-9'>
-                                        <h6 className='file-post-header'>
-                                            IMAGE
-                                        </h6>
-                                        <p className='file-post-title'>{post.filename}</p>
-                                    </div>
-                                </div>
                                 )
                             }
                                 

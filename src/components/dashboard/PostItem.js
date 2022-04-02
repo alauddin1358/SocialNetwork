@@ -71,8 +71,13 @@ const PostItem = ({index, deletePost,deleteFile, postOwner, post:{_id, title, de
     <>
         <div className="card-body">
             <h5><Link to={`/post/${_id.$oid}`}>
-               {title} 
+            {
+                title.length > 160 ? title.slice(0, 161): title
+            }
                 </Link>
+            {
+                title.length > 160 ? <span style={{paddingLeft:3}}>....</span> : null
+            }
             </h5>
             <p>
             {isReadDescMore === index ? desc : desc.slice(0, 300)}
@@ -98,10 +103,14 @@ const PostItem = ({index, deletePost,deleteFile, postOwner, post:{_id, title, de
                                     <img className='file-post-icon' src={process.env.PUBLIC_URL + '/img/pdfIcon.png'} alt="PDF FILE"/>
                                     </div>
                                     <div className='col-lg-10 col-sm-9'>
-                                        <h6 className='file-post-header'>
-                                            PDF
-                                        </h6>
-                                        <p className='file-post-title'>{filename}</p>
+                                        <p className='file-post-title'>
+                                        {
+                                            title.length > 60 ? title.slice(0, 67): title
+                                        }
+                                        {
+                                            title.length > 60 ? <span style={{paddingLeft:3}}>....</span> : null
+                                        }
+                                        </p>
                                     </div>
                                     </div>
                                 ) : (

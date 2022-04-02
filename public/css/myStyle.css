@@ -66,11 +66,13 @@
 }
 .file-post-title {
     font-family:Georgia, 'Times New Roman', Times, serif;
+    padding-top: 10px;
+    text-align: center;
     font-weight: bold;
-    font-size: smaller;
+    font-size: medium;
     max-width: 95%;
-    height: 25px;
-    overflow: hidden;
+    height: 35px;
+    
     margin-bottom: 0%;
 }
 .image-file-post {
