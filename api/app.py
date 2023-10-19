@@ -42,7 +42,11 @@ app = Flask(__name__)
 # random secrect key initialization
 app.secret_key = "thisisthesecretkey"
 # db config
-app.config['MONGO_URI'] = "mongodb://localhost:27017/userReg"
+# New MongoDB Connection Locally
+app.config['MONGO_URI'] = "mongodb://localhost:27017/agriculturist"
+
+
+# app.config['MONGO_URI'] = "mongodb://localhost:27017/userReg"
 # app.config['MONGO_URI'] = "mongodb://root:iritadb2021@127.0.0.1:27020/userReg?authSource=admin"
 # app.config['MONGO_URI'] = "mongodb://admin:iritadb2021@localhost:27020/userReg?authSource=admin"
 
@@ -260,9 +264,9 @@ def add_user():
         _address = _json['address']
         _country = _json['country']
 
-        _referrer_name = _json['referrer_name']
-        _referrer_email = _json['referrer_email']
-        _emailconfirm = False
+        # _referrer_name = _json['referrer_name']
+        # _referrer_email = _json['referrer_email']
+        # _emailconfirm = False
         # print(_referrer_email)
         _password = bcrypt.generate_password_hash(
             _json['password']).decode('utf-8')
@@ -275,14 +279,15 @@ def add_user():
                 'result': {'isError': 'true', 'message': 'Email is already exists', 'status': 200, }
             }
             return jsonify(message)
-        existing_referrer = mongo.db.userReg.find_one(
-            {'email': _referrer_email})
+        """
+        existing_referrer = mongo.db.userReg.find_one({'email': _referrer_email})
         if (existing_referrer is None):
             message = {
                 'data': "null",
                 'result': {'isError': 'true', 'message': 'Referrer Email is invalid or not exist in our system', 'status': 200, }
             }
             return jsonify(message)
+        """
         cloudinary.config(cloud_name="daf1cgy1c", api_key="228197214629277",
                           api_secret="DferVvyNAJovYz-cOug7zIx6cR4")
         upload_result = None
@@ -314,25 +319,26 @@ def add_user():
                                                  'passwordconfirm': _passwordconfirm, 'user_category': _user_category,
                                                  'student_type': _student_type, 'job_type': _job_type,
                                                  'specialization_type': _specialization_type, 'address': _address, 'phone': _phone,
-                                                 'country': _country, 'image': _image, 'referrer_name': _referrer_name,
-                                                 'referrer_email': _referrer_email, 'emailconfirm': _emailconfirm,
+                                                 'country': _country, 'image': _image,
                                                  'roles': [], 'groups': [], 'ts': [], 'friends': []})
 
             # mongo.db.upload.insert({'upload_file_name': _file.filename})
             # for json response
             # print(_insertId)
+            """
             token = safeSerializer.dumps(
                 _referrer_email, salt='email-confirm')
             msg = Message(subject='Account Confirmation',
                           sender='admin@iritatech.com', recipients=[_referrer_email])
             link = url_for('confirm_email', token=token,
                            id=_insertId, _external=True)
-            msg.body = """A user {} wants to create account using your reference.
-            The user acivation link is {}""".format(_name, link)
-            msgReply = mail.send(msg)
+            """
+            # msg.body = """A user {} wants to create account using your reference.The user acivation link is {}""".format(_name, link)
+            # msgReply = mail.send(msg)
+
             message = {
                 'data': "null",
-                'result': {'isError': 'false', 'message': 'Registration successfull, Mail has been sent to your referrer email. Tell your referrer to activate the link', 'status': 200, }
+                'result': {'isError': 'false', 'message': 'Registration successfull', 'status': 200, }
             }
             return jsonify(message)
         else:
@@ -347,6 +353,7 @@ def add_user():
 # Confirm Email
 
 
+"""
 @app.route('/confirm_account')
 def confirm_account():
     return 'Successful'
@@ -374,8 +381,8 @@ def confirm_email(token, id):
             msg = Message(subject='Account Confirmation',
                           sender='admin@iritatech.com', recipients=[_userEmail])
             link = url_for('confirm_account', _external=True)
-            msg.body = """Hello, Your account was successfully created in https://agriculturist.org
-            Please click the link to login"""
+            msg.body = ""Hello, Your account was successfully created in https://agriculturist.org
+            Please click the link to login""
             msgReply = mail.send(msg)
     except SignatureExpired:
         _id = id
@@ -394,6 +401,8 @@ def confirm_email(token, id):
             mongo.db.userReg.delete_one({'_id': ObjectId(_id)})
         return '<h1>The account is not registered</h1>'
     return '<h1>The account is activated! Now the user can login.</h1>'
+    """
+
 
 # Sending resetForm Link if Forget password
 
@@ -470,7 +479,7 @@ def resetPassword():
 def getAllUser():
 
     # mongo query for finding all value
-    users = mongo.db.userReg.find({'emailconfirm': True})
+    users = mongo.db.userReg.find()
     # print(user)
     if users:
         message = {
@@ -628,8 +637,8 @@ def update_user(id):
 
         _image = _imagefilename
 
-        _referrer_name = _json['referrer_name']
-        _referrer_email = _json['referrer_email']
+        # _referrer_name = _json['referrer_name']
+        # _referrer_email = _json['referrer_email']
         _password = _json['password']
         _passwordconfirm = _json['passwordconfirm']
         if _name and _email and _id and request.method == 'PUT':
@@ -640,8 +649,7 @@ def update_user(id):
                                                   'passwordconfirm': _passwordconfirm, 'user_category': _user_category,
                                                   'student_type': _student_type, 'job_type': _job_type,
                                                   'specialization_type': _specialization_type, 'address': _address, 'phone': _phone,
-                                                  'country': _country, 'image': _image, 'referrer_name': _referrer_name,
-                                                  'referrer_email': _referrer_email,
+                                                  'country': _country, 'image': _image,
                                                   'roles': [], 'groups': [], 'ts': [], 'friends': []}}
                                         )
             mongo.db.posts.update_many({'user.userId': ObjectId(_id['$oid']) if '$oid' in _id else ObjectId(_id)},
