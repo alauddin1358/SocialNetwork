@@ -83,14 +83,14 @@ const Register = ({userRegister, isAuthenticated}) => {
             //     message: "Phone number contains only digit"
             // }
         },
-        referrer_name: {required: "Referrer Name is required"},
+        /*referrer_name: {required: "Referrer Name is required"},
         referrer_email: {
             required: "Referrer Email is required",
             pattern: {
                 value: /^(([^<>()[\]\\.,;:!*&$#\s@"]+(\.[^<>()[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,4}))$/,
                 message: "Enter a valid e-mail address",
               }
-        }
+        } */
     };
     const [file, setFile] = useState('');
     const [image, setImage] = useState('../../img/user-profile.png');
@@ -208,7 +208,7 @@ const Register = ({userRegister, isAuthenticated}) => {
         //alert(JSON.stringify(form_data))
         form_data.append('file', file);
         // form_data.append('image', image);
-        form_data.append('emailconfirm', false);
+        //form_data.append('emailconfirm', false);
         form_data.append('job_type','');
         form_data.append('student_type','');
         form_data.append('specialization_type','');
@@ -596,6 +596,7 @@ const Register = ({userRegister, isAuthenticated}) => {
                             </div>
                         </div>
                     </div>     
+                    {/*
                     <h3>Referred By: </h3>   
                     <div className="flex-inline ">
                         <label>Name: * </label>
@@ -614,6 +615,7 @@ const Register = ({userRegister, isAuthenticated}) => {
                        
                     </div>
                     {errors.referrer_email && <span className="text-danger">{errors.referrer_email.message}</span>}
+                                */}
                     <button>Registration</button>
                     <Alert />
                     <p text-align="center">* Marked fields are required. Please fill up these fields <br/><br/>

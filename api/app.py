@@ -43,7 +43,7 @@ app = Flask(__name__)
 app.secret_key = "thisisthesecretkey"
 # db config
 # New MongoDB Connection Locally
-app.config['MONGO_URI'] = "mongodb://localhost:27017/agriculturist"
+app.config['MONGO_URI'] = "mongodb://localhost:27017/userReg"
 
 
 # app.config['MONGO_URI'] = "mongodb://localhost:27017/userReg"
@@ -127,6 +127,32 @@ def unprotected():
     return jsonify({'message': 'Anyone can view this'})
 
 
+@ app.errorhandler(404)
+def not_found(error=None):
+    message = {
+        'data': "null",
+        'result': {'isError': 'true', 'message': 'Not Found', 'status': 404, }
+    }
+    return jsonify(message)
+
+
+@ app.errorhandler(400)
+def bad_request(error=None):
+    message = {
+        'data': "null",
+        'result': {'isError': 'true', 'message': 'bad_request', 'status': 400, }
+    }
+    return jsonify(message)
+
+
+@ app.errorhandler(500)
+def internal_error(error=None):
+    message = {
+        'data': "null",
+        'result': {'isError': 'true', 'message': 'INTERNAL SERVER ERROR', 'status': 500, }
+    }
+    return jsonify(message)
+
 # for valid users with token
 
 
@@ -163,38 +189,41 @@ def protected():
 def login():
     try:
         _json = request.json
-        # print(_json)
+        print(_json)
         # _name = _json['name']
         _email = _json['email']
         _password = _json['password']
         # if email & name is matched
         response = mongo.db.userReg.find_one({'email': _email})
         if response:
-            if response['emailconfirm']:
-                if bcrypt.check_password_hash(response['password'], _password):
-                    # generating token and set token time 60 minutes
-                    token = jwt.encode({'user': response['email'], 'exp': datetime.datetime.utcnow(
-                    ) + datetime.timedelta(minutes=1060)}, app.config['SECRET_KEY'])
-                    # usermail
-                    # print(token)
-                    # returning the token
-                    message = {
-                        'data': {'token': token},
-                        'result': {'isError': 'false', 'message': 'Login Successful', 'status': 200, }
-                    }
-                    return jsonify(message)
-                else:
-                    message = {
-                        'data': 'null',
-                        'result': {'isError': 'true', 'message': 'password is invalid', 'status': 401, }
-                    }
-                    return jsonify(message)
+            # if response['emailconfirm']:
+            if bcrypt.check_password_hash(response['password'], _password):
+                # generating token and set token time 60 minutes
+                token = jwt.encode({'user': response['email'], 'exp': datetime.datetime.utcnow(
+                ) + datetime.timedelta(minutes=1060)}, app.config['SECRET_KEY'])
+                # usermail
+
+                # returning the token
+                message = {
+                    'data': {'token': token.decode('UTF-8')},
+                    'result': {'isError': 'false', 'message': 'Login Successful', 'status': 200, }
+                }
+                print(token)
+                return jsonify(message)
+            else:
+                message = {
+                    'data': 'null',
+                    'result': {'isError': 'true', 'message': 'password is invalid', 'status': 401, }
+                }
+                return jsonify(message)
+            """
             else:
                 message = {
                     'data': 'null',
                     'result': {'isError': 'true', 'message': 'User Account is not activated', 'status': 401, }
                 }
                 return jsonify(message)
+            """
         else:
             message = {
                 'data': 'null', 'result': {'isError': 'true', 'message': 'Username or password is invalid', 'status': 401, }
@@ -267,7 +296,7 @@ def add_user():
         # _referrer_name = _json['referrer_name']
         # _referrer_email = _json['referrer_email']
         # _emailconfirm = False
-        # print(_referrer_email)
+        print(_email)
         _password = bcrypt.generate_password_hash(
             _json['password']).decode('utf-8')
         _passwordconfirm = bcrypt.generate_password_hash(
@@ -290,14 +319,16 @@ def add_user():
         """
         cloudinary.config(cloud_name="daf1cgy1c", api_key="228197214629277",
                           api_secret="DferVvyNAJovYz-cOug7zIx6cR4")
+
         upload_result = None
         if 'file' in request.files:
             _file = request.files['file']
             if _file and allowed_file(_file.filename):
                 # print(_file)
                 _imagefilename = secure_filename(_file.filename)
-                # print(filename)
+
                 _filename = _imagefilename.split(".")[0]
+                print(_filename)
                 # app.logger.info('%s file_to_upload', _file)
                 upload_result = cloudinary.uploader.upload(
                     _file, public_id=_filename)
@@ -314,17 +345,19 @@ def add_user():
         if _name and _email and _password and request.method == 'POST' and (existing_user is None):
             # insert details and generate id
             # mongo.save_file(_file.filename, _file)
-            _insertId = mongo.db.userReg.insert({'firstname': _firstname, 'middlename': _middlename, 'lastname': _lastname, 'name': _name,
-                                                 'email': _email, 'password': _password,
-                                                 'passwordconfirm': _passwordconfirm, 'user_category': _user_category,
-                                                 'student_type': _student_type, 'job_type': _job_type,
-                                                 'specialization_type': _specialization_type, 'address': _address, 'phone': _phone,
-                                                 'country': _country, 'image': _image,
-                                                 'roles': [], 'groups': [], 'ts': [], 'friends': []})
+
+            _insertId = mongo.db.userReg.insert_one({'firstname': _firstname, 'middlename': _middlename, 'lastname': _lastname, 'name': _name,
+                                                     'email': _email, 'password': _password,
+                                                     'passwordconfirm': _passwordconfirm, 'user_category': _user_category,
+                                                     'student_type': _student_type, 'job_type': _job_type,
+                                                     'specialization_type': _specialization_type, 'address': _address, 'phone': _phone,
+                                                     'country': _country, 'image': _image,
+                                                     'roles': [], 'groups': [], 'ts': [], 'friends': []})
 
             # mongo.db.upload.insert({'upload_file_name': _file.filename})
             # for json response
-            # print(_insertId)
+            print(_insertId)
+            print(_name)
             """
             token = safeSerializer.dumps(
                 _referrer_email, salt='email-confirm')
@@ -347,7 +380,8 @@ def add_user():
                 'result': {'isError': 'true', 'message': 'User added unsuccessfull', 'status': 200, }
             }
             return jsonify(message)
-    except:
+    except Exception as e:
+        print(e)
         return internal_error()
 
 # Confirm Email
@@ -673,32 +707,6 @@ def update_user(id):
         print('Error in upload', e)
         return internal_error()
 
-
-@ app.errorhandler(404)
-def not_found(error=None):
-    message = {
-        'data': "null",
-        'result': {'isError': 'true', 'message': 'Not Found', 'status': 404, }
-    }
-    return jsonify(message)
-
-
-@ app.errorhandler(400)
-def bad_request(error=None):
-    message = {
-        'data': "null",
-        'result': {'isError': 'true', 'message': 'bad_request', 'status': 400, }
-    }
-    return jsonify(message)
-
-
-@ app.errorhandler(500)
-def internal_error(error=None):
-    message = {
-        'data': "null",
-        'result': {'isError': 'true', 'message': 'INTERNAL SERVER ERROR', 'status': 500, }
-    }
-    return jsonify(message)
 # -----------OTP generate-------------------
 # -----------Registration End---------------
 
@@ -943,7 +951,7 @@ def new_comment(id):
         'date': datetime.datetime.now()
     }
 
-    mongo.db.posts.update(
+    mongo.db.posts.update_one(
         {'_id': ObjectId(_post_id)},
         {
             '$push': {
@@ -1060,12 +1068,12 @@ def comment_reply(pid, cid):
         return 'error'
     try:
         # adding reply against specific comment to database
-        mongo.db.posts.update({'_id': ObjectId(_post_id),
-                               'comments._id': ObjectId(_comment_id)},
-                              {'$push': {'comments.$.child': {
-                                  'repBody': _creply_body,
-                                  'user': session['user'],
-                                  'date': datetime.datetime.now()}}})
+        mongo.db.posts.update_one({'_id': ObjectId(_post_id),
+                                   'comments._id': ObjectId(_comment_id)},
+                                  {'$push': {'comments.$.child': {
+                                      'repBody': _creply_body,
+                                      'user': session['user'],
+                                      'date': datetime.datetime.now()}}})
     except:
         return 'error'
     message = {
@@ -1189,6 +1197,7 @@ def file(filename):
     # response = make_response(send_file(filename, mimetype='image/png'))
     # response.headers['Content-Transfer-Encoding'] = 'base64'
     # return response
+    print(filename)
     return mongo.send_file(filename)
 
 
@@ -1321,7 +1330,7 @@ def upload_advertise():
             upload_result = cloudinary.uploader.upload(
                 _advertiseFile, public_id=_advfile_name)
             app.logger.info(upload_result)
-            mongo.db.advertiseUpload.insert(
+            mongo.db.advertiseUpload.insert_one(
                 {'advertisement_type': _advertisement_type, 'filename': _adv_name,
                  'file_mimetype': _advfile_mimetype, 'user': session['user'], 'date': datetime.datetime.now()})
             # print(_advfile_name)
@@ -1402,7 +1411,7 @@ def add_service():
     existing_service = mongo.db.services.find_one({'name': _service_name})
     if _service_name and (existing_service is None) and request.method == 'POST':
         # insert new service
-        mongo.db.services.insert(
+        mongo.db.services.insert_one(
             {'name': _service_name, 'description': _description})
         message = {
             'data': "null",
@@ -1450,10 +1459,11 @@ def serviceto_role():
     existing_service = mongo.db.services.find_one({'name': _service_name, })
     # Add new service if not exist
     if (existing_service is None) and _role_name:
-        mongo.db.services.insert({'name': _service_name, 'description': ''})
+        mongo.db.services.insert_one(
+            {'name': _service_name, 'description': ''})
     # Add new role if not exist
     if (existing_role is None) and _service_name:
-        mongo.db.roles.insert(
+        mongo.db.roles.insert_one(
             {'name': _role_name, 'description': '', 'services': []})
     # check if Role already has the service
     if _role_name and existing_service:
@@ -1536,10 +1546,11 @@ def serviceto_group():
     existing_service = mongo.db.services.find_one({'name': _service_name})
     # Add new service if not exist
     if (existing_service is None) and _group_name:
-        mongo.db.services.insert({'name': _service_name, 'description': ''})
+        mongo.db.services.insert_one(
+            {'name': _service_name, 'description': ''})
     # Add new group if not exist
     if _group_name and (existing_group is None):
-        mongo.db.groups.insert(
+        mongo.db.groups.insert_one(
             {'name': _group_name, 'description': '', 'roles': [], 'services': []})
     # check if Gropu already has the service
     if _group_name and existing_service:
@@ -1571,7 +1582,7 @@ def roleto_group():
     existing_role = mongo.db.roles.find_one({'name': _role_name})
     # Add new group if not exist
     if _group_name and (existing_group is None):
-        mongo.db.groups.insert(
+        mongo.db.groups.insert_one(
             {'name': _group_name, 'description': '', 'roles': [], 'services': []})
     # check if Group already has the Role
     if _group_name and existing_role:

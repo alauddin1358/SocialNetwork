@@ -99,9 +99,9 @@ export const getAllUsers = () => async dispatch => {
 // Register User
 export const userRegister = ({form_data}) => async dispatch => {
   try {
-    //console.log(API);
+    console.log(API);
     const res = await axios.post(`${API}/add`, form_data);
-    //console.log('Users data', res.data);
+    console.log('Users data', res.data);
     if(res.data.result.isError === 'true') {
       dispatch(setAlert(res.data.result.message, 'danger'));
     }

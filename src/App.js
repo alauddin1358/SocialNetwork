@@ -60,7 +60,7 @@ const App = () => {
               <Route exact path="/sharepost/:id" component = {SharePage} />
               <Route exact path="/searchuser" render={(props) => <SearchUserListContainer {...props}/>} />
               <Route exact path="/privacypolicy" component = {PrivacyPolicy} />
-            </Switch>
+            </Switch> 
           
         </Fragment>
 

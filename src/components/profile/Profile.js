@@ -5,7 +5,7 @@ import Footer from '../dashboard/Footer';
 import ProfilePage from './ProfilePage';
 import Alert from '../layout/Alert';
 const Profile = (props) => {
-    //console.log('Props in profile', props);
+    console.log('Props in profile', props);
     return (
         <Fragment>
             <div id="wrapper">

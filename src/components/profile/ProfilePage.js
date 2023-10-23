@@ -35,8 +35,6 @@ const initialState = {
   address: '',
   country: '',
   image: '',
-  referrer_name: '',
-  referrer_email: '',
 };
 
 const ProfilePage = ({
@@ -85,7 +83,7 @@ const ProfilePage = ({
     }, 5000);
     
   }, [loading, user, loadUser, getAllUsers]);
-  //console.log('Loading in Profilepage', loading);
+  console.log('Loading in Profilepage', loading);
   //console.log('User in ProfilePage', user);
   if (props.location.state) {
     //console.log('Calling location state');
@@ -130,8 +128,6 @@ const ProfilePage = ({
     address,
     country,
     image,
-    referrer_name,
-    referrer_email,
   } = formData;
   const addFriendRequest = (id) => {
     sendFriendRequest(id);
@@ -740,7 +736,8 @@ const ProfilePage = ({
                                 alt='profile'
                               />
                             </div>
-                          </div>
+                        </div>
+                        {/*
                           <fieldset>
                             <legend>Referred By *</legend>
                             <div className='form-group'>
@@ -763,7 +760,8 @@ const ProfilePage = ({
                                 onChange={onChange}
                               />
                             </div>
-                          </fieldset>
+                        </fieldset>
+                          */}
                           <Alert />
                         </div>
 
