@@ -194,7 +194,7 @@ export const updateProfile = (id, {form_data}) => async dispatch => {
 export const logout = () => dispatch => {  
   //dispatch( { type : CLEAR_PROFILE });
   dispatch( {type: LOGOUT} );
-  window.location.replace("https://agriculturist.org");
+  window.location.replace("http://15.235.163.6");
   //window.location.replace("http://localhost:3000"); 
   //dispatch(loadUser());
 };
