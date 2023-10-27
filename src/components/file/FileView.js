@@ -8,7 +8,10 @@ import FileHeader from './FileHeader';
 import { Document, Page, pdfjs } from 'react-pdf';
 
 const API = process.env.REACT_APP_API;
+
 pdfjs.GlobalWorkerOptions.workerSrc = `//cdnjs.cloudflare.com/ajax/libs/pdf.js/${pdfjs.version}/pdf.worker.js`;
+
+
 
 const FileView = ({match}) => {
     useEffect(() => {
@@ -35,7 +38,7 @@ const FileView = ({match}) => {
           setFileExtension(fileExt);
           
           const fileURL = URL.createObjectURL(result.data)
-          //console.log("File URL = ", fileRet);
+          console.log("File URL = ", fileURL);
           setFileURL(fileURL);
           setErrorMsg('');
         } catch (error) {

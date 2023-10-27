@@ -43,10 +43,13 @@ app = Flask(__name__)
 app.secret_key = "thisisthesecretkey"
 # db config
 # New MongoDB Connection Locally
-app.config['MONGO_URI'] = "mongodb://localhost:27017/userReg"
-
-
 # app.config['MONGO_URI'] = "mongodb://localhost:27017/userReg"
+
+# MongoDB Atlas
+# app.config['MONGO_URI'] = "mongodb+srv://alauddin:01767ali@cluster0.qyaqkin.mongodb.net/userReg"
+
+
+app.config['MONGO_URI'] = "mongodb://localhost:27017/userReg"
 # app.config['MONGO_URI'] = "mongodb://root:iritadb2021@127.0.0.1:27020/userReg?authSource=admin"
 # app.config['MONGO_URI'] = "mongodb://admin:iritadb2021@localhost:27020/userReg?authSource=admin"
 
@@ -1100,7 +1103,7 @@ def file_upload():
             _file = request.files['file']
             _filename = _file.filename
             _file_mimetype = _file.content_type
-            mongo.save_file(_file.filename, request.files['file'])
+            mongo.save_file(_filename, request.files['file'])
 
         # _filedata = _json['filedata']
 
@@ -1127,9 +1130,6 @@ def file_upload():
         _insertedRecord = mongo.db.upload.find({}).sort('date', -1).limit(1)
         # mongo.db.upload.insert({'upload_file_name': _file.filename})
 
-        for doc in _insertedRecord:
-            _newFile = doc
-            print('DOC = ', _newFile['_id'])
         message = {
             # 'data': dumps(_file.filename),
             'data': "null",
@@ -1199,6 +1199,8 @@ def file(filename):
     # return response
     print(filename)
     return mongo.send_file(filename)
+
+# Delete file
 
 
 @ app.route('/fileDelete/<id>', methods=['DELETE'])
