@@ -1832,7 +1832,7 @@ def update():
 @ token_required
 def getPendFrUser():
     # mongo query for finding all value
-    users = mongo.db.userReg.find({'emailconfirm': True})
+    users = mongo.db.userReg.find()
     user = mongo.db.userReg.find_one(
         {'email': session['user']})
     # print(pend_fruser)
@@ -1865,7 +1865,7 @@ def getPendFrUser():
 @ token_required
 def getUserFriend():
     # mongo query for finding all value
-    users = mongo.db.userReg.find({'emailconfirm': True})
+    users = mongo.db.userReg.find()
     user = mongo.db.userReg.find_one(
         {'email': session['user']})
     # print(pend_fruser)
@@ -1897,7 +1897,7 @@ def getUserFriend():
 @ token_required
 def getFriendSuggestion():
     # mongo query for finding all value
-    users = mongo.db.userReg.find({'emailconfirm': True})
+    users = mongo.db.userReg.find()
     user = mongo.db.userReg.find_one(
         {'email': session['user']})
     friend_suggestion = []

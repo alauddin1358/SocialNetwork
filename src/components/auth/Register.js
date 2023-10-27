@@ -2,37 +2,26 @@ import React, { useState } from 'react';
 import { connect } from 'react-redux';
 //import { bindActionCreators } from 'redux';
 import { Link } from 'react-router-dom';
-import { userRegister } from '../../actions/auth';
+//import { userRegister } from '../../actions/auth';
 import PropTypes from 'prop-types';
-//import { setAlert } from '../../actions/alert';
 import Alert from '../layout/Alert';
 import Compress from "browser-image-compression";
-
+import store from '../../store';
 import { useForm } from "react-hook-form";
+import {
+    REGISTER_SUCCESS,
+    REGISTER_FAIL
+  } from '../../actions/types';
+import axios from 'axios';
+import { setAlert } from '../../actions/alert';
+const API = process.env.REACT_APP_API;
 
-// const initialState = {
-//     firstname: '',
-//     middlename: '',
-//     lastname: '',
-//     user_category: '',
-//     student_type: '',
-//     job_type: '',
-//     specialization_type: '',
-//     email: '',
-//     phone: '',
-//     password: '',
-//     passwordconfirm: '',
-//     address: '',
-//     country: '',
-//     referrer_name: '',
-//     referrer_email: '',
-//     emailconfirm: false
-//   }
-const Register = ({userRegister, isAuthenticated}) => {
+const Register = ({isAuthenticated}) => {
     const { register, handleSubmit, errors, getValues, reset } = useForm({
         mode: 'onTouched',
         });
-    const {password} = getValues();
+    const { password } = getValues();
+    const [disable, setDisable] = useState(false);
     const registerOptions = {
         firstname: { 
                 required: "Firstname is required",
@@ -94,74 +83,7 @@ const Register = ({userRegister, isAuthenticated}) => {
     };
     const [file, setFile] = useState('');
     const [image, setImage] = useState('../../img/user-profile.png');
-    // const [formData, setFormData] = useState(initialState);
     
-    // const { firstname, middlename, lastname, user_category, email, phone,
-    //    passwordconfirm, address, country,
-    //    referrer_name, referrer_email } = formData;
-    
-    // const onChange = (e) =>
-    //       setFormData({ ...formData, [e.target.name]: e.target.value });
-    // function processfile(blob, options) {
-    //     // read the files
-    //     var reader = new FileReader();
-    //     reader.readAsArrayBuffer(blob);
-    //     var resized;
-    //     reader.onload = function (event) {
-    //       // blob stuff
-    //       var blob = new Blob([event.target.result]); // create blob...
-    //       window.URL = window.URL || window.webkitURL;
-    //       var blobURL = window.URL.createObjectURL(blob); // and get it's URL
-          
-    //       // helper Image object
-    //       var image = new Image();
-    //       image.src = blobURL;
-    //       image.onload = function() {
-    //         // have to wait till it's loaded
-    //         resized = resizeMe(image, options); // resized image url
-    //         setImage(resized);
-    //         console.log('Resize image = ', resized);
-    //       }
-    //     };
-    //     // console.log('Resize image = ', resized);
-    //     // return resized;
-    // }
-    
-    // === RESIZE ====
-    
-    // function resizeMe(img, options) {
-      
-    //   var canvas = document.createElement('canvas');
-    
-    //   var width = img.width;
-    //   var height = img.height;
-    
-    //   // calculate the width and height, constraining the proportions
-    //   if (width > height) {
-    //     if (width > options.maxWidth) {
-    //       //height *= max_width / width;
-    //       height = Math.round(height *= options.maxWidth / width);
-    //       width = options.maxWidth;
-    //     }
-    //   } else {
-    //     if (height > options.max_height) {
-    //       //width *= max_height / height;
-    //       width = Math.round(width *= options.max_height / height);
-    //       height = options.max_height;
-    //     }
-    //   }
-      
-    //   // resize the canvas and draw the image data into it
-    //   canvas.width = width;
-    //   canvas.height = height;
-    //   var ctx = canvas.getContext("2d");
-    //   ctx.drawImage(img, 0, 0, width, height);
-      
-    //   return canvas.toDataURL("image/jpeg",0.5); // get the data from canvas as 70% JPG (can be also PNG, etc.)
-      
-    //   // you can get BLOB too by using canvas.toBlob(blob => {});
-    
-    // }
     const imageHandler = async (e) => {
         setFile(e.target.files[0]);
         var fileUpload = e.target.files[0];
@@ -203,6 +125,7 @@ const Register = ({userRegister, isAuthenticated}) => {
         //alert(data);
         //e.preventDefault();
         //console.log(formData);
+        setDisable(true);
         const form_data = getFormData(data);
         //console.log(form_data);
         //alert(JSON.stringify(form_data))
@@ -211,10 +134,37 @@ const Register = ({userRegister, isAuthenticated}) => {
         //form_data.append('emailconfirm', false);
         form_data.append('job_type','');
         form_data.append('student_type','');
-        form_data.append('specialization_type','');
-        userRegister({ form_data })
-        //reset();
-        //setValue('');   
+        form_data.append('specialization_type', '');
+        //const val = await userRegister({ form_data })
+        try {
+    
+            const res = await axios.post(`${API}/add`, form_data);
+            console.log('Users data', res.data);
+            if (res.data.result.isError === 'true') {
+                store.dispatch({
+                    type: REGISTER_FAIL
+                });
+                store.dispatch(setAlert(res.data.result.message, 'danger'));
+            }
+            else {
+                store.dispatch({
+                    type: REGISTER_SUCCESS,
+                    payload: res.data
+                });
+                store.dispatch(setAlert(res.data.result.message, 'success'));
+                reset();
+                setImage('../../img/user-profile.png');
+            }
+        } catch (err) {
+            console.log("Error in registration = ", err);
+            store.dispatch(setAlert('Server Error', 'danger'));
+            // const errors = err.response;
+            // console.log(errors);
+            store.dispatch({
+                type: REGISTER_FAIL
+            });
+        }
+        setDisable(false);
     };
     
     // if(isAuthenticated) {
@@ -616,7 +566,7 @@ const Register = ({userRegister, isAuthenticated}) => {
                     </div>
                     {errors.referrer_email && <span className="text-danger">{errors.referrer_email.message}</span>}
                                 */}
-                    <button>Registration</button>
+                    <button disabled={disable}>Registration</button>
                     <Alert />
                     <p text-align="center">* Marked fields are required. Please fill up these fields <br/><br/>
                         Already have an account? <Link to="/login">Login Here</Link>
@@ -628,7 +578,6 @@ const Register = ({userRegister, isAuthenticated}) => {
     )
 };
 Register.propTypes = {
-    userRegister: PropTypes.func.isRequired,
     isAuthenticated: PropTypes.bool
   };
   
@@ -643,4 +592,4 @@ const mapStateToProps = (state) => ({
 //         }, dispatch)
 //     }
 // }
-export default connect(mapStateToProps, {userRegister})(Register);
+export default connect(mapStateToProps)(Register);
