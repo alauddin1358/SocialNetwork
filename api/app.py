@@ -55,11 +55,11 @@ app.config['MONGO_URI'] = "mongodb://localhost:27017/userReg"
 
 
 # configuration for flask-mail
-app.config["MAIL_SERVER"] = 'webmail.iritatech.com'
+app.config["MAIL_SERVER"] = 'smtp.gmail.com'
 app.config["MAIL_PORT"] = 465
-app.config["MAIL_USERNAME"] = 'admin@iritatech.com'
+app.config["MAIL_USERNAME"] = 'ali.ak133058@gmail.com'
 # app.config['MAIL_PASSWORD'] = 'X5Y[qN!GM3Yu'
-app.config['MAIL_PASSWORD'] = 'kV32_9ZZ}B2s'
+app.config['MAIL_PASSWORD'] = 'rsjp jihc iknf fppd'
 
 
 app.config['MAIL_USE_TLS'] = False
@@ -390,12 +390,12 @@ def add_user():
 # Confirm Email
 
 
-"""
 @app.route('/confirm_account')
 def confirm_account():
     return 'Successful'
 
 
+"""
 @app.route('/confirm_email/<token>/<id>')
 def confirm_email(token, id):
     try:
@@ -458,13 +458,13 @@ def forgotPassword():
                 _email, salt='email-confirm')
 
             msg = Message(subject='Reset password',
-                          sender='admin@iritatech.com', recipients=[_email])
-            print(_json)
+                          sender='ali.ak133058@gmail.com', recipients=[_email])
             link = url_for('confirm_account', token=token, _external=True)
-            msg.body = """Click the link to reset password https://agriculturist.org/resetpassword"""
+            msg.body = """Click the link to reset password http://localhost:3000/resetpassword"""
             # msg.body = """Click the link to reset password https://www.agriculturist.org/resetpassword"""
 
             mail.send(msg)
+            print(_json)
             # print(msg)
             message = {
                 'data': "null",

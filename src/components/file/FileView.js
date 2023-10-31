@@ -34,7 +34,7 @@ const FileView = ({match}) => {
           
           let fileExt = filename.split('.').pop();
           
-          console.log("File Extension = ", fileExt);
+          console.log("Result data = ", result.data);
           setFileExtension(fileExt);
           
           const fileURL = URL.createObjectURL(result.data)
