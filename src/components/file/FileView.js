@@ -1,11 +1,12 @@
 import React, { useState, Fragment, useEffect } from 'react';
 import axios from 'axios';
-import Sidebar from '../dashboard/Sidebar';
-import Topbar from '../dashboard/Topbar';
-import Footer from '../dashboard/Footer';
+//import Sidebar from '../dashboard/Sidebar';
+//import Topbar from '../dashboard/Topbar';
+//import Footer from '../dashboard/Footer';
 import { Container } from 'reactstrap';
 import FileHeader from './FileHeader';
 import { Document, Page, pdfjs } from 'react-pdf';
+//import imageFile from '../../AlauddinNewImage.jpg';
 
 const API = process.env.REACT_APP_API;
 
@@ -25,7 +26,7 @@ const FileView = ({match}) => {
     const [fileURL, setFileURL] = useState(null);
     const [fileExtension, setFileExtension] = useState(null);
     //const [fileRet, setFileRet] = useState([]);
-
+  //const imageURL = require('../../AlauddinNewImage.jpg');
     const viewFile = async (filename) => {
         try {
           const result = await axios.get(`${API}/file/${filename}`, {
@@ -36,10 +37,17 @@ const FileView = ({match}) => {
           
           console.log("Result data = ", result.data);
           setFileExtension(fileExt);
+          setFileURL(URL.createObjectURL(result.data));
+          //const fileURL = URL.createObjectURL(result.data)
           
-          const fileURL = URL.createObjectURL(result.data)
-          console.log("File URL = ", fileURL);
-          setFileURL(fileURL);
+          // const fileReader = new FileReader();
+          
+          // fileReader.onloadend = () => {
+          //   console.log("Response data = ", fileReader.result);
+          //   setFileURL(fileReader.result);
+          // };
+          // fileReader.readAsDataURL(result.data);
+          
           setErrorMsg('');
         } catch (error) {
           if (error.response && error.response.status === 400) {
@@ -101,7 +109,7 @@ const FileView = ({match}) => {
                             ) : (
                               <Fragment>
                                 <img src={fileURL} alt={match.params.filename} className="view-file"/>
-                              
+                                
                                 
                               </Fragment>
                             )

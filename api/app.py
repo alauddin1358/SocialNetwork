@@ -1,4 +1,4 @@
-from flask import Flask, redirect, url_for, make_response, json, jsonify, request, render_template, session
+from flask import Flask, send_file, redirect, url_for, make_response, json, jsonify, request, render_template, session
 # from flask_session import Session
 # for react calling
 from flask_cors import CORS, cross_origin
@@ -29,11 +29,14 @@ from werkzeug.utils import secure_filename
 from itsdangerous import URLSafeTimedSerializer, SignatureExpired
 import cloudinary
 import cloudinary.uploader
+from pymongo import MongoClient
+from gridfs import GridFS
 # from flask_email_verifier import Client
 # from flask_email_verifier import exceptions
 UPLOAD_FOLDER = os.getcwd()
 # UPLOAD_FOLDER = 'https://api.agriculturist.org'
-ALLOWED_EXTENSIONS = set(['png', 'jpg', 'jpeg', 'gif'])
+ALLOWED_EXTENSIONS = set(
+    ['png', 'PNG', 'jpg', 'JPG', 'jpeg', 'JPEG', 'gif', 'GIF'])
 
 
 # initialize the app
@@ -76,6 +79,10 @@ mail = Mail(app)
 
 # connects to the mongoDB server
 mongo = PyMongo(app)
+client = MongoClient('mongodb://localhost:27017/')
+dbs = client['userReg']
+fs = GridFS(dbs)
+
 bcrypt = Bcrypt(app)
 safeSerializer = URLSafeTimedSerializer(app.config['SECRET_KEY'])
 # -----------login Start-------------
@@ -733,9 +740,9 @@ def create_post(id):
 
     _filename = _json['filename']
     _fileID = '0123456789ab0123456789ab'
-
     if 'file' in request.files:
         _file = request.files['file']
+        print(_file)
         _filename = secure_filename(_file.filename)
         _filenameExt = _filename.split(".")[1]
         if _filenameExt in ALLOWED_EXTENSIONS and _id != 'null':
@@ -767,29 +774,31 @@ def create_post(id):
                 return jsonify(message)
     else:
         try:
-            # inserting new post
+            # inserting new file as post
             user = mongo.db.userReg.find_one({'email': session['user']})
             _postID = 'null'
             if 'file' in request.files:
                 _file = request.files['file']
+                _fileForCloud = _file
                 _file_mimetype = _file.content_type
-
                 _filename = secure_filename(_file.filename)
                 _filenameExt = _filename.split(".")[1]
-                cloudinary.config(cloud_name="daf1cgy1c", api_key="228197214629277",
-                                  api_secret="DferVvyNAJovYz-cOug7zIx6cR4")
-                print(_filenameExt)
-                if _filenameExt in ALLOWED_EXTENSIONS:
-                    print(_filenameExt)
-                    _filenameWithoutExt = _filename.split(".")[0]
-                    print(_file)
-                    _file = request.files['file']
-                    if _file and allowed_file(_file.filename):
-                        print(_filenameWithoutExt)
-                        upload_result = cloudinary.uploader.upload(
-                            request.files['file'], public_id=_filenameWithoutExt)
 
-                mongo.save_file(_file.filename, request.files['file'])
+                if _filenameExt in ALLOWED_EXTENSIONS:
+                    _filenameWithoutExt = _filename.split(".")[0]
+                    cloudinary.config(cloud_name="daf1cgy1c", api_key="228197214629277",
+                                      api_secret="DferVvyNAJovYz-cOug7zIx6cR4")
+                    if _fileForCloud and allowed_file(_fileForCloud.filename):
+                        result = cloudinary.uploader.upload(
+                            _fileForCloud, public_id=_filenameWithoutExt)
+                        with fs.new_file(filename=_filename, content_type=result['format']) as fp:
+                            _file.seek(0)
+                            fp.write(_file.read())
+                else:
+                    fs.put(_file, filename=_filename)
+
+                # mongo.save_file(_file.filename, request.files['file'])
+
                 mongo.db.upload.insert_one(
                     {'title': _title, 'desc': _desc, 'filename': _filename,
                      'file_mimetype': _file_mimetype, 'postID': _postID, 'user': {'userId': user['_id']}, 'date': datetime.datetime.now()})
@@ -1103,7 +1112,8 @@ def file_upload():
             _file = request.files['file']
             _filename = _file.filename
             _file_mimetype = _file.content_type
-            mongo.save_file(_filename, request.files['file'])
+            # mongo.save_file(_filename, request.files['file'])
+            fs.put(_file, filename=_filename)
 
         # _filedata = _json['filedata']
 
@@ -1162,7 +1172,8 @@ def file_update(id):
             _file = request.files['file']
             _filename = _file.filename
             _file_mimetype = _file.content_type
-            mongo.save_file(_file.filename, request.files['file'])
+            # mongo.save_file(_file.filename, request.files['file'])
+            fs.put(_file, filename=_filename)
         else:
             existing_file = mongo.db.upload.find_one({'_id': ObjectId(id)})
             _filename = existing_file['filename']
@@ -1198,7 +1209,12 @@ def file(filename):
     # response.headers['Content-Transfer-Encoding'] = 'base64'
     # return response
     print(filename)
-    return mongo.send_file(filename)
+    # return mongo.send_file(filename)
+    file = fs.get_last_version(filename=filename)
+    response = send_file(file, as_attachment=True,
+                         attachment_filename=filename)
+    return response
+
 
 # Delete file
 

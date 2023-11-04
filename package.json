@@ -67,6 +67,7 @@
     ]
   },
   "devDependencies": {
-    "@babel/plugin-transform-react-jsx": "^7.12.12"
+    "@babel/plugin-transform-react-jsx": "^7.12.12",
+    "file-loader": "^6.2.0"
   }
 }
