@@ -1,7 +1,6 @@
 import React, { Fragment, useEffect, useState } from 'react';
 import { connect, useDispatch } from 'react-redux';
 import { Link } from 'react-router-dom';
-import store from '../../store';
 import Advertisement from '../dashboard/Advertisement';
 import { getAllUsers, loadUser } from '../../actions/auth';
 import {
@@ -64,10 +63,6 @@ const AddFriendList = ({
     sendFriendRequest(id);
     setIsSendRequest(!isSendRequest);
     setLoadFriend(true);
-    // setTimeout(() => {
-    //   setLoadFriend(false) 
-    // }, 2000);
-    //window.location.replace('/friends');
   };
   const cancelFrRequest = (id) => {
     cancelFriendRequest(id);

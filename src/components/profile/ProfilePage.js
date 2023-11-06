@@ -82,7 +82,7 @@ const ProfilePage = ({
       setLoadFriend(false) 
     }, 5000);
     
-  }, [loading, user, loadUser, getAllUsers]);
+  }, []);
   console.log('Loading in Profilepage', loading);
   //console.log('User in ProfilePage', user);
   if (props.location.state) {

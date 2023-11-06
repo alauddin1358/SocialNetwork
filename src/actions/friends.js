@@ -7,7 +7,6 @@ import {
     DELETE_REQUEST,
     ACCEPT_REQUEST
 } from './types';
-import axios from 'axios';
 import {instance} from './instance';
 import { setAlert } from './alert';
 //import {config} from './config';
