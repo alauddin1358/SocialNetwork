@@ -25,7 +25,7 @@ const NewPost = ({propsFromLink, addPost, post:{posts, loading}}) => {
             post = posts.filter((post) => post._id.$oid === id)
             post = Object.assign({}, post[0]);
         } 
-        console.log('Loading in newPost = ', loading);
+        
         if (!loading && post) {
           const postData = { ...initialState };
           for (const key in post) {
@@ -50,7 +50,9 @@ const NewPost = ({propsFromLink, addPost, post:{posts, loading}}) => {
             formData.append('title', title);
             formData.append('desc', desc);
             formData.append('filename', null);
-            addPost({formData},  propsFromLink.id, propsFromLink.edit);
+            
+            await addPost({formData},  propsFromLink.id, propsFromLink.edit);
+            
             setIsSubmit(true);
         } else {
             if(title.trim() === '')
@@ -61,8 +63,6 @@ const NewPost = ({propsFromLink, addPost, post:{posts, loading}}) => {
     };
     
     if(isSubmit) {
-        // console.log('IsSubmit  ',isSubmit);
-        // setIsSubmit(false);
         return <Redirect to = "/dashboard" />;
     }
     return (

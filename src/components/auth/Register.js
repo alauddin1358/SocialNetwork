@@ -16,7 +16,7 @@ import axios from 'axios';
 import { setAlert } from '../../actions/alert';
 const API = process.env.REACT_APP_API;
 
-const Register = ({isAuthenticated}) => {
+const Register = () => {
     const { register, handleSubmit, errors, getValues, reset } = useForm({
         mode: 'onTouched',
         });
@@ -87,8 +87,6 @@ const Register = ({isAuthenticated}) => {
     const imageHandler = async (e) => {
         setFile(e.target.files[0]);
         var fileUpload = e.target.files[0];
-        console.log("Image file ",e.target.files[0]);
-        console.log("file URL", URL.createObjectURL(e.target.files[0]));
         if(fileUpload) setImage(URL.createObjectURL(e.target.files[0]));
         //var convertedBlobFile;
         const options = {

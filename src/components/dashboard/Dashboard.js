@@ -30,6 +30,7 @@ const Dashboard = ({
     loadUser();
     getAllUsers();
     getPendingFrUser();
+    getFriendSuggestion();
     getUserMyFr();
     if(user !== null) {
       if(!loading){
@@ -119,6 +120,7 @@ export default connect(mapStateToProps, {
   loadUser,
   getAllUsers,
   getPendingFrUser,
+  getFriendSuggestion,
   getUserMyFr,
   getFile
 })(Dashboard);

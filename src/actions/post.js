@@ -1,4 +1,5 @@
 import {
+    API_REQUEST_START,
     ADD_POST,
     POST_ERROR,
     GET_POST,
@@ -54,17 +55,21 @@ export const addPost = ({formData}, id, edit=false) => async dispatch => {
     };
     try {
       //console.log('Id in addpost = ', id);
+      dispatch({
+        type: API_REQUEST_START
+      });
       const res = await instance.post(`${API}/posts/${id}`, formData,config);
       //console.log('Post Response', res.data);
       if(res.data.result.isError === 'true') {
         dispatch(setAlert(res.data.result.message, 'danger'));
       }
       else {
+        dispatch(getPosts());
         dispatch({
           type: ADD_POST,
           payload: res.data
         });
-        dispatch(getPosts());
+        
         if(edit) dispatch(setAlert('Post Updated', 'success'));
         else dispatch(setAlert('Post Created', 'success'));
       }

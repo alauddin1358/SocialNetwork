@@ -1,8 +1,8 @@
 import React, { useState, useRef, Fragment, useEffect } from 'react';
 import Dropzone from 'react-dropzone';
-import Sidebar from '../dashboard/Sidebar';
-import Topbar from '../dashboard/Topbar';
-import Footer from '../dashboard/Footer';
+// import Sidebar from '../dashboard/Sidebar';
+// import Topbar from '../dashboard/Topbar';
+// import Footer from '../dashboard/Footer';
 import FileHeader from './FileHeader';
 import Advertisement from '../dashboard/Advertisement';
 import {Redirect, Link} from 'react-router-dom';
@@ -10,8 +10,8 @@ import { connect } from 'react-redux';
 import { Container, Form, Row, Col, Button } from 'react-bootstrap';
 import { addFile, getFile,updateFile } from '../../actions/file';
 import Spinner from '../layout/Spinner';
-import Alert from '../layout/Alert';
-import { updateProfile } from '../../actions/auth';
+// import Alert from '../layout/Alert';
+// import { updateProfile } from '../../actions/auth';
 const ADMIN = process.env.REACT_APP_ADMIN;
 
 const initialState = {

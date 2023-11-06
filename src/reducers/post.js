@@ -2,6 +2,7 @@ import {
     GET_POSTS,
     POST_ERROR,
     DELETE_POST,
+    API_REQUEST_START,
     ADD_POST,
     GET_POST,
     GET_SHAREPOST,
@@ -23,17 +24,22 @@ import {
     const { type, payload } = action;
   
     switch (type) {
+      case API_REQUEST_START:
+        return {
+          ...state,
+          loading: true,
+        };
       case GET_POSTS:
         return {
           ...state,
           posts: payload,
-          loading: false
+          loading: false,
         };
       case GET_POST:
         return {
           ...state,
           post: payload,
-          loading: false
+          loading: false,
         };
       case GET_SHAREPOST:
         return {

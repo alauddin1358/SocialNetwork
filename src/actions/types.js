@@ -11,6 +11,7 @@ export const GET_POST = 'GET_POST';
 export const GET_SHAREPOST = 'GET_SHAREPOST';
 export const POST_ERROR = 'POST_ERROR';
 export const DELETE_POST = 'DELETE_POST';
+export const API_REQUEST_START = 'API_REQUEST_START';
 export const ADD_POST = 'ADD_POST';
 export const ADD_COMMENT = 'ADD_COMMENT';
 // export const UPDATE_COMMENT = 'UPDATE_COMMENT';

@@ -24,9 +24,9 @@ import datetime
 from random import randint
 import pandas as pd
 import os
-import shutil
+# import shutil
 from werkzeug.utils import secure_filename
-from itsdangerous import URLSafeTimedSerializer, SignatureExpired
+from itsdangerous import URLSafeTimedSerializer
 import cloudinary
 import cloudinary.uploader
 from pymongo import MongoClient
@@ -52,7 +52,7 @@ app.secret_key = "thisisthesecretkey"
 # app.config['MONGO_URI'] = "mongodb+srv://alauddin:01767ali@cluster0.qyaqkin.mongodb.net/userReg"
 
 
-app.config['MONGO_URI'] = "mongodb://localhost:27017/userReg"
+app.config['MONGO_URI'] = "mongodb://15.235.163.6:27017/userReg"
 # app.config['MONGO_URI'] = "mongodb://root:iritadb2021@127.0.0.1:27020/userReg?authSource=admin"
 # app.config['MONGO_URI'] = "mongodb://admin:iritadb2021@localhost:27020/userReg?authSource=admin"
 
@@ -79,7 +79,7 @@ mail = Mail(app)
 
 # connects to the mongoDB server
 mongo = PyMongo(app)
-client = MongoClient('mongodb://localhost:27017/')
+client = MongoClient('mongodb://15.235.163.6:27017/')
 dbs = client['userReg']
 fs = GridFS(dbs)
 
@@ -467,7 +467,7 @@ def forgotPassword():
             msg = Message(subject='Reset password',
                           sender='ali.ak133058@gmail.com', recipients=[_email])
             link = url_for('confirm_account', token=token, _external=True)
-            msg.body = """Click the link to reset password http://localhost:3000/resetpassword"""
+            msg.body = """Click the link to reset password http://15.235.163.6/resetpassword"""
             # msg.body = """Click the link to reset password https://www.agriculturist.org/resetpassword"""
 
             mail.send(msg)
@@ -1208,7 +1208,7 @@ def file(filename):
     # response = make_response(send_file(filename, mimetype='image/png'))
     # response.headers['Content-Transfer-Encoding'] = 'base64'
     # return response
-    print(filename)
+    # print(filename)
     # return mongo.send_file(filename)
     file = fs.get_last_version(filename=filename)
     response = send_file(file, as_attachment=True,
