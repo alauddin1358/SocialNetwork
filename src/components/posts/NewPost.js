@@ -1,21 +1,36 @@
 import React, { Fragment, useState, useEffect } from 'react';
 //import { Alert } from 'reactstrap';
-import { connect } from 'react-redux';
-import { Redirect, Link } from 'react-router-dom';
-import { addPost, getPost } from '../../actions/post';
+import { connect, useDispatch } from 'react-redux';
+import {  Link } from 'react-router-dom';
+import { addPost, getPost, getPosts } from '../../actions/post';
 import Advertisement from '../dashboard/Advertisement';
+//import store from '../../store';
+import axios from 'axios';
 import PropTypes from 'prop-types';
 import Alert from '../layout/Alert';
 import '../../css/style.css';
+import { setAlert } from '../../actions/alert';
+import {
+    ADD_POST,
+    POST_ERROR,
+    GET_POSTS,
+    
+  } from '../../actions/types';
+
+const API = process.env.REACT_APP_API;
+
 const initialState = {
     title : '',
     desc : ''
 }
-const NewPost = ({propsFromLink, addPost, post:{posts, loading}}) => {
+const NewPost = ({ propsFromLink, post: { posts, loading } }) => {
+    const dispatch = useDispatch();
+    //const navigate = useNavigate();
     const [postData, setPostData] = useState(initialState)
-    const [isSubmit, setIsSubmit] = useState(false);
+    //const [isSubmit, setIsSubmit] = useState(false);
     const [errorTitle, setErrorTitle] = useState('');
     const [errorBody, setErrorBody] = useState('');
+    const [submitButtonDisable, setSubmitButtonDisable] = useState(false);
     let {id, edit} = propsFromLink;
     useEffect(() => {
         
@@ -42,6 +57,7 @@ const NewPost = ({propsFromLink, addPost, post:{posts, loading}}) => {
 
     const onPostSubmit = async (e) => {
         e.preventDefault();
+        setSubmitButtonDisable(true);
         const { title, desc } = postData;
         if (title.trim() !== '' && desc.trim() !== '') {
             setErrorTitle('');
@@ -50,10 +66,48 @@ const NewPost = ({propsFromLink, addPost, post:{posts, loading}}) => {
             formData.append('title', title);
             formData.append('desc', desc);
             formData.append('filename', null);
+
+            //await addPost({ formData }, propsFromLink.id, propsFromLink.edit);
+            const config = {
+                headers : {
+                    'Authorization': `Bearer ${localStorage.token}`,
+                    'Content-Type':'application/json',
+                    'Access-Control-Allow-Origin': '*',
+                    'Access-Control-Allow-Credentials': true
+                }
+            };
+            try {
             
-            await addPost({formData},  propsFromLink.id, propsFromLink.edit);
-            
-            setIsSubmit(true);
+                const res = await axios.post(`${API}/posts/${propsFromLink.id}`,
+                    formData, config,
+                    { withCredentials: true });
+                //console.log('Post Response', res.data);
+                if(res.data.result.isError === 'true') {
+                    dispatch(setAlert(res.data.result.message, 'danger'));
+                    setSubmitButtonDisable(false);
+                }
+                else {
+                    dispatch(getPosts());
+                    dispatch({
+                    type: ADD_POST,
+                    payload: res.data
+                    });
+                    window.location.href = '/dashboard';
+                    if(propsFromLink.edit) dispatch(setAlert('Post Updated', 'success'));
+                    else dispatch(setAlert('Post Created', 'success'));
+                    setSubmitButtonDisable(false);
+                }
+                
+            } catch (err) {
+                console.log(err.response);
+                dispatch(setAlert('Server Error', 'danger'));
+                dispatch({
+                    type: POST_ERROR,
+                    payload: { msg: err.response, status: err.response }
+                });
+                setSubmitButtonDisable(false);
+            }
+            //setIsSubmit(true);
         } else {
             if(title.trim() === '')
                 setErrorTitle('Please enter the post title.');
@@ -62,9 +116,9 @@ const NewPost = ({propsFromLink, addPost, post:{posts, loading}}) => {
           }
     };
     
-    if(isSubmit) {
-        return <Redirect to = "/dashboard" />;
-    }
+    // if(isSubmit) {
+    //     return <Redirect to = "/dashboard" />;
+    // }
     return (
         <Fragment>
             <div className="row">
@@ -117,7 +171,7 @@ const NewPost = ({propsFromLink, addPost, post:{posts, loading}}) => {
                                 {
                                     edit ? (
                                         <div className='update-file-btn'>
-                                            <button type="submit" className="btn btn-primary">Update Post</button>
+                                            <button type="submit" disabled={submitButtonDisable} className="btn btn-primary">Update Post</button>
                                             <Link to='/dashboard'
                                                 className='btn btn-danger'
                                             >
@@ -125,7 +179,7 @@ const NewPost = ({propsFromLink, addPost, post:{posts, loading}}) => {
                                             </Link>
                                         </div>
                                     ):(
-                                        <button type="submit" className="btn btn-primary">Add Post</button>
+                                        <button type="submit" disabled={submitButtonDisable} className="btn btn-primary">Add Post</button>
                                     )
                                     
                                 }
@@ -142,7 +196,6 @@ const NewPost = ({propsFromLink, addPost, post:{posts, loading}}) => {
 }
 NewPost.propTypes = {
     //setAlert: PropTypes.func.isRequired,
-    addPost: PropTypes.func.isRequired,
     getPost: PropTypes.func.isRequired,
     isSuccess: PropTypes.bool
   };
@@ -151,4 +204,4 @@ const mapStateToProps = (state) => ({
     isSuccess: state.post.isSuccess,
     post:state.post
 });
-export default connect(mapStateToProps, { addPost, getPost })(NewPost);    
+export default connect(mapStateToProps, { getPost })(NewPost);    

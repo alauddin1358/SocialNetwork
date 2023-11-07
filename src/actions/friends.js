@@ -136,7 +136,7 @@ export const sendFriendRequest = (id) => async dispatch => {
       if(res.data.result.isError === 'false') {
         // console.log('calling getalluser from friend');
         //getAllUsers();
-        await getFriendSuggestion();
+        await dispatch(getFriendSuggestion());
         await loadUser();
         await getAllUsers();
         //console.log('loaduser response ',resp);
@@ -307,7 +307,7 @@ export const cancelFriendRequest = (id) => async dispatch => {
       //console.log('Cancel Friend response = ',res.data);
       if(res.data.result.isError === 'false') {
         //getAllUsers();
-        getFriendSuggestion();
+        await dispatch(getFriendSuggestion());
         await loadUser();
         await getAllUsers();
         dispatch(setAlert(res.data.result.message, 'success'));

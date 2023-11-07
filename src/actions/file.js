@@ -62,22 +62,24 @@ export const addFile = ({formData},id) => async dispatch => {
         if(res.data.result.isError === 'true') {
             dispatch(setAlert(res.data.result.message, 'danger'));
           }
-          else {
-              dispatch({
-                type: ADD_FILE,
-                payload: res.data
-              });
+        else {
+              await dispatch(getPosts());
+              
               dispatch({
                 type: ADD_POST,
                 payload: res.data
               });
-              dispatch(getPosts());
+            dispatch({
+                type: ADD_FILE,
+                payload: res.data
+              });
+              
               //dispatch(getFile());
               dispatch(setAlert('File uploaded', 'success'));
             }
             
       } catch (error) {
-        console.log(error);
+        
         console.log(error.response);
         dispatch(setAlert('Server Error', 'danger'));
         // dispatch({
@@ -108,15 +110,16 @@ export const updateFile = ({formData},id, filePostID) => async dispatch => {
               dispatch(setAlert(res.data.result.message, 'danger'));
             }
             else {
-              dispatch({
-                type: ADD_FILE,
-                payload: res.data
-              });
+              dispatch(getPosts());
+              
               dispatch({
                 type: ADD_POST,
                 payload: postResp.data
               });
-              dispatch(getPosts());
+              dispatch({
+                type: ADD_FILE,
+                payload: res.data
+              });
               dispatch(setAlert('File Edited', 'success'));
             }
             
@@ -124,7 +127,6 @@ export const updateFile = ({formData},id, filePostID) => async dispatch => {
             
           }
       } catch (error) {
-        console.log(error);
         console.log(error.response);
         dispatch(setAlert('Server Error', 'danger'));
         // dispatch({

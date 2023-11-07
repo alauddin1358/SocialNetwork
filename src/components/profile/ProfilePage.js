@@ -1,6 +1,6 @@
 import React, { Fragment, useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
-import { connect } from 'react-redux';
+import { connect, useDispatch } from 'react-redux';
 import PropTypes from 'prop-types';
 import Spinner from '../layout/Spinner';
 import Advertisement from '../dashboard/Advertisement';
@@ -49,6 +49,8 @@ const ProfilePage = ({
   props,
   getFile,
 }) => {
+
+  const dispatch = useDispatch();
   const [file, setFile] = useState('');
   const [viewImage, setViewImage] = useState('../../img/user-profile.png');
   const [showImageFlag, setShowImageFlag] = useState(false);
@@ -59,12 +61,19 @@ const ProfilePage = ({
   const [loadFriend, setLoadFriend] = useState(false);
   //const [ownUser, setOwnUser] = useState(null);
   let isSearch = false, userEmail = null, otherUserId=null, ownUser=[];
-  useEffect(() => {
-    console.log('Calling profilePage useEffect');
-    
-      getAllUsers();
-      loadUser();
-    
+  useEffect( () => {
+    const fetchData = async () => {
+      console.log('Calling profilePage useEffect');
+
+      try {
+        await dispatch(getAllUsers());
+        await dispatch(loadUser());
+      } catch (error) {
+        console.error('Error fetching data:', error);
+      }
+    };
+
+   fetchData();
     
     if (!loading && user) {
       const profileData = { ...initialState };
@@ -80,10 +89,10 @@ const ProfilePage = ({
     //getFriendSuggestion();
     setTimeout(() => {
       setLoadFriend(false) 
-    }, 5000);
+    }, 2000);
     
-  }, []);
-  console.log('Loading in Profilepage', loading);
+  }, [dispatch]);
+  //console.log('Loading in Profilepage', loading);
   //console.log('User in ProfilePage', user);
   if (props.location.state) {
     //console.log('Calling location state');

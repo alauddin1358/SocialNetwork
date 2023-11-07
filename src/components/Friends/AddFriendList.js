@@ -3,6 +3,7 @@ import { connect, useDispatch } from 'react-redux';
 import { Link } from 'react-router-dom';
 import Advertisement from '../dashboard/Advertisement';
 import { getAllUsers, loadUser } from '../../actions/auth';
+import axios from 'axios';
 import {
   sendFriendRequest,
   acceptFriendRequest,
@@ -11,9 +12,20 @@ import {
   getPendingFrUser,
   getFriendSuggestion
 } from '../../actions/friends';
+import {
+  GET_PENDINGFRIEND,
+  GET_MYFRIEND,
+  GET_FRIENDSUGGESTION,
+  ERROR_REQUEST,
+  REMOVE_FRIEND,
+  DELETE_REQUEST,
+  ACCEPT_REQUEST
+} from '../../actions/types';
+import { setAlert } from '../../actions/alert';
 import PropTypes from 'prop-types';
 import Spinner from '../layout/Spinner';
 const IMAGEURL = process.env.REACT_APP_CLOUDINARY;
+const API = process.env.REACT_APP_API;
 
 const AddFriendList = ({
   auth: { allUsers, user },
@@ -28,9 +40,9 @@ const AddFriendList = ({
   loadUser,
 }) => {
   const [isSendRequest, setIsSendRequest] = useState(false);
-  // const dispatch = useDispatch()
+  const dispatch = useDispatch()
   // const [friendSuggestionList, setFriendSuggestionList] = useState([])
-  const [loadFriend, setLoadFriend] = useState(loadingFriend);
+  const [loadFriend, setLoadFriend] = useState(false);
   useEffect(() => {
     console.log('calling useEffect of AddFriendList');
     loadUser();
@@ -40,9 +52,9 @@ const AddFriendList = ({
     getFriendSuggestion();
     setTimeout(() => {
       setLoadFriend(false) 
-    }, 2000);
+    }, 1000);
     
-  }, [getAllUsers, loadUser, isSendRequest, getPendingFrUser]);
+  }, [ loadUser, isSendRequest,getFriendSuggestion, getPendingFrUser]);
   //const [pendingFriend, setPendingFriend] = useState([]);
   //const [addFriendList, setAddFriendList] = useState([]);
   // const [isSetPenFr, setIsSetPenFr] = useState(true);
@@ -58,37 +70,136 @@ const AddFriendList = ({
 //         }
 //     }))
 //     setFriendSuggestionList(userInfo || [])
-// }
-  const addFriendRequest = (id) => {
-    sendFriendRequest(id);
-    setIsSendRequest(!isSendRequest);
-    setLoadFriend(true);
+  // }
+  
+  const config = {
+      headers : {
+          'Authorization': `Bearer ${localStorage.token}`,
+          'Content-Type':'application/json',
+          'Access-Control-Allow-Origin': '*',
+          'Access-Control-Allow-Credentials': true
+      }
   };
-  const cancelFrRequest = (id) => {
-    cancelFriendRequest(id);
-    setIsSendRequest(!isSendRequest);
+  
+  const addFriendRequest = async (id) => {
     setLoadFriend(true);
-    // setTimeout(() => {
-    //   setLoadFriend(false) 
-    // }, 2000);
-    //window.location.reload(false);
-    //window.location.replace('/friends');
+    try {
+      const res = await axios.get(`${API}/friendReq/${id}`, config
+      );
+      if(res.data.result.isError === 'false') {
+        await getFriendSuggestion();
+        await loadUser();
+        await getAllUsers();
+        dispatch(setAlert(res.data.result.message, 'success'));
+      }
+      else {
+        dispatch(setAlert(res.data.result.message, 'danger'));
+        dispatch({
+          type: ERROR_REQUEST
+        });
+      }
+      
+    } catch (err) {
+      console.log('Error in sending friend request',err);
+      dispatch(setAlert('Something went wrong', 'danger'));
+      dispatch({
+        type: ERROR_REQUEST
+      });
+    }
+    //await dispatch(sendFriendRequest(id));
+    //setIsSendRequest(!isSendRequest);
+    setLoadFriend(false);
   };
-  const deleteFrRequest = (id) => {
-    deleteFriendRequest(id);
-    setIsSendRequest(!isSendRequest);
+  const cancelFrRequest = async (id) => {
     setLoadFriend(true);
-    //window.location.replace('/friends');
+    //await dispatch(cancelFriendRequest(id));
+     try {
+       const res = await axios.get(`${API}/cancelFrndReq/${id}`, config,
+       {withCredentials:true});
+      if(res.data.result.isError === 'false') {
+        await getFriendSuggestion();
+        await loadUser();
+        await getAllUsers();
+        dispatch(setAlert(res.data.result.message, 'success'));
+      }
+      else {
+        dispatch(setAlert(res.data.result.message, 'danger'));
+        dispatch({
+          type: ERROR_REQUEST
+        });
+      }
+      
+    } catch (err) {
+      console.log('Error in sending friend request',err);
+      dispatch(setAlert('Something went wrong', 'danger'));
+      dispatch({
+        type: ERROR_REQUEST
+      });
+    }
+    //setIsSendRequest(!isSendRequest);
+    setLoadFriend(false);
   };
-  const acceptFrRequest = (id) => {
-    acceptFriendRequest(id);
-    setIsSendRequest(!isSendRequest);
+  const deleteFrRequest = async (id) => {
     setLoadFriend(true);
-    //window.location.replace('/friends');
+    try {
+      const res = await axios.get(`${API}/friendReqDel/${id}`, config);
+      if(res.data.result.isError === 'false') {
+        await getFriendSuggestion();
+        await getPendingFrUser();
+        loadUser();
+        dispatch(setAlert(res.data.result.message, 'success'));
+        dispatch({
+          type: DELETE_REQUEST,
+          payload: id
+        });
+      }
+      else {
+        dispatch(setAlert(res.data.result.message, 'danger'));
+        dispatch({
+          type: ERROR_REQUEST
+        });
+      }
+      
+    } catch (err) {
+      console.log('Error in sending friend request',err);
+      dispatch(setAlert('Error in deleting friend request', 'danger'));
+    }
+    setLoadFriend(false);
   };
-  console.log('user friends loading', loadFriend);
-  //console.log('Suggestion Friend', friendSuggestion);
-  //console.log(suggestedFriend);
+  const acceptFrRequest = async (id) => {
+    setLoadFriend(true);
+    //await dispatch(acceptFriendRequest({ id }));
+    //setIsSendRequest(!isSendRequest);
+    try {
+      const res = await axios.get(`${API}/friendReqAccept/${id}`, config);
+      if(res.data.result.isError === 'false') {
+        
+        await getPendingFrUser();
+        await getFriendSuggestion();
+        await loadUser();
+        dispatch(setAlert(res.data.result.message, 'success'));
+        dispatch({
+          type: ACCEPT_REQUEST,
+          payload: id
+        });
+      }
+      else {
+        dispatch(setAlert(res.data.result.message, 'danger'));
+        dispatch({
+          type: ERROR_REQUEST
+        });
+      }
+      
+    } catch (err) {
+      console.log('Error in sending friend request',err);
+      dispatch(setAlert('Error in accepting friend request', 'danger'));
+      dispatch({
+        type: ERROR_REQUEST
+      });
+    }
+    setLoadFriend(false);
+  };
+ 
 
   return loadFriend ? (
     <Spinner />

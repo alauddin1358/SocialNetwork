@@ -154,6 +154,8 @@ const Register = () => {
                 store.dispatch(setAlert(res.data.result.message, 'success'));
                 reset();
                 setImage('../../img/user-profile.png');
+                //window.location.href = '/login';
+                window.location.href = '/';
             }
         } catch (err) {
             console.log("Error in registration = ", err);

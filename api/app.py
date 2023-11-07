@@ -51,7 +51,7 @@ app.secret_key = "thisisthesecretkey"
 # MongoDB Atlas
 # app.config['MONGO_URI'] = "mongodb+srv://alauddin:01767ali@cluster0.qyaqkin.mongodb.net/userReg"
 
-
+# Live server in Production
 app.config['MONGO_URI'] = "mongodb://15.235.163.6:27017/userReg"
 # app.config['MONGO_URI'] = "mongodb://root:iritadb2021@127.0.0.1:27020/userReg?authSource=admin"
 # app.config['MONGO_URI'] = "mongodb://admin:iritadb2021@localhost:27020/userReg?authSource=admin"
@@ -1922,21 +1922,22 @@ def getFriendSuggestion():
     for us in users:
         if user['_id'] != us['_id']:
             friend_suggestion.append(us)
-    # print(friend_suggestion)
+    print('first ', friend_suggestion)
     # Remove user's pending friend for creating friend suggestion list
     temp_list = friend_suggestion[:]
     size_oflist = len(friend_suggestion)
 
     if 'friend_pending' in user:
         pend_fruser = user['friend_pending']
+        # print('Pending', pend_fruser)
         for pf in temp_list[:]:
             for u in pend_fruser:
-                if u.id == us['_id']:
+                if u.id == pf['_id']:
                     if pf in friend_suggestion:
                         friend_suggestion.remove(pf)
     temp_list = friend_suggestion[:]
     size_oflist = len(friend_suggestion)
-
+    # print('second ', friend_suggestion)
     # Remove user's friend for creating friend suggestion list
     if 'friends' in user:
         fruser = user['friends']

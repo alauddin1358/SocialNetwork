@@ -73,6 +73,7 @@ export const addPost = ({formData}, id, edit=false) => async dispatch => {
         if(edit) dispatch(setAlert('Post Updated', 'success'));
         else dispatch(setAlert('Post Created', 'success'));
       }
+      return res.data;
     } catch (err) {
         console.log(err);
         console.log(err.response);
@@ -81,6 +82,7 @@ export const addPost = ({formData}, id, edit=false) => async dispatch => {
         type: POST_ERROR,
         payload: { msg: err.response, status: err.response }
       });
+      throw err;
     }
   };
 

@@ -6,7 +6,7 @@ import Dropzone from 'react-dropzone';
 import FileHeader from './FileHeader';
 import Advertisement from '../dashboard/Advertisement';
 import {Redirect, Link} from 'react-router-dom';
-import { connect } from 'react-redux';
+import { connect, useDispatch } from 'react-redux';
 import { Container, Form, Row, Col, Button } from 'react-bootstrap';
 import { addFile, getFile,updateFile } from '../../actions/file';
 import Spinner from '../layout/Spinner';
@@ -20,6 +20,8 @@ const initialState = {
   filename: ''
 }
 const Upload = ({props, addFile,getFile,updateFile,auth, file: {files, isSuccess,loading}}) => {
+  const dispatch = useDispatch();
+  const [submitButtonDisable, setSubmitButtonDisable] = useState(false);
   const [file, setFile] = useState(null); // state for storing actual image
   const [previewSrc, setPreviewSrc] = useState(''); // state for storing previewImage
   const [fileData, setFileData] = useState(initialState);
@@ -99,7 +101,7 @@ const Upload = ({props, addFile,getFile,updateFile,auth, file: {files, isSuccess
 
   const handleOnSubmit = async (event) => {
     event.preventDefault(); 
-
+    setSubmitButtonDisable(true);
     try {
       const { title, desc, filename } = fileData;
       if (title.trim() !== '' && desc.trim() !== '') {
@@ -115,15 +117,19 @@ const Upload = ({props, addFile,getFile,updateFile,auth, file: {files, isSuccess
           
           setErrorMsg('');
           
-          updateFile({formData},id, filePostID.$oid);
+          await dispatch(updateFile({formData},id, filePostID.$oid));
+          
           props.history.push('/dashboard');
+          setSubmitButtonDisable(false);
         }
         else {
           if (file) {
             formData.append('file', file);  
             setErrorMsg(''); 
-            addFile({formData},id);
+            await dispatch(addFile({formData},id));
+            
             props.history.push('/dashboard');
+            setSubmitButtonDisable(false);
           } 
           else {
             setErrorMsg('Please select a file.');
@@ -135,6 +141,7 @@ const Upload = ({props, addFile,getFile,updateFile,auth, file: {files, isSuccess
       }
     } catch (error) {
       error.response && setErrorMsg(error.response.data);
+      setSubmitButtonDisable(false);
     }
     
   };
@@ -225,7 +232,7 @@ const Upload = ({props, addFile,getFile,updateFile,auth, file: {files, isSuccess
               {
                 edit ? (
                   <div className='update-file-btn'>
-                      <Button variant="primary" type="submit">
+                      <Button variant="primary" disabled={submitButtonDisable} type="submit">
                           Update
                       </Button>
                       <Link to='/dashboard'
@@ -235,7 +242,7 @@ const Upload = ({props, addFile,getFile,updateFile,auth, file: {files, isSuccess
                       </Link>
                   </div>
                   ):(
-                        <Button variant="primary" type="submit">
+                        <Button variant="primary" disabled={submitButtonDisable} type="submit">
                             Submit
                         </Button>
                       )
@@ -247,9 +254,6 @@ const Upload = ({props, addFile,getFile,updateFile,auth, file: {files, isSuccess
         </div>
         
       </Container>
-              
-              
-          
      
   </Fragment>
     
