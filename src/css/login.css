@@ -113,19 +113,22 @@ input[type="file"] {
 	text-align: center;
 	width: 150px;
 }
+
 #registration-image img {
 	color: green;
     font-size: 45px;
     background: #fff !important;
     border: 5px solid green;
-	border-radius: 100%;
+	border-radius: 50%;
 	padding: 20px;
 	width: 150px;
+	height: 150px;
+	object-fit: cover;
 }
 #registration-image input[type="file"] {
 	margin-top: 20px;
 	margin-bottom: 20px;
-	width: 149px;
+	width: 150px;
 }
 .customFileInput::-webkit-file-upload-button {
   visibility: hidden;

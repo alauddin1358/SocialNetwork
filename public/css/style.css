@@ -296,7 +296,7 @@ p {
     width: 260px;
     max-width: 100%;
     background: #fff;
-    z-index: 3;
+    
 }
 #profile-image-container h6 {
 	color: #fff;
@@ -306,7 +306,7 @@ p {
 	padding: 0 10px;
 	text-align: center;
 	width: 100%;
-	z-index: 3;
+	
 }
 .profile-add-link,
 .profile-message-link {
@@ -316,11 +316,12 @@ p {
 	padding: 18px 15px 12px;
 	border-radius: 10px;
 	text-align: center;
+	margin-top: 10px;
 }
 .profile-add-link {
     background: linear-gradient(to bottom, #34A853, rgb(70, 126, 70));
     top: 251px;
-    z-index: 2;
+   
     left: 20px;
     width: 220px;
 }

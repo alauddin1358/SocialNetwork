@@ -14,8 +14,13 @@ import download from 'downloadjs';
 import axios from 'axios';
 import {
   sendFriendRequest,
-  cancelFriendRequest
+  cancelFriendRequest,
+  getFriendSuggestion
 } from '../../actions/friends';
+import {
+  ERROR_REQUEST
+} from '../../actions/types';
+import { setAlert } from '../../actions/alert';
 
 const ADMIN = process.env.REACT_APP_ADMIN;
 const IMAGEURL = process.env.REACT_APP_CLOUDINARY;
@@ -66,8 +71,8 @@ const ProfilePage = ({
       console.log('Calling profilePage useEffect');
 
       try {
-        await dispatch(getAllUsers());
-        await dispatch(loadUser());
+        await getAllUsers();
+        await loadUser();
       } catch (error) {
         console.error('Error fetching data:', error);
       }
@@ -138,15 +143,73 @@ const ProfilePage = ({
     country,
     image,
   } = formData;
-  const addFriendRequest = (id) => {
-    sendFriendRequest(id);
-    setIsSendRequest(!isSendRequest);
-    setLoadFriend(true);
+  
+  const config = {
+      headers : {
+          'Authorization': `Bearer ${localStorage.token}`,
+          'Content-Type':'application/json',
+          'Access-Control-Allow-Origin': '*',
+          'Access-Control-Allow-Credentials': true
+      }
   };
-  const cancelFrRequest = (id) => {
-    cancelFriendRequest(id);
-    setIsSendRequest(!isSendRequest);
+
+  const addFriendRequest = async (id) => {
     setLoadFriend(true);
+    //sendFriendRequest(id);
+    //setIsSendRequest(!isSendRequest);
+    try {
+      const res = await axios.get(`${API}/friendReq/${id}`, config
+      );
+      if(res.data.result.isError === 'false') {
+        await getFriendSuggestion();
+        await loadUser();
+        await getAllUsers();
+        dispatch(setAlert(res.data.result.message, 'success'));
+      }
+      else {
+        dispatch(setAlert(res.data.result.message, 'danger'));
+        dispatch({
+          type: ERROR_REQUEST
+        });
+      }
+      
+    } catch (err) {
+      console.log('Error in sending friend request',err);
+      dispatch(setAlert('Something went wrong', 'danger'));
+      dispatch({
+        type: ERROR_REQUEST
+      });
+    }
+    setLoadFriend(false);
+  };
+  const cancelFrRequest = async (id) => {
+    setLoadFriend(true);
+    try {
+       const res = await axios.get(`${API}/cancelFrndReq/${id}`, config,
+       {withCredentials:true});
+      if(res.data.result.isError === 'false') {
+        await getFriendSuggestion();
+        await loadUser();
+        await getAllUsers();
+        dispatch(setAlert(res.data.result.message, 'success'));
+      }
+      else {
+        dispatch(setAlert(res.data.result.message, 'danger'));
+        dispatch({
+          type: ERROR_REQUEST
+        });
+      }
+      
+    } catch (err) {
+      console.log('Error in canceling friend request',err);
+      dispatch(setAlert('Something went wrong', 'danger'));
+      dispatch({
+        type: ERROR_REQUEST
+      });
+    }
+    //cancelFriendRequest(id);
+    //setIsSendRequest(!isSendRequest);
+    setLoadFriend(false);
   };
   const onChange = (e) =>
     setFormData({ ...formData, [e.target.name]: e.target.value });

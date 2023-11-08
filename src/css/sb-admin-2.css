@@ -10983,7 +10983,7 @@ a:focus {
     border-radius: 0.35rem;
   }
   .sidebar.toggled .nav-item .collapsing {
-    display: none;
+    display: block;
     transition: none;
   }
   .sidebar.toggled .nav-item .collapse,
@@ -11006,7 +11006,7 @@ a:focus {
     margin-right: 0;
   }
   .sidebar.toggled .nav-item .nav-link[data-toggle='collapse']::after {
-    display: none;
+    display: block;
   }
   .sidebar.toggled .sidebar-brand .sidebar-brand-icon i {
     font-size: 2rem;

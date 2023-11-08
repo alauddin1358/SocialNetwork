@@ -26,7 +26,6 @@ import { loadUser } from './actions/auth';
 import SharePage from './components/Share/SharePage';
 import PrivacyPolicy from './components/Share/PrivacyPolicy';
 
-
 const App = () => {
   useEffect(() => {
     console.log('calling useEffect');

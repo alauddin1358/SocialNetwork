@@ -13,11 +13,7 @@ import {
   getFriendSuggestion
 } from '../../actions/friends';
 import {
-  GET_PENDINGFRIEND,
-  GET_MYFRIEND,
-  GET_FRIENDSUGGESTION,
   ERROR_REQUEST,
-  REMOVE_FRIEND,
   DELETE_REQUEST,
   ACCEPT_REQUEST
 } from '../../actions/types';
@@ -130,7 +126,7 @@ const AddFriendList = ({
       }
       
     } catch (err) {
-      console.log('Error in sending friend request',err);
+      console.log('Error in canceling friend request',err);
       dispatch(setAlert('Something went wrong', 'danger'));
       dispatch({
         type: ERROR_REQUEST

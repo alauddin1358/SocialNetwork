@@ -532,7 +532,7 @@ const Register = () => {
                         <label>Profile Picture:</label>
                         <div id="registration-image">
                             <div id="registration-image-container">
-                                <div className="full-row">
+                                <div className="full-row image-container">
                                     <img src={image} alt="profile" />
                                 </div>
                                 <div className="full-row">
