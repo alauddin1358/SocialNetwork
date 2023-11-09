@@ -49,7 +49,7 @@ import {
           return {
             ...state,
             ...payload,
-            isAuthenticated: true,
+            isAuthenticated: false,
             loading: false
           };
       case LOGIN_SUCCESS:

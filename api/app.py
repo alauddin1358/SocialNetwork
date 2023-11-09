@@ -46,7 +46,7 @@ app = Flask(__name__)
 app.secret_key = "thisisthesecretkey"
 # db config
 # New MongoDB Connection Locally
-# app.config['MONGO_URI'] = "mongodb://localhost:27017/userReg"
+app.config['MONGO_URI'] = "mongodb://localhost:27017/userReg"
 
 # MongoDB Atlas
 # app.config['MONGO_URI'] = "mongodb+srv://alauddin:01767ali@cluster0.qyaqkin.mongodb.net/userReg"
@@ -54,7 +54,7 @@ app.secret_key = "thisisthesecretkey"
 # API LINK = http://15.235.163.6:5000/
 
 # Live server in Production
-app.config['MONGO_URI'] = "mongodb://15.235.163.6:27017/userReg"
+# app.config['MONGO_URI'] = "mongodb://15.235.163.6:27017/userReg"
 
 # app.config['MONGO_URI'] = "mongodb://root:iritadb2021@127.0.0.1:27020/userReg?authSource=admin"
 # app.config['MONGO_URI'] = "mongodb://admin:iritadb2021@localhost:27020/userReg?authSource=admin"
@@ -82,8 +82,8 @@ mail = Mail(app)
 
 # connects to the mongoDB server
 mongo = PyMongo(app)
-client = MongoClient('mongodb://15.235.163.6:27017/')
-# client = MongoClient('mongodb://localhost:27017/')
+# client = MongoClient('mongodb://15.235.163.6:27017/')
+client = MongoClient('mongodb://localhost:27017/')
 dbs = client['userReg']
 fs = GridFS(dbs)
 
@@ -1926,7 +1926,7 @@ def getFriendSuggestion():
     for us in users:
         if user['_id'] != us['_id']:
             friend_suggestion.append(us)
-    print('first ', friend_suggestion)
+
     # Remove user's pending friend for creating friend suggestion list
     temp_list = friend_suggestion[:]
     size_oflist = len(friend_suggestion)

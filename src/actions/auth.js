@@ -44,19 +44,19 @@ export const loadUser = () => async dispatch => {
   try {
     //console.log('Calling LoadUser', localStorage.token);
     const res = await instance.get(`${API}/user`, config);
-    //console.log('Auth response = ',JSON.parse(res.data.data));
+    console.log('Auth response = ',res.data);
     if(res.data.result.isError === 'false') {
       dispatch({
         type: USER_LOADED,
         payload: JSON.parse(res.data.data)
       });
     }
-    // else {
-    //   // dispatch(setAlert(res.data.result.message, 'danger'));
-    //   dispatch({
-    //     type: AUTH_ERROR
-    //   });
-    // }
+    else {
+      // dispatch(setAlert(res.data.result.message, 'danger'));
+      dispatch({
+        type: AUTH_ERROR
+      });
+    }
     
   } catch (err) {
     dispatch({
