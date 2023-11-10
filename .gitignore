@@ -8,7 +8,8 @@
 api/__pycache__/
 api/.venv/
 api/user_api.py
-api/api.py 
+api/api.py
+api/.env
 # testing
 /coverage
 

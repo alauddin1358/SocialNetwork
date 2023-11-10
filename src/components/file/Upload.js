@@ -68,10 +68,14 @@ const Upload = ({props, addFile,getFile,updateFile,auth, file: {files, isSuccess
       setFileData(fileData);
       //console.log('file data ', fileData);
     }
-  },[loading,files, props]);
+  }, [loading, files, props]);
+  useEffect(() => {
+    console.log('File:', file);
+  }, [file]);
   let { title, desc, filename } = fileData;
   //console.log('Loading in upload = ', loading);
   const handleInputChange = (event) => {
+    //console.log(event.target.value);
     setFileData({
       ...fileData,
       [event.target.name]: event.target.value
@@ -80,7 +84,9 @@ const Upload = ({props, addFile,getFile,updateFile,auth, file: {files, isSuccess
 
   const onDrop = (files) => {
     const [uploadedFile] = files;
+    
     setFile(uploadedFile);
+    //console.log('FIle ', file);
     setIsEdit(false);
     const fileReader = new FileReader();
     fileReader.onload = () => {
@@ -102,13 +108,16 @@ const Upload = ({props, addFile,getFile,updateFile,auth, file: {files, isSuccess
   const handleOnSubmit = async (event) => {
     event.preventDefault(); 
     setSubmitButtonDisable(true);
+    //console.log(event);
     try {
       const { title, desc, filename } = fileData;
       if (title.trim() !== '' && desc.trim() !== '') {
         const formData = new FormData();
         formData.append('title', title);
         formData.append('desc', desc);
+        //console.log('Form data', { formData });
         formData.append('filename', filename);
+        
         if(edit) {
           
           if (file) {
@@ -126,17 +135,23 @@ const Upload = ({props, addFile,getFile,updateFile,auth, file: {files, isSuccess
           if (file) {
             formData.append('file', file);  
             setErrorMsg(''); 
+            formData.forEach((key, value) => {
+    console.log(key, value);
+  });
+            //console.log('FormData in React component', formData);
             await dispatch(addFile({formData},id));
             
             props.history.push('/dashboard');
             setSubmitButtonDisable(false);
           } 
           else {
+            setSubmitButtonDisable(false);
             setErrorMsg('Please select a file.');
           }
         }
         
       } else {
+        setSubmitButtonDisable(false);
         setErrorMsg('Please enter all the field values.');
       }
     } catch (error) {

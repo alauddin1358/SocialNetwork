@@ -66,7 +66,7 @@ const NewPost = ({ propsFromLink, post: { posts, loading } }) => {
             formData.append('title', title);
             formData.append('desc', desc);
             formData.append('filename', null);
-
+            console.log('Post form data', formData);
             //await addPost({ formData }, propsFromLink.id, propsFromLink.edit);
             const config = {
                 headers : {

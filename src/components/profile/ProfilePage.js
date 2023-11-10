@@ -85,7 +85,7 @@ const ProfilePage = ({
       for (const key in user) {
         if (key in profileData) profileData[key] = user[key];
       }
-      //console.log("Profile Data = ", profileData);
+      console.log("Profile Data = ", profileData);
       setFormData(profileData);
     }
     //getPendingFrUser();
@@ -98,7 +98,7 @@ const ProfilePage = ({
     
   }, [dispatch]);
   //console.log('Loading in Profilepage', loading);
-  //console.log('User in ProfilePage', user);
+  console.log('User in ProfilePage', user);
   if (props.location.state) {
     //console.log('Calling location state');
     if (user !== null) {
@@ -175,7 +175,7 @@ const ProfilePage = ({
       
     } catch (err) {
       console.log('Error in sending friend request',err);
-      dispatch(setAlert('Something went wrong', 'danger'));
+      dispatch(setAlert('Error in sending friend request', 'danger'));
       dispatch({
         type: ERROR_REQUEST
       });
@@ -202,7 +202,7 @@ const ProfilePage = ({
       
     } catch (err) {
       console.log('Error in canceling friend request',err);
-      dispatch(setAlert('Something went wrong', 'danger'));
+      dispatch(setAlert('Error in canceling friend request', 'danger'));
       dispatch({
         type: ERROR_REQUEST
       });

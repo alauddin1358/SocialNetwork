@@ -28,8 +28,8 @@ import PrivacyPolicy from './components/Share/PrivacyPolicy';
 
 const App = () => {
   const { isAuthenticated, loading } = useSelector((state) => state.auth);
-  console.log('isAuthenticated app', isAuthenticated);
-  console.log('Loadin in app', loading);
+  // console.log('isAuthenticated app', isAuthenticated);
+  // console.log('Loadin in app', loading);
   useEffect(() => {
     console.log('calling useEffect in app');
     store.dispatch(loadUser());

@@ -31,30 +31,31 @@ import cloudinary
 import cloudinary.uploader
 from pymongo import MongoClient
 from gridfs import GridFS
+from dotenv import load_dotenv
 # from flask_email_verifier import Client
 # from flask_email_verifier import exceptions
 UPLOAD_FOLDER = os.getcwd()
 # UPLOAD_FOLDER = 'https://api.agriculturist.org'
 ALLOWED_EXTENSIONS = set(
     ['png', 'PNG', 'jpg', 'JPG', 'jpeg', 'JPEG', 'gif', 'GIF'])
-
-
+# Load environment variable
+load_dotenv()
 # initialize the app
 app = Flask(__name__)
 
 # random secrect key initialization
-app.secret_key = "thisisthesecretkey"
+app.secret_key = os.getenv('API_SECRET_KEY')
 # db config
 # New MongoDB Connection Locally
-app.config['MONGO_URI'] = "mongodb://localhost:27017/userReg"
+# app.config['MONGO_URI'] = os.getenv('LOCAL_MONGO_URI')
 
 # MongoDB Atlas
 # app.config['MONGO_URI'] = "mongodb+srv://alauddin:01767ali@cluster0.qyaqkin.mongodb.net/userReg"
 
-# API LINK = http://15.235.163.6:5000/
+# API LINK = http://15.235.163.6:5000
 
 # Live server in Production
-# app.config['MONGO_URI'] = "mongodb://15.235.163.6:27017/userReg"
+app.config['MONGO_URI'] = "mongodb://15.235.163.6:27017/userReg"
 
 # app.config['MONGO_URI'] = "mongodb://root:iritadb2021@127.0.0.1:27020/userReg?authSource=admin"
 # app.config['MONGO_URI'] = "mongodb://admin:iritadb2021@localhost:27020/userReg?authSource=admin"
@@ -63,9 +64,9 @@ app.config['MONGO_URI'] = "mongodb://localhost:27017/userReg"
 # configuration for flask-mail
 app.config["MAIL_SERVER"] = 'smtp.gmail.com'
 app.config["MAIL_PORT"] = 465
-app.config["MAIL_USERNAME"] = 'ali.ak133058@gmail.com'
+app.config["MAIL_USERNAME"] = os.getenv('MAIL_USERNAME')
 # app.config['MAIL_PASSWORD'] = 'X5Y[qN!GM3Yu'
-app.config['MAIL_PASSWORD'] = 'rsjp jihc iknf fppd'
+app.config['MAIL_PASSWORD'] = os.getenv('MAIL_PASSWORD')
 
 
 app.config['MAIL_USE_TLS'] = False
@@ -82,8 +83,8 @@ mail = Mail(app)
 
 # connects to the mongoDB server
 mongo = PyMongo(app)
-# client = MongoClient('mongodb://15.235.163.6:27017/')
-client = MongoClient('mongodb://localhost:27017/')
+client = MongoClient('mongodb://15.235.163.6:27017/')
+# client = MongoClient('mongodb+srv://alauddin:01767ali@cluster0.qyaqkin.mongodb.net/')
 dbs = client['userReg']
 fs = GridFS(dbs)
 
@@ -173,7 +174,7 @@ def internal_error(error=None):
 @app.route('/protected')
 @token_required
 def protected():
-    print('hello')
+    # print('hello')
     return jsonify({'message': 'Available with valid tokens'})
 
 # Email Verification
@@ -203,7 +204,7 @@ def protected():
 def login():
     try:
         _json = request.json
-        print(_json)
+        # print(_json)
         # _name = _json['name']
         _email = _json['email']
         _password = _json['password']
@@ -222,12 +223,12 @@ def login():
                     'data': {'token': token.decode('UTF-8')},
                     'result': {'isError': 'false', 'message': 'Login Successful', 'status': 200, }
                 }
-                print(token)
+                # print(token)
                 return jsonify(message)
             else:
                 message = {
                     'data': 'null',
-                    'result': {'isError': 'true', 'message': 'password is invalid', 'status': 401, }
+                    'result': {'isError': 'true', 'message': 'username or password is invalid', 'status': 401, }
                 }
                 return jsonify(message)
             """
@@ -240,7 +241,7 @@ def login():
             """
         else:
             message = {
-                'data': 'null', 'result': {'isError': 'true', 'message': 'Username or password is invalid', 'status': 401, }
+                'data': 'null', 'result': {'isError': 'true', 'message': 'Please sign up for an account before attempting to log in', 'status': 401, }
             }
             return jsonify(message)
     except Exception as e:
@@ -310,7 +311,7 @@ def add_user():
         # _referrer_name = _json['referrer_name']
         # _referrer_email = _json['referrer_email']
         # _emailconfirm = False
-        print(_email)
+        # print(_email)
         _password = bcrypt.generate_password_hash(
             _json['password']).decode('utf-8')
         _passwordconfirm = bcrypt.generate_password_hash(
@@ -342,7 +343,7 @@ def add_user():
                 _imagefilename = secure_filename(_file.filename)
 
                 _filename = _imagefilename.split(".")[0]
-                print(_filename)
+                # print(_filename)
                 # app.logger.info('%s file_to_upload', _file)
                 upload_result = cloudinary.uploader.upload(
                     _file, public_id=_filename)
@@ -369,9 +370,7 @@ def add_user():
                                                      'roles': [], 'groups': [], 'ts': [], 'friends': []})
 
             # mongo.db.upload.insert({'upload_file_name': _file.filename})
-            # for json response
-            print(_insertId)
-            print(_name)
+
             """
             token = safeSerializer.dumps(
                 _referrer_email, salt='email-confirm')
@@ -547,7 +546,7 @@ def getAllUser():
 def getUser():
     # data = jwt.decode(token, app.config['SECRET_KEY'])
     user = session['user']
-    # print(user)
+    print(user)
     # mongo query for finding all value
     user = mongo.db.userReg.find_one({'email': user})
     # print(user)
@@ -750,7 +749,7 @@ def create_post(id):
         _filename = secure_filename(_file.filename)
         _filenameExt = _filename.split(".")[1]
         if _filenameExt in ALLOWED_EXTENSIONS and _id != 'null':
-            print(_filenameExt)
+            # print(_filenameExt)
             cloudinary.config(cloud_name="daf1cgy1c", api_key="228197214629277",
                               api_secret="DferVvyNAJovYz-cOug7zIx6cR4")
             _filenameWithoutExt = _filename.split(".")[0]
@@ -1281,7 +1280,7 @@ def getfile(id):
         }
         return jsonify(message)
     except Exception as e:
-        print(e)
+        print('Error in getting file ', e)
         return internal_error()
 
 # Add Advertisement
@@ -1384,7 +1383,7 @@ def get_Advertise():
         }
         return jsonify(message)
     except Exception as e:
-        print(e)
+        print('Error in getting advertise ', e)
         return internal_error()
 
 
@@ -1392,7 +1391,6 @@ def get_Advertise():
 @ cross_origin(supports_credentials=True)
 def delete_advertise(id):
     try:
-        print(id)
         existing_adv = mongo.db.advertiseUpload.find_one({'_id': ObjectId(id)})
         if existing_adv and request.method == 'DELETE':
             # # mongo query for deleting specific id
@@ -2006,7 +2004,7 @@ def friendReq(id):
 @ token_required
 def cancelFrndReq(id):
     try:
-        print('id = ', id)
+        # print('id = ', id)
         # print('User ', session['user'])
         current_user = mongo.db.userReg.find_one({'email': session['user']})
         # existing_user = mongo.db.userReg.find_one({'_id': ObjectId(id)})
@@ -2027,7 +2025,8 @@ def cancelFrndReq(id):
             return jsonify(message)
         else:
             return not_found()
-    except:
+    except Exception as e:
+        print('Error ', e)
         return internal_error()
 # acceptFriend Request
 
@@ -2059,7 +2058,8 @@ def acceptFriendReq(id):
             return jsonify(message)
         else:
             return not_found()
-    except:
+    except Exception as e:
+        print('Error ', e)
         return internal_error()
 
 # deleteFriend Request
@@ -2087,7 +2087,8 @@ def friendReqDel(id):
             return jsonify(message)
         else:
             return not_found()
-    except:
+    except Exception as e:
+        print('Error ', e)
         return internal_error()
 
 

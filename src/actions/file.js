@@ -57,8 +57,9 @@ export const addFile = ({formData},id) => async dispatch => {
     }
   };
       try {
-        console.log('ID = ', id);
-        const res = await instance.post(`${API}/posts/${id}`, formData,config);
+        console.log('FIle formdata = ', formData);
+        const res = await instance.post(`${API}/posts/${id}`, formData, config);
+        console.log('After File uploading response ', res.data);
         if(res.data.result.isError === 'true') {
             dispatch(setAlert(res.data.result.message, 'danger'));
           }

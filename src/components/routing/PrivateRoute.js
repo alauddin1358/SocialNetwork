@@ -9,13 +9,13 @@ const PrivateRoute = ({
   auth: { isAuthenticated, loading },
   ...rest
 }) => {
-  console.log('isAuthenticated', isAuthenticated);
-  console.log('Loadin in PR', loading);
+  // console.log('isAuthenticated', isAuthenticated);
+  // console.log('Loadin in PR', loading);
   return (
     <>
     <Route {...rest}
       render={props =>
-        !isAuthenticated ? (<Redirect to="/" />) :
+        !isAuthenticated ? (<Redirect to="/login" />) :
           (<Component {...props} />)
       }
       />
