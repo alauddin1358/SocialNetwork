@@ -64,7 +64,7 @@ const App = () => {
               <PrivateRoute exact path="/friends" component = {AddFriend} />
               <PrivateRoute exact path="/friendlist" component = {FriendListContainer} />
               <PrivateRoute exact path="/sharepost/:id" component={SharePage} />
-          <PrivateRoute exact path="/privacypolicy" component={PrivacyPolicy} />
+              <Route exact path="/privacypolicy" component={PrivacyPolicy} />
               {/* <PrivateRoute exact path="/profile" render={(props) => <Profile {...props}/>}  />
               <PrivateRoute exact path="/searchuser" render={(props) => <SearchUserListContainer {...props}/>} /> */}
               

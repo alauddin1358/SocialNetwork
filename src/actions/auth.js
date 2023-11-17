@@ -52,7 +52,7 @@ export const loadUser = () => async dispatch => {
       });
     }
     else {
-      // dispatch(setAlert(res.data.result.message, 'danger'));
+      dispatch(setAlert(res.data.result.message, 'danger'));
       dispatch({
         type: AUTH_ERROR
       });
@@ -142,7 +142,7 @@ export const login = (email, password) => async dispatch => {
   
   try {
     const res = await axios.post(`${API}/login`, body, config);
-    //console.log('Login response', res.data);
+    console.log('Login response', res.data);
     if(res.data.result.isError === 'true') {
       dispatch(setAlert(res.data.result.message, 'danger'));
     }

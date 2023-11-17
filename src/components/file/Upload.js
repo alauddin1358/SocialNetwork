@@ -69,9 +69,9 @@ const Upload = ({props, addFile,getFile,updateFile,auth, file: {files, isSuccess
       //console.log('file data ', fileData);
     }
   }, [loading, files, props]);
-  useEffect(() => {
-    console.log('File:', file);
-  }, [file]);
+  // useEffect(() => {
+  //   console.log('File:', file);
+  // }, [file]);
   let { title, desc, filename } = fileData;
   //console.log('Loading in upload = ', loading);
   const handleInputChange = (event) => {
@@ -135,9 +135,9 @@ const Upload = ({props, addFile,getFile,updateFile,auth, file: {files, isSuccess
           if (file) {
             formData.append('file', file);  
             setErrorMsg(''); 
-            formData.forEach((key, value) => {
-    console.log(key, value);
-  });
+            // formData.forEach((key, value) => {
+            //   console.log(key, value);
+            // });
             //console.log('FormData in React component', formData);
             await dispatch(addFile({formData},id));
             

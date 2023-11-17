@@ -28,7 +28,7 @@ export const getPendingFrUser = () => async dispatch => {
   };
   try {
     const res = await instance.get(`${API}/getPendFrUser`, config);
-    console.log('All pending User',JSON.parse(res.data.data));
+    //console.log('All pending User',JSON.parse(res.data.data));
     if(res.data.result.isError === 'true') {
       dispatch(setAlert(res.data.result.message, 'danger'));
     }
@@ -61,7 +61,7 @@ export const getUserMyFr = () => async dispatch => {
   };
   try {
     const res = await instance.get(`${API}/getUserFriend`, config);
-    console.log('All User Friend',JSON.parse(res.data.data));
+    //console.log('All User Friend',JSON.parse(res.data.data));
     if(res.data.result.isError === 'true') {
       dispatch(setAlert(res.data.result.message, 'danger'));
     }
@@ -94,7 +94,7 @@ export const getFriendSuggestion = () => async (dispatch) => {
   };
   try {
     const res = await instance.get(`${API}/getFriendSuggestion`, config);
-    console.log('All Suggested Friend',JSON.parse(res.data.data));
+    //console.log('All Suggested Friend',JSON.parse(res.data.data));
     if(res.data.result.isError === 'true') {
       dispatch(setAlert(res.data.result.message, 'danger'));
     }

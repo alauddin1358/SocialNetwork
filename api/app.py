@@ -47,7 +47,7 @@ app = Flask(__name__)
 app.secret_key = os.getenv('API_SECRET_KEY')
 # db config
 # New MongoDB Connection Locally
-# app.config['MONGO_URI'] = os.getenv('LOCAL_MONGO_URI')
+app.config['MONGO_URI'] = os.getenv('LOCAL_MONGO_URI')
 
 # MongoDB Atlas
 # app.config['MONGO_URI'] = "mongodb+srv://alauddin:01767ali@cluster0.qyaqkin.mongodb.net/userReg"
@@ -55,7 +55,7 @@ app.secret_key = os.getenv('API_SECRET_KEY')
 # API LINK = http://15.235.163.6:5000
 
 # Live server in Production
-app.config['MONGO_URI'] = "mongodb://15.235.163.6:27017/userReg"
+# app.config['MONGO_URI'] = "mongodb://15.235.163.6:27017/userReg"
 
 # app.config['MONGO_URI'] = "mongodb://root:iritadb2021@127.0.0.1:27020/userReg?authSource=admin"
 # app.config['MONGO_URI'] = "mongodb://admin:iritadb2021@localhost:27020/userReg?authSource=admin"
@@ -83,8 +83,8 @@ mail = Mail(app)
 
 # connects to the mongoDB server
 mongo = PyMongo(app)
-client = MongoClient('mongodb://15.235.163.6:27017/')
-# client = MongoClient('mongodb+srv://alauddin:01767ali@cluster0.qyaqkin.mongodb.net/')
+# client = MongoClient('mongodb://15.235.163.6:27017/')
+client = MongoClient('mongodb://localhost:27017/')
 dbs = client['userReg']
 fs = GridFS(dbs)
 
@@ -241,12 +241,18 @@ def login():
             """
         else:
             message = {
-                'data': 'null', 'result': {'isError': 'true', 'message': 'Please sign up for an account before attempting to log in', 'status': 401, }
+                'data': 'null',
+                'result': {'isError': 'true', 'message': 'Please sign up for an account before attempting to log in', 'status': 401, }
             }
             return jsonify(message)
     except Exception as e:
         print(e)
-        return internal_error()
+        message = {
+            'data': str(e),
+            'result': {'isError': 'true', 'message': 'Internal Server Error', 'status': 401, }
+        }
+        return jsonify(message)
+        # return internal_error()
     # return make_response(jsonify(message), 401, {'WWW-Authenticate': 'Basic realm="Login Required" '})
 
 # OTP varify and generate token
@@ -544,20 +550,24 @@ def getAllUser():
 @cross_origin(supports_credentials=True)
 @token_required
 def getUser():
-    # data = jwt.decode(token, app.config['SECRET_KEY'])
-    user = session['user']
-    print(user)
-    # mongo query for finding all value
-    user = mongo.db.userReg.find_one({'email': user})
-    # print(user)
-    if user:
-        message = {
-            'data': dumps(user),
-            'result': {'isError': 'false', 'message': 'Valid', 'status': 200, }
-        }
-        return jsonify(message)
-    else:
-        return not_found()
+    try:
+        # data = jwt.decode(token, app.config['SECRET_KEY'])
+        user = session['user']
+        print(user)
+        # mongo query for finding all value
+        user = mongo.db.userReg.find_one({'email': user})
+        # print(user)
+        if user:
+            message = {
+                'data': dumps(user),
+                'result': {'isError': 'false', 'message': 'Valid', 'status': 200, }
+            }
+            return jsonify(message)
+        else:
+            return not_found()
+    except Exception as e:
+        print('Error in load user ', e)
+        return internal_error()
 
 # showing specific user
 

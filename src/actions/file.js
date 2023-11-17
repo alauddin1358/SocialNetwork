@@ -9,7 +9,8 @@ import {
     DELETE_ADV,
     ADD_POST
   } from './types';
-import {instance} from './instance';
+import { instance } from './instance';
+import axios from 'axios';
 import { setAlert } from './alert';
 import { getPosts } from './post';
 const API = process.env.REACT_APP_API;
@@ -57,8 +58,8 @@ export const addFile = ({formData},id) => async dispatch => {
     }
   };
       try {
-        console.log('FIle formdata = ', formData);
-        const res = await instance.post(`${API}/posts/${id}`, formData, config);
+       // console.log('FIle formdata = ', formData);
+        const res = await axios.post(`${API}/posts/${id}`, formData, config);
         console.log('After File uploading response ', res.data);
         if(res.data.result.isError === 'true') {
             dispatch(setAlert(res.data.result.message, 'danger'));

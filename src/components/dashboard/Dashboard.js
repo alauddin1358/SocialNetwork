@@ -25,6 +25,16 @@ const Dashboard = ({
   auth: { isAuthenticated, token, user, loading },
 }) => {
   const [fileLoading, setFileLoading] = useState(true);
+  // useEffect(() => {
+  //   const lastPath = sessionStorage.getItem('lastPath');
+  //   if (lastPath) {
+  //     // Clear the saved path from sessionStorage
+  //     sessionStorage.removeItem('lastPath');
+  //     // Redirect to the last path
+  //     props.history.push(lastPath);
+  //   }
+  // }, []);
+
   useEffect(() => {
     console.log('calling useEffect in Dashboard');
     loadUser();
@@ -48,9 +58,9 @@ const Dashboard = ({
     }
   }, [loadUser, getAllUsers, getPendingFrUser, getUserMyFr, getFile]);
   //console.log('IsAuthenticated', isAuthenticated);
-  if (!isAuthenticated && token === null) {
-    return <Redirect to='/login' />;
-  }
+  // if (!isAuthenticated && token === null) {
+  //   return <Redirect to='/login' />;
+  // }
   //console.log(' Props dashboard = ',props);
   return (
     <Fragment>

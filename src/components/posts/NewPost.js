@@ -66,7 +66,7 @@ const NewPost = ({ propsFromLink, post: { posts, loading } }) => {
             formData.append('title', title);
             formData.append('desc', desc);
             formData.append('filename', null);
-            console.log('Post form data', formData);
+            //console.log('Post form data', formData);
             //await addPost({ formData }, propsFromLink.id, propsFromLink.edit);
             const config = {
                 headers : {
@@ -109,10 +109,15 @@ const NewPost = ({ propsFromLink, post: { posts, loading } }) => {
             }
             //setIsSubmit(true);
         } else {
-            if(title.trim() === '')
+            if (title.trim() === '') {
                 setErrorTitle('Please enter the post title.');
-            if(desc.trim() === '')
-                setErrorBody('Please enter the post body.');
+                setSubmitButtonDisable(false);
+            }
+                
+            if (desc.trim() === '') {
+                setErrorBody('Please enter the post body.');   
+                setSubmitButtonDisable(false);
+            }
           }
     };
     
