@@ -1,22 +1,26 @@
-import React, { Fragment, useState, useEffect } from 'react';
-import { connect } from 'react-redux';
+import React, { Fragment, useState } from "react";
+import { connect } from "react-redux";
 //import { Modal, ModalHeader, ModalBody } from 'reactstrap';
-import { Link, Redirect } from 'react-router-dom';
-import { logout } from '../../actions/auth';
-import Autosuggest from 'react-autosuggest';
-import AutosuggestHighlightMatch from 'autosuggest-highlight/match';
-import AutosuggestHighlightParse from 'autosuggest-highlight/parse';
-import Pages from './Pages';
-import Footer from './Footer';
-import Alert from '../layout/Alert';
-import { toggleCssClass } from '../../actions/auth';
+import { Link } from "react-router-dom";
+import { logout } from "../../actions/auth";
+import Autosuggest from "react-autosuggest";
+import AutosuggestHighlightMatch from "autosuggest-highlight/match";
+import AutosuggestHighlightParse from "autosuggest-highlight/parse";
+import Pages from "./Pages";
+import Footer from "./Footer";
+import Alert from "../layout/Alert";
+import { toggleCssClass } from "../../actions/auth";
 const ADMIN = process.env.REACT_APP_ADMIN;
 const IMAGEURL = process.env.REACT_APP_CLOUDINARY;
 
-const TopSidebar = ({ props, auth: { user, allUsers },
-  friend: {pendingFriend},
-  toggleCssClass, logout }) => {
-  const [value, setValue] = useState('');
+const TopSidebar = ({
+  props,
+  auth: { user, allUsers },
+  friend: { pendingFriend },
+  toggleCssClass,
+  logout,
+}) => {
+  const [value, setValue] = useState("");
   const [suggestions, setSuggestions] = useState([]);
   const [addClass, setAddClass] = useState(false);
   const [stopCondition, setStopCondition] = useState(true);
@@ -43,18 +47,18 @@ const TopSidebar = ({ props, auth: { user, allUsers },
       setStopCondition(false);
     }
   }
-  
+
   function escapeRegexCharacters(str) {
-    return str.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+    return str.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
   }
   function getSuggestions(value) {
     const escapedValue = escapeRegexCharacters(value.trim());
 
-    if (escapedValue === '') {
+    if (escapedValue === "") {
       return [];
     }
 
-    const regex = new RegExp('\\b' + escapedValue, 'i');
+    const regex = new RegExp("\\b" + escapedValue, "i");
 
     return allUsers.filter((user) => regex.test(getSuggestionValue(user)));
   }
@@ -70,23 +74,23 @@ const TopSidebar = ({ props, auth: { user, allUsers },
     const matches = AutosuggestHighlightMatch(suggestionText, query);
     const parts = AutosuggestHighlightParse(suggestionText, matches);
     return (
-      <span className='suggestion-content'>
+      <span className="suggestion-content">
         <img
-          src={IMAGEURL+suggestion.image}
-          alt='user'
-          className='user-img-profile rounded-circle'
+          src={IMAGEURL + suggestion.image}
+          alt="user"
+          className="user-img-profile rounded-circle"
         />
-        <span className='name'>
+        <span className="name">
           <Link
             to={{
-              pathname: '/profile',
+              pathname: "/profile",
               state: {
                 id: suggestion._id.$oid,
               },
             }}
           >
             {parts.map((part, index) => {
-              const className = part.highlight ? 'highlight' : null;
+              const className = part.highlight ? "highlight" : null;
               return (
                 <span className={className} key={index}>
                   {part.text}
@@ -137,16 +141,16 @@ const TopSidebar = ({ props, auth: { user, allUsers },
     //   //     {value}{' '}
     //   //   </Redirect>
     //   // );
-    // } else 
-    if (value !== '') {
-      props.history.push('/searchuser',{
+    // } else
+    if (value !== "") {
+      props.history.push("/searchuser", {
         value: value,
       });
       //alert('Searching user is not found');
     }
   };
   const inputProps = {
-    placeholder: 'Search for...',
+    placeholder: "Search for...",
     value,
     onChange: onChange,
   };
@@ -154,64 +158,64 @@ const TopSidebar = ({ props, auth: { user, allUsers },
     <Fragment>
       <ul
         className={`navbar-nav bgGradientPrimary sidebar sidebar-dark accordion 
-                        ${addClass ? 'toggled' : ''}`}
-        id='accordionSidebar'
+                        ${addClass ? "toggled" : ""}`}
+        id="accordionSidebar"
       >
         <Link
           to={{
-            pathname: '/dashboard',
+            pathname: "/dashboard",
             state: {
               showMyPost: false,
             },
           }}
-          id='brand-image'
+          id="brand-image"
         >
           <img
-            src={process.env.PUBLIC_URL + '/img/Agriculturist-logo_150x191.png'}
-            alt='Agriculturist Logo'
+            src={process.env.PUBLIC_URL + "/img/Agriculturist-logo_150x191.png"}
+            alt="Agriculturist Logo"
           />
           {/* <img src="../../../public/img/Social_Fish2.png" alt="Agriculturist Logo"/> */}
           <span>Agriculturist</span>
         </Link>
-        <hr className='sidebar-divider my-0' />
-        <li className='nav-item active'>
+        <hr className="sidebar-divider my-0" />
+        <li className="nav-item active">
           <Link
-            className='nav-link collapsed'
+            className="nav-link collapsed"
             to={{
-              pathname: '/dashboard',
+              pathname: "/dashboard",
               state: {
                 showMyPost: false,
               },
             }}
             // onClick={() => toggleCssClass(true)}
           >
-            <i className='fas fa-fw fa-tachometer-alt'></i>
+            <i className="fas fa-fw fa-tachometer-alt"></i>
             <span>Dashboard</span>
           </Link>
         </li>
-        <li className='nav-item'>
+        <li className="nav-item">
           <a
-            className='nav-link collapsed'
-            href='/#'
-            data-toggle='collapse'
-            data-target='#collapsePosts'
-            aria-expanded='true'
-            aria-controls='collapsePosts'
+            className="nav-link collapsed"
+            href="/#"
+            data-toggle="collapse"
+            data-target="#collapsePosts"
+            aria-expanded="true"
+            aria-controls="collapsePosts"
           >
-            <i className='fas fa-user-plus' aria-hidden='true'></i>
+            <i className="fas fa-user-plus" aria-hidden="true"></i>
             <span>Posts</span>
           </a>
           <div
-            id='collapsePosts'
-            className='collapse'
-            aria-labelledby='headingPages'
-            data-parent='#accordionSidebar'
+            id="collapsePosts"
+            className="collapse"
+            aria-labelledby="headingPages"
+            data-parent="#accordionSidebar"
           >
-            <div className='bg-white py-2 collapse-inner rounded'>
+            <div className="bg-white py-2 collapse-inner rounded">
               <Link
-                className='nav-link collapse-item'
+                className="collapse-item"
                 to={{
-                  pathname: '/addpost',
+                  pathname: "/addpost",
                   state: {
                     id: null,
                     edit: false,
@@ -222,9 +226,9 @@ const TopSidebar = ({ props, auth: { user, allUsers },
                 Add Post
               </Link>
               <Link
-                className='collapse-item'
+                className="collapse-item"
                 to={{
-                  pathname: '/dashboard',
+                  pathname: "/dashboard",
                   state: {
                     showMyPost: true,
                   },
@@ -237,64 +241,66 @@ const TopSidebar = ({ props, auth: { user, allUsers },
           </div>
         </li>
 
-        <li className='nav-item'>
+        <li className="nav-item">
           <a
-            className='nav-link collapsed'
-            href='/#'
-            data-toggle='collapse'
-            data-target='#collapseFiles'
-            aria-expanded='true'
-            aria-controls='collapseFiles'
+            className="nav-link collapsed"
+            href="/#"
+            data-toggle="collapse"
+            data-target="#collapseFiles"
+            aria-expanded="true"
+            aria-controls="collapseFiles"
           >
-            <i className='fas fa-fw fa-folder'></i>
+            <i className="fas fa-fw fa-folder"></i>
             <span>Files</span>
           </a>
           <div
-            id='collapseFiles'
-            className='collapse'
-            aria-labelledby='headingPages'
-            data-parent='#accordionSidebar'
+            id="collapseFiles"
+            className="collapse"
+            aria-labelledby="headingPages"
+            data-parent="#accordionSidebar"
           >
-            <div className='bg-white py-2 collapse-inner rounded'>
-              <Link className='collapse-item' to={{
-                                            pathname: '/addfile',
-                                            state: {
-                                                id: null,
-                                                edit: false
-                                            }
-                                        }}
+            <div className="bg-white py-2 collapse-inner rounded">
+              <Link
+                className="collapse-item"
+                to={{
+                  pathname: "/addfile",
+                  state: {
+                    id: null,
+                    edit: false,
+                  },
+                }}
               >
                 Add File
               </Link>
-              <Link className='collapse-item' to='/list'>
+              <Link className="collapse-item" to="/list">
                 Show Files
               </Link>
             </div>
           </div>
         </li>
-        <li className='nav-item'>
+        <li className="nav-item">
           <a
-            className='nav-link collapsed'
-            href='/#'
-            data-toggle='collapse'
-            data-target='#collapseFriends'
-            aria-expanded='true'
-            aria-controls='collapseFiles'
+            className="nav-link collapsed"
+            href="/#"
+            data-toggle="collapse"
+            data-target="#collapseFriends"
+            aria-expanded="true"
+            aria-controls="collapseFiles"
           >
-            <i className='fas fa-user-friends'></i>
+            <i className="fas fa-user-friends"></i>
             <span>Friends</span>
           </a>
           <div
-            id='collapseFriends'
-            className='collapse'
-            aria-labelledby='headingPages'
-            data-parent='#accordionSidebar'
+            id="collapseFriends"
+            className="collapse"
+            aria-labelledby="headingPages"
+            data-parent="#accordionSidebar"
           >
-            <div className='bg-white py-2 collapse-inner rounded'>
-              <Link className='collapse-item' to='/friends'>
+            <div className="bg-white py-2 collapse-inner rounded">
+              <Link className="collapse-item" to="/friends">
                 Add Friends
               </Link>
-              <Link className='collapse-item' to='/friendlist'>
+              <Link className="collapse-item" to="/friendlist">
                 My Friends
               </Link>
             </div>
@@ -302,39 +308,39 @@ const TopSidebar = ({ props, auth: { user, allUsers },
         </li>
         {user !== null ? (
           user.email === ADMIN ? (
-            <li className='nav-item'>
-              <Link to='/userlist' className='nav-link collapsed'>
-                <i className='fa fa-user'></i>
+            <li className="nav-item">
+              <Link to="/userlist" className="nav-link collapsed">
+                <i className="fa fa-user"></i>
                 <span>UserList</span>
               </Link>
             </li>
           ) : null
         ) : null}
 
-        <hr className='sidebar-divider' />
+        <hr className="sidebar-divider" />
 
-        <hr className='sidebar-divider d-none d-md-block' />
+        <hr className="sidebar-divider d-none d-md-block" />
 
-        <div className='text-center d-none d-md-inline'>
+        <div className="text-center d-none d-md-inline">
           <button
-            className='rounded-circle border-0'
-            id='sidebarToggle'
+            className="rounded-circle border-0"
+            id="sidebarToggle"
             onClick={toggleClass}
           ></button>
         </div>
       </ul>
-      <div id='content-wrapper' className='d-flex flex-column'>
-        <div id='content'>
+      <div id="content-wrapper" className="d-flex flex-column">
+        <div id="content">
           <nav
-            className='navbar navbar-expand navbar-light 
-                            bg-white topbar mb-4 static-top shadow'
+            className="navbar navbar-expand navbar-light 
+                            bg-white topbar mb-4 static-top shadow"
           >
             <button
-              id='sidebarToggleTop'
+              id="sidebarToggleTop"
               onClick={toggleClass}
-              className='btn btn-link d-md-none rounded-circle mr-3'
+              className="btn btn-link d-md-none rounded-circle mr-3"
             >
-              <i className='fa fa-bars'></i>
+              <i className="fa fa-bars"></i>
             </button>
 
             {/* <div id='dashboard-header-dropdown' className='dropdown'>
@@ -379,10 +385,10 @@ const TopSidebar = ({ props, auth: { user, allUsers },
             </div> */}
 
             <form
-              className='d-none d-sm-inline-block form-inline mr-auto ml-md-3 my-2 my-md-0 mw-100 navbar-search'
+              className="d-none d-sm-inline-block form-inline mr-auto ml-md-3 my-2 my-md-0 mw-100 navbar-search"
               onSubmit={submitSearchData}
             >
-              <div className='input-group'>
+              <div className="input-group">
                 <Autosuggest
                   suggestions={suggestions}
                   onSuggestionsFetchRequested={onSuggestionsFetchRequested}
@@ -391,37 +397,37 @@ const TopSidebar = ({ props, auth: { user, allUsers },
                   renderSuggestion={renderSuggestion}
                   inputProps={inputProps}
                 />
-                <div className='input-group-append'>
-                  <button className='btn btn-primary' type='submit'>
-                    <i className='fas fa-search fa-sm'></i>
+                <div className="input-group-append">
+                  <button className="btn btn-primary" type="submit">
+                    <i className="fas fa-search fa-sm"></i>
                   </button>
                 </div>
               </div>
             </form>
 
-            <ul className='navbar-nav ml-auto'>
-              <li className='nav-item dropdown no-arrow d-sm-none'>
+            <ul className="navbar-nav ml-auto">
+              <li className="nav-item dropdown no-arrow d-sm-none">
                 <a
-                  className='nav-link dropdown-toggle'
-                  href='/#'
-                  id='searchDropdown'
-                  role='button'
-                  data-toggle='dropdown'
-                  aria-haspopup='true'
-                  aria-expanded='false'
+                  className="nav-link dropdown-toggle"
+                  href="/#"
+                  id="searchDropdown"
+                  role="button"
+                  data-toggle="dropdown"
+                  aria-haspopup="true"
+                  aria-expanded="false"
                 >
-                  <i className='fas fa-search fa-fw'></i>
+                  <i className="fas fa-search fa-fw"></i>
                 </a>
                 <div
-                  className='dropdown-menu dropdown-menu-right p-3 
-                                            shadow animated--grow-in'
-                  aria-labelledby='searchDropdown'
+                  className="dropdown-menu dropdown-menu-right p-3 
+                                            shadow animated--grow-in"
+                  aria-labelledby="searchDropdown"
                 >
                   <form
-                    className='form-inline mr-auto w-100 navbar-search'
+                    className="form-inline mr-auto w-100 navbar-search"
                     onSubmit={submitSearchData}
                   >
-                    <div className='input-group'>
+                    <div className="input-group">
                       <Autosuggest
                         suggestions={suggestions}
                         onSuggestionsFetchRequested={
@@ -434,9 +440,9 @@ const TopSidebar = ({ props, auth: { user, allUsers },
                         renderSuggestion={renderSuggestion}
                         inputProps={inputProps}
                       />
-                      <div className='input-group-append'>
-                        <button className='btn btn-primary' type='submit'>
-                          <i className='fas fa-search fa-sm'></i>
+                      <div className="input-group-append">
+                        <button className="btn btn-primary" type="submit">
+                          <i className="fas fa-search fa-sm"></i>
                         </button>
                       </div>
                       {/* <input type="text" 
@@ -448,41 +454,41 @@ const TopSidebar = ({ props, auth: { user, allUsers },
                 </div>
               </li>
 
-              <li className='nav-item dropdown no-arrow mx-1'>
+              <li className="nav-item dropdown no-arrow mx-1">
                 <a
-                  className='nav-link dropdown-toggle'
-                  href='/#'
-                  id='alertsDropdown'
-                  role='button'
-                  data-toggle='dropdown'
-                  aria-haspopup='true'
-                  aria-expanded='false'
+                  className="nav-link dropdown-toggle"
+                  href="/#"
+                  id="alertsDropdown"
+                  role="button"
+                  data-toggle="dropdown"
+                  aria-haspopup="true"
+                  aria-expanded="false"
                 >
-                  <i className='fas fa-bell fa-fw'></i>
-                  <span className='badge badge-danger badge-counter'>
+                  <i className="fas fa-bell fa-fw"></i>
+                  <span className="badge badge-danger badge-counter">
                     {pendingFriend.length > 0 ? pendingFriend.length : null}
                   </span>
                 </a>
                 {pendingFriend.length > 0 ? (
                   <div
-                    className='dropdown-list dropdown-menu dropdown-menu-right shadow animated--grow-in'
-                    aria-labelledby='alertsDropdown'
+                    className="dropdown-list dropdown-menu dropdown-menu-right shadow animated--grow-in"
+                    aria-labelledby="alertsDropdown"
                   >
-                    <h6 className='dropdown-header'>Notification Center</h6>
+                    <h6 className="dropdown-header">Notification Center</h6>
                     {pendingFriend.length > 0
                       ? pendingFriend.map((pendingUser) => (
                           <Link
-                            className='dropdown-item d-flex align-items-center'
+                            className="dropdown-item d-flex align-items-center"
                             to="/friends"
                             key={pendingUser._id.$oid}
                           >
-                            <div className='mr-3'>
-                              <div className='icon-circle bg-primary'>
+                            <div className="mr-3">
+                              <div className="icon-circle bg-primary">
                                 <img
-                                  className='img-profile rounded-circle'
+                                  className="img-profile rounded-circle"
                                   src={
                                     pendingUser !== null
-                                      ? IMAGEURL+pendingUser.image
+                                      ? IMAGEURL + pendingUser.image
                                       : null
                                   }
                                   alt={pendingUser.name}
@@ -490,18 +496,18 @@ const TopSidebar = ({ props, auth: { user, allUsers },
                               </div>
                             </div>
                             <div>
-                              <span className='font-weight-bold'>
-                              <span
-                              style={{
-                                fontSize: 15,
-                                fontWeight: 'bold',
-                                fontFamily: 'cursive',
-                                color: 'green'
-                              }}
-                            >
-                              {pendingUser.name}
-                            </span>{' '}
-                            wants to be your friend.
+                              <span className="font-weight-bold">
+                                <span
+                                  style={{
+                                    fontSize: 15,
+                                    fontWeight: "bold",
+                                    fontFamily: "cursive",
+                                    color: "green",
+                                  }}
+                                >
+                                  {pendingUser.name}
+                                </span>{" "}
+                                wants to be your friend.
                               </span>
                             </div>
                           </Link>
@@ -526,44 +532,44 @@ const TopSidebar = ({ props, auth: { user, allUsers },
                 </a>
               </li> */}
 
-              <div className='topbar-divider d-none d-sm-block'></div>
+              <div className="topbar-divider d-none d-sm-block"></div>
 
-              <li className='nav-item dropdown no-arrow'>
+              <li className="nav-item dropdown no-arrow">
                 <a
-                  href='/#'
-                  className='nav-link dropdown-toggle'
-                  id='userDropdown'
-                  role='button'
-                  data-toggle='dropdown'
-                  aria-haspopup='true'
-                  aria-expanded='false'
+                  href="/#"
+                  className="nav-link dropdown-toggle"
+                  id="userDropdown"
+                  role="button"
+                  data-toggle="dropdown"
+                  aria-haspopup="true"
+                  aria-expanded="false"
                 >
-                  <span className='mr-2 d-none d-lg-inline text-gray-600 small'>
-                    {user !== null ? user.name : 'UserName'}{' '}
+                  <span className="mr-2 d-none d-lg-inline text-gray-600 small">
+                    {user !== null ? user.name : "UserName"}{" "}
                   </span>
                   <img
-                    className='img-profile rounded-circle'
-                    src={user !== null ? IMAGEURL+user.image : null}
-                    alt='userName'
+                    className="img-profile rounded-circle"
+                    src={user !== null ? IMAGEURL + user.image : null}
+                    alt="userName"
                   />
                 </a>
                 <div
-                  className='dropdown-menu dropdown-menu-right 
-                                            shadow animated--grow-in'
-                  aria-labelledby='userDropdown'
+                  className="dropdown-menu dropdown-menu-right 
+                                            shadow animated--grow-in"
+                  aria-labelledby="userDropdown"
                 >
-                  <Link className='dropdown-item' to='/profile'>
-                    <i className='fas fa-user fa-sm fa-fw mr-2 text-gray-400'></i>
+                  <Link className="dropdown-item" to="/profile">
+                    <i className="fas fa-user fa-sm fa-fw mr-2 text-gray-400"></i>
                     Profile
                   </Link>
-                  <div className='dropdown-divider'></div>
+                  <div className="dropdown-divider"></div>
                   <a
-                    href='/#'
-                    className='dropdown-item'
-                    data-toggle='modal'
-                    data-target='#logoutModal'
+                    href="/#"
+                    className="dropdown-item"
+                    data-toggle="modal"
+                    data-target="#logoutModal"
                   >
-                    <i className='fas fa-sign-out-alt fa-sm fa-fw mr-2 text-gray-400'></i>
+                    <i className="fas fa-sign-out-alt fa-sm fa-fw mr-2 text-gray-400"></i>
                     Logout
                   </a>
                 </div>
@@ -582,41 +588,41 @@ const TopSidebar = ({ props, auth: { user, allUsers },
                         </ListGroup> : null
                     } */}
       <div
-        className='modal fade'
-        id='logoutModal'
-        tabIndex='-1'
-        role='dialog'
-        aria-labelledby='exampleModalLabel'
-        aria-hidden='true'
+        className="modal fade"
+        id="logoutModal"
+        tabIndex="-1"
+        role="dialog"
+        aria-labelledby="exampleModalLabel"
+        aria-hidden="true"
       >
-        <div className='modal-dialog' role='document'>
-          <div className='modal-content'>
-            <div className='modal-header'>
-              <h5 className='modal-title' id='exampleModalLabel'>
+        <div className="modal-dialog" role="document">
+          <div className="modal-content">
+            <div className="modal-header">
+              <h5 className="modal-title" id="exampleModalLabel">
                 Ready to Leave?
               </h5>
               <button
-                className='close'
-                type='button'
-                data-dismiss='modal'
-                aria-label='Close'
+                className="close"
+                type="button"
+                data-dismiss="modal"
+                aria-label="Close"
               >
-                <span aria-hidden='true'>×</span>
+                <span aria-hidden="true">×</span>
               </button>
             </div>
-            <div className='modal-body'>
+            <div className="modal-body">
               Select "Logout" below if you are ready to end your current
               session.
             </div>
-            <div className='modal-footer'>
+            <div className="modal-footer">
               <button
-                className='btn btn-secondary'
-                type='button'
-                data-dismiss='modal'
+                className="btn btn-secondary"
+                type="button"
+                data-dismiss="modal"
               >
                 Cancel
               </button>
-              <Link to='/' className='btn btn-primary' onClick={logout}>
+              <Link to="/" className="btn btn-primary" onClick={logout}>
                 Logout
               </Link>
             </div>
@@ -636,6 +642,6 @@ const TopSidebar = ({ props, auth: { user, allUsers },
 };
 const mapStateToProps = (state) => ({
   auth: state.auth,
-  friend: state.friend
+  friend: state.friend,
 });
 export default connect(mapStateToProps, { logout, toggleCssClass })(TopSidebar);

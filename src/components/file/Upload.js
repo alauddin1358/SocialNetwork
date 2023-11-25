@@ -248,7 +248,7 @@ const Upload = ({props, addFile,getFile,updateFile,auth, file: {files, isSuccess
                 edit ? (
                   <div className='update-file-btn'>
                       <Button variant="primary" disabled={submitButtonDisable} type="submit">
-                          Update
+                          {submitButtonDisable ? 'Updating...' : 'Update'}
                       </Button>
                       <Link to='/dashboard'
                             className='btn btn-danger'
@@ -258,7 +258,7 @@ const Upload = ({props, addFile,getFile,updateFile,auth, file: {files, isSuccess
                   </div>
                   ):(
                         <Button variant="primary" disabled={submitButtonDisable} type="submit">
-                            Submit
+                            {submitButtonDisable ? 'Submitting...' : 'Submit'}
                         </Button>
                       )
               }

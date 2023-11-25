@@ -8,7 +8,7 @@ import { deleteFile } from '../../actions/file';
 import Spinner from '../layout/Spinner';
 import Advertisement from './Advertisement';
 
-const Pages = ({ getPosts, deletePost,deleteFile, auth:{user}, post: {posts, loading}, props}) => {
+const Pages = ({ getPosts, deletePost,deleteFile, auth:{user}, post: {posts}, props}) => {
     useEffect(() => {
         getPosts();
     }, [getPosts, deletePost]);
@@ -45,7 +45,7 @@ const Pages = ({ getPosts, deletePost,deleteFile, auth:{user}, post: {posts, loa
                             </div>
                             <div id="posts-list" className="card-body">
                                 <div className="post-card card">
-                                        {user === null ? (<Spinner />) : (posts.length <= 0 ? (<h5 style={{padding: '10px'}}>You have no post yet</h5>) : (posts.map((post, index) => (
+                                        {user === null ? (<Spinner />) : (posts === null ? (<h5 style={{padding: '10px'}}>You have no post yet</h5>) : (posts.map((post, index) => (
                                             <PostItem key={post._id.$oid} post={post} postOwner={user} deletePost={deletePost} deleteFile={deleteFile} index={index}/> 
                                         )))) }
                                 </div>

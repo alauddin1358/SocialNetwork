@@ -35,16 +35,16 @@
 // export default ShareModal
 
 // src/components/bootstrap-carousel.component.js
-import React, { Component } from "react";
+import React from "react";
 
 import { Modal, Button } from 'react-bootstrap';
 import { FacebookShareButton, LinkedinShareButton } from "react-share";
 import { FacebookIcon, LinkedinIcon} from "react-share";
-
+const APP_DOMAIN = process.env.REACT_APP_DOMAIN;
 const ShareModal = (props) => {
     //console.log(props.data);
     const {id, title, body} = props.data;
-    const url = "https://agriculturist.org/sharepost/"+`${id}`;
+    const url = `${APP_DOMAIN}/sharepost/${id}`;
         return (
             <div>
                 <Modal show={props.show} onHide={() => props.onHide()}>

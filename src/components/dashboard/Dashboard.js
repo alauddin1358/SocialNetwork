@@ -1,8 +1,9 @@
 import React, { Fragment, useEffect, useState } from 'react';
-import { Link, Redirect } from 'react-router-dom';
+import { Link } from 'react-router-dom';
 import { connect } from 'react-redux';
 import { logout } from '../../actions/auth';
 import { getAllUsers, loadUser } from '../../actions/auth';
+import { getPosts } from '../../actions/post';
 import {
   getPendingFrUser,
   getFriendSuggestion,
@@ -16,13 +17,14 @@ const ADMIN = process.env.REACT_APP_ADMIN;
 const Dashboard = ({
   props,
   logout,
+  loadUser,
   getAllUsers,
+  getPosts,
   getPendingFrUser,
   getFriendSuggestion,
   getUserMyFr,
-  loadUser,
   getFile,
-  auth: { isAuthenticated, token, user, loading },
+  auth: { user, loading },
 }) => {
   const [fileLoading, setFileLoading] = useState(true);
   // useEffect(() => {
@@ -39,6 +41,7 @@ const Dashboard = ({
     console.log('calling useEffect in Dashboard');
     loadUser();
     getAllUsers();
+    getPosts();
     getPendingFrUser();
     getFriendSuggestion();
     getUserMyFr();
@@ -129,6 +132,7 @@ export default connect(mapStateToProps, {
   logout,
   loadUser,
   getAllUsers,
+  getPosts,
   getPendingFrUser,
   getFriendSuggestion,
   getUserMyFr,

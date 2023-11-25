@@ -21,12 +21,14 @@ import FriendListContainer from './components/Friends/FriendListContainer';
 import SearchUserListContainer from './components/profile/SearchUserListContainer';
 import store from './store';
 import { BrowserRouter as Router, Route, Switch } from 'react-router-dom';
-import { useSelector } from 'react-redux';
+import { useSelector, useDispatch } from 'react-redux';
 import { loadUser } from './actions/auth';
 import SharePage from './components/Share/SharePage';
 import PrivacyPolicy from './components/Share/PrivacyPolicy';
+import { removeAlert} from './actions/alert';
 
 const App = () => {
+  const dispatch = useDispatch();
   const { isAuthenticated, loading } = useSelector((state) => state.auth);
   // console.log('isAuthenticated app', isAuthenticated);
   // console.log('Loadin in app', loading);
@@ -35,7 +37,10 @@ const App = () => {
     store.dispatch(loadUser());
     //store.dispatch(getPendingFrUser);
   }, []);
-
+  useEffect(() => {
+    // Dispatch removeAlert action when the app initializes or upon page reload
+    dispatch(removeAlert());
+  }, [dispatch]);
   
   return (
     
@@ -63,7 +68,7 @@ const App = () => {
               <PrivateRoute exact path="/userlist" component={UserListContainer}  />
               <PrivateRoute exact path="/friends" component = {AddFriend} />
               <PrivateRoute exact path="/friendlist" component = {FriendListContainer} />
-              <PrivateRoute exact path="/sharepost/:id" component={SharePage} />
+              <Route exact path="/sharepost/:id" component={SharePage} />
               <Route exact path="/privacypolicy" component={PrivacyPolicy} />
               {/* <PrivateRoute exact path="/profile" render={(props) => <Profile {...props}/>}  />
               <PrivateRoute exact path="/searchuser" render={(props) => <SearchUserListContainer {...props}/>} /> */}

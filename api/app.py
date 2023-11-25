@@ -47,7 +47,7 @@ app = Flask(__name__)
 app.secret_key = os.getenv('API_SECRET_KEY')
 # db config
 # New MongoDB Connection Locally
-app.config['MONGO_URI'] = os.getenv('LOCAL_MONGO_URI')
+# app.config['MONGO_URI'] = os.getenv('LOCAL_MONGO_URI')
 
 # MongoDB Atlas
 # app.config['MONGO_URI'] = "mongodb+srv://alauddin:01767ali@cluster0.qyaqkin.mongodb.net/userReg"
@@ -55,7 +55,7 @@ app.config['MONGO_URI'] = os.getenv('LOCAL_MONGO_URI')
 # API LINK = http://15.235.163.6:5000
 
 # Live server in Production
-# app.config['MONGO_URI'] = "mongodb://15.235.163.6:27017/userReg"
+app.config['MONGO_URI'] = "mongodb://15.235.163.6:27017/userReg"
 
 # app.config['MONGO_URI'] = "mongodb://root:iritadb2021@127.0.0.1:27020/userReg?authSource=admin"
 # app.config['MONGO_URI'] = "mongodb://admin:iritadb2021@localhost:27020/userReg?authSource=admin"
@@ -83,8 +83,8 @@ mail = Mail(app)
 
 # connects to the mongoDB server
 mongo = PyMongo(app)
-# client = MongoClient('mongodb://15.235.163.6:27017/')
-client = MongoClient('mongodb://localhost:27017/')
+client = MongoClient('mongodb://15.235.163.6:27017/')
+# client = MongoClient('mongodb://localhost:27017/')
 dbs = client['userReg']
 fs = GridFS(dbs)
 
@@ -1239,11 +1239,15 @@ def fileDelete(id):
         print(id)
         existing_file = mongo.db.upload.find_one({'_id': ObjectId(id)})
         if existing_file and request.method == 'DELETE':
+            _filename = existing_file['filename']
+            file = fs.find_one({'filename': _filename})
+            if file:
+                fs.delete(file._id)
             # mongo query for pull specific friend from other userRegs
             # mongo.db.posts.update_many(
             #     {}, {'$pull': {'friends': DBRef(collection="userReg", id=ObjectId(id))}})
             # # mongo query for deleting specific id
-            post = mongo.db.upload.delete_one({'_id': ObjectId(id)})
+            mongo.db.upload.delete_one({'_id': ObjectId(id)})
             # for json response
             message = {
                 'data': "null",

@@ -7,7 +7,7 @@ import Advertisement from '../dashboard/Advertisement';
 // import CommentForm from './CommentForm';
 // import CommentItem from './CommentItem'; 
 import Spinner from '../layout/Spinner';
-import Alert from '../layout/Alert';
+//import Alert from '../layout/Alert';
 const SharePageDetail = ({getSharePost, post:{sharepost, loading}, match}) => {
     useEffect(() => {
         getSharePost(match.params.id);
